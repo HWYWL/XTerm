@@ -70,13 +70,13 @@ func ReadText(ctx context.Context, c FS, p string, progress Progress) ([]byte, f
 		return nil, fi, ErrBinary
 	}
 	buf.Write(head[:n])
-	var done int64
-	cnt := &counter{ctx: ctx, done: &done, progress: progress}
-	if err := cnt.add(n); err != nil {
+	cnt := &counter{progress: progress}
+	cnt.add(n)
+	if err := ctx.Err(); err != nil {
 		return nil, fi, err
 	}
 	if n == sniffLen {
-		if _, err := f.WriteTo(&countingWriter{w: &buf, counter: cnt}); err != nil {
+		if _, err := f.WriteTo(&countingWriter{ctx: ctx, w: &buf, counter: cnt}); err != nil {
 			return nil, fi, err
 		}
 	}

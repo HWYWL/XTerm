@@ -14,6 +14,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/pkg/sftp"
@@ -165,65 +166,140 @@ func RemoteSize(c *sftp.Client, p string) (int64, error) {
 	if !fi.IsDir() {
 		return fi.Size(), nil
 	}
-	var total int64
+	var total atomic.Int64
 	err = walkRemote(c, p, func(_ string, fi fs.FileInfo) error {
-		total += fi.Size()
+		total.Add(fi.Size())
 		return nil
 	})
-	return total, err
+	return total.Load(), err
 }
+
+// remoteWalkers is how many directories a walk lists at once. Listing one
+// is a round trip, so a tree of many directories is otherwise bound by
+// them, which is what makes a folder of many files slow to measure and to
+// fetch on a link with a long round trip.
+const remoteWalkers = 8
 
 // walkRemote calls file for each regular file under the directory dir,
 // with its path. Links to directories are not followed, which keeps a
 // link to a parent from looping.
+//
+// The directories are listed remoteWalkers at a time, so file is called
+// from several goroutines, in no order, and must be safe for that.
 func walkRemote(c *sftp.Client, dir string, file func(p string, fi fs.FileInfo) error) error {
-	infos, err := c.ReadDir(dir)
-	if err != nil {
-		return err
+	type found struct {
+		p  string
+		fi fs.FileInfo
 	}
-	for _, fi := range infos {
-		p := path.Join(dir, fi.Name())
-		if fi.Mode()&fs.ModeSymlink != 0 {
-			target, err := c.Stat(p)
-			if err != nil || target.IsDir() {
-				continue
-			}
-			fi = target
-		}
-		switch {
-		case fi.IsDir():
-			if err := walkRemote(c, p, file); err != nil {
-				return err
-			}
-		case fi.Mode().IsRegular():
-			if err := file(p, fi); err != nil {
-				return err
-			}
+	var (
+		mu       sync.Mutex
+		cond     = sync.NewCond(&mu)
+		queue    = []string{dir}
+		pending  = 1 // directories queued or being listed
+		firstErr error
+	)
+	fail := func(err error) {
+		if firstErr == nil {
+			firstErr = err
 		}
 	}
-	return nil
+	var wg sync.WaitGroup
+	wg.Add(remoteWalkers)
+	for range remoteWalkers {
+		go func() {
+			defer wg.Done()
+			for {
+				mu.Lock()
+				for len(queue) == 0 && pending > 0 && firstErr == nil {
+					cond.Wait()
+				}
+				if firstErr != nil || len(queue) == 0 {
+					mu.Unlock()
+					return
+				}
+				d := queue[0]
+				queue = queue[1:]
+				mu.Unlock()
+
+				infos, err := c.ReadDir(d)
+				var files []found
+				if err == nil {
+					for _, fi := range infos {
+						p := path.Join(d, fi.Name())
+						if fi.Mode()&fs.ModeSymlink != 0 {
+							target, err := c.Stat(p)
+							if err != nil || target.IsDir() {
+								continue
+							}
+							fi = target
+						}
+						switch {
+						case fi.IsDir():
+							mu.Lock()
+							queue = append(queue, p)
+							pending++
+							mu.Unlock()
+						case fi.Mode().IsRegular():
+							files = append(files, found{p, fi})
+						}
+					}
+				}
+				mu.Lock()
+				if err != nil {
+					fail(fmt.Errorf("%s: %w", d, err))
+				}
+				pending--
+				cond.Broadcast()
+				mu.Unlock()
+				if err != nil {
+					return
+				}
+				for _, f := range files {
+					if err := file(f.p, f.fi); err != nil {
+						mu.Lock()
+						fail(err)
+						cond.Broadcast()
+						mu.Unlock()
+						return
+					}
+				}
+			}
+		}()
+	}
+	wg.Wait()
+	return firstErr
 }
 
-// Progress is told the bytes copied so far, from the transfer's goroutine.
+// Progress is told the bytes copied so far, by the goroutines copying the
+// files of a folder, one call at a time.
 type Progress func(done int64)
 
+// counter adds up the bytes copied by the goroutines of a transfer, and
+// tells progress, one call at a time, as a transfer of a folder copies
+// several files at once (transferWorkers).
 type counter struct {
-	ctx      context.Context
-	done     *int64
+	mu       sync.Mutex
+	done     int64
 	progress Progress
 }
 
-func (c *counter) add(n int) error {
-	*c.done += int64(n)
-	if c.progress != nil {
-		c.progress(*c.done)
+func (c *counter) add(n int) {
+	if n <= 0 {
+		return
 	}
-	return c.ctx.Err()
+	c.mu.Lock()
+	c.done += int64(n)
+	done := c.done
+	if c.progress != nil {
+		c.progress(done)
+	}
+	c.mu.Unlock()
 }
 
 // countingReader counts what is read, and stops when the context ends.
 // Its Size lets sftp write several chunks at once.
 type countingReader struct {
+	ctx  context.Context
 	r    io.Reader
 	size int64
 	*counter
@@ -234,16 +310,15 @@ func (r *countingReader) Read(p []byte) (int, error) {
 		return 0, err
 	}
 	n, err := r.r.Read(p)
-	if cerr := r.add(n); cerr != nil && err == nil {
-		err = cerr
-	}
+	r.add(n)
 	return n, err
 }
 
 func (r *countingReader) Size() int64 { return r.size }
 
 type countingWriter struct {
-	w io.Writer
+	ctx context.Context
+	w   io.Writer
 	*counter
 }
 
@@ -252,26 +327,86 @@ func (w *countingWriter) Write(p []byte) (int, error) {
 		return 0, err
 	}
 	n, err := w.w.Write(p)
-	if cerr := w.add(n); cerr != nil && err == nil {
-		err = cerr
-	}
+	w.add(n)
 	return n, err
 }
 
+// transferWorkers is how many files of a folder a transfer copies at once.
+// A folder of many small files is bound by the round trips of each file
+// (open, write, close, chmod), which side by side files overlap, not by
+// the bandwidth of the link; each file still sends several chunks at once
+// (NewClient).
+const transferWorkers = 8
+
+// pair is a file to copy: where it is and where it goes.
+type pair struct {
+	src, dst string
+	fi       fs.FileInfo
+}
+
+// eachFile runs copy over files with up to transferWorkers goroutines,
+// stopping the others at the first error and when ctx ends. It returns
+// the context's error when the caller stopped it, and else the first
+// error of a file.
+func eachFile(ctx context.Context, files []pair, copy func(ctx context.Context, f pair) error) error {
+	parent := ctx
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	var (
+		mu   sync.Mutex
+		werr error
+		wg   sync.WaitGroup
+	)
+	jobs := make(chan pair)
+	for range min(transferWorkers, len(files)) {
+		wg.Go(func() {
+			for f := range jobs {
+				if err := copy(ctx, f); err != nil {
+					mu.Lock()
+					if werr == nil {
+						werr = err
+					}
+					mu.Unlock()
+					cancel() // the others stop at their next chunk
+					return
+				}
+			}
+		})
+	}
+feed:
+	for _, f := range files {
+		select {
+		case jobs <- f:
+		case <-ctx.Done():
+			break feed
+		}
+	}
+	close(jobs)
+	wg.Wait()
+	if werr == nil {
+		return parent.Err() // the caller stopped it
+	}
+	return werr
+}
+
 // Upload copies the local file or directory src into the remote directory
-// dstDir, as dstDir/<name of src>, replacing files that are there.
+// dstDir, as dstDir/<name of src>, replacing files that are there. A
+// directory's files go transferWorkers at a time.
 func Upload(ctx context.Context, c *sftp.Client, src, dstDir string, progress Progress) error {
-	var done int64
-	cnt := &counter{ctx: ctx, done: &done, progress: progress}
+	cnt := &counter{progress: progress}
 	fi, err := os.Stat(src)
 	if err != nil {
 		return err
 	}
 	dst := path.Join(dstDir, filepath.Base(src))
 	if !fi.IsDir() {
-		return uploadFile(c, src, dst, fi, cnt)
+		return uploadFile(ctx, c, src, dst, fi, cnt)
 	}
-	return filepath.WalkDir(src, func(name string, d fs.DirEntry, err error) error {
+	if err := c.MkdirAll(dst); err != nil {
+		return err
+	}
+	var files []pair
+	err = filepath.WalkDir(src, func(name string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -284,17 +419,27 @@ func Upload(ctx context.Context, c *sftp.Client, src, dstDir string, progress Pr
 		}
 		target := path.Join(dst, filepath.ToSlash(rel))
 		if d.IsDir() {
+			if name == src {
+				return nil // dst, above
+			}
 			return c.MkdirAll(target)
 		}
 		fi, err := os.Stat(name)
 		if err != nil || !fi.Mode().IsRegular() {
 			return nil // a broken link, a device, a link to a directory
 		}
-		return uploadFile(c, name, target, fi, cnt)
+		files = append(files, pair{src: name, dst: target, fi: fi})
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return eachFile(ctx, files, func(ctx context.Context, f pair) error {
+		return uploadFile(ctx, c, f.src, f.dst, f.fi, cnt)
 	})
 }
 
-func uploadFile(c *sftp.Client, src, dst string, fi fs.FileInfo, cnt *counter) (err error) {
+func uploadFile(ctx context.Context, c *sftp.Client, src, dst string, fi fs.FileInfo, cnt *counter) (err error) {
 	in, err := os.Open(src)
 	if err != nil {
 		return err
@@ -312,7 +457,7 @@ func uploadFile(c *sftp.Client, src, dst string, fi fs.FileInfo, cnt *counter) (
 			c.Remove(dst) // what was written is a part of the file
 		}
 	}()
-	if _, err = out.ReadFrom(&countingReader{r: in, size: fi.Size(), counter: cnt}); err != nil {
+	if _, err = out.ReadFrom(&countingReader{ctx: ctx, r: in, size: fi.Size(), counter: cnt}); err != nil {
 		return err
 	}
 	c.Chmod(dst, fi.Mode().Perm()) // best effort: some servers refuse it
@@ -321,22 +466,28 @@ func uploadFile(c *sftp.Client, src, dst string, fi fs.FileInfo, cnt *counter) (
 
 // Download copies the remote file or directory src into the local
 // directory dstDir, as dstDir/<name of src>, replacing files that are
-// there, and returns the local path.
+// there, and returns the local path. A directory's files go
+// transferWorkers at a time.
 func Download(ctx context.Context, c *sftp.Client, src, dstDir string, progress Progress) (string, error) {
-	var done int64
-	cnt := &counter{ctx: ctx, done: &done, progress: progress}
+	cnt := &counter{progress: progress}
 	fi, err := c.Stat(src)
 	if err != nil {
 		return "", err
 	}
 	dst := filepath.Join(dstDir, path.Base(src))
 	if !fi.IsDir() {
-		return dst, downloadFile(c, src, dst, fi, cnt)
+		return dst, downloadFile(ctx, c, src, dst, fi, cnt)
 	}
 	if err := os.MkdirAll(dst, 0o755); err != nil {
 		return dst, err
 	}
-	return dst, walkRemote(c, src, func(p string, fi fs.FileInfo) error {
+	// walkRemote calls this from several goroutines.
+	var filesMu sync.Mutex
+	var files []pair
+	err = walkRemote(c, src, func(p string, fi fs.FileInfo) error {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
 		rel := strings.TrimPrefix(p, strings.TrimSuffix(src, "/")+"/")
 		target := filepath.Join(dst, filepath.FromSlash(rel))
 		if !isInside(dst, target) {
@@ -345,7 +496,16 @@ func Download(ctx context.Context, c *sftp.Client, src, dstDir string, progress 
 		if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
 			return err
 		}
-		return downloadFile(c, p, target, fi, cnt)
+		filesMu.Lock()
+		files = append(files, pair{src: p, dst: target, fi: fi})
+		filesMu.Unlock()
+		return nil
+	})
+	if err != nil {
+		return dst, err
+	}
+	return dst, eachFile(ctx, files, func(ctx context.Context, f pair) error {
+		return downloadFile(ctx, c, f.src, f.dst, f.fi, cnt)
 	})
 }
 
@@ -356,7 +516,7 @@ func isInside(dir, p string) bool {
 	return err == nil && rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) && !filepath.IsAbs(rel)
 }
 
-func downloadFile(c *sftp.Client, src, dst string, fi fs.FileInfo, cnt *counter) (err error) {
+func downloadFile(ctx context.Context, c *sftp.Client, src, dst string, fi fs.FileInfo, cnt *counter) (err error) {
 	in, err := c.Open(src)
 	if err != nil {
 		return fmt.Errorf("%s: %w", src, err)
@@ -374,7 +534,7 @@ func downloadFile(c *sftp.Client, src, dst string, fi fs.FileInfo, cnt *counter)
 			os.Remove(dst)
 		}
 	}()
-	if _, err = in.WriteTo(&countingWriter{w: out, counter: cnt}); err != nil {
+	if _, err = in.WriteTo(&countingWriter{ctx: ctx, w: out, counter: cnt}); err != nil {
 		return err
 	}
 	if perm := fi.Mode().Perm(); perm&0o111 != 0 {

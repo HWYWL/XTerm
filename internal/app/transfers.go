@@ -36,8 +36,12 @@ const (
 	transferCanceled
 )
 
-// maxRunning is how many transfers run at once; the others wait.
-const maxRunning = 3
+// maxRunning is how many transfers run at once; the others wait. A
+// transfer of a folder copies several files at a time itself
+// (remotefs.transferWorkers), so this is what has files going side by side
+// when a selection of many files is uploaded or downloaded, one transfer
+// each, as it is not much more than one folder's worth.
+const maxRunning = 8
 
 // transferJob copies one file or directory, src into dstDir.
 type transferJob struct {
@@ -320,43 +324,33 @@ func (a *App) transfer(ctx context.Context, t *transferJob, report remotefs.Arch
 }
 
 // copyFiles is transfer, but for archive downloads, which it only
-// prepares.
+// prepares: their data goes through tar, not through the files here.
 func (a *App) copyFiles(ctx context.Context, t *transferJob, report remotefs.ArchiveProgress) (string, error) {
-	if t.archive {
-		if t.dir == download {
-			// The download folder of the settings may be gone.
-			if err := os.MkdirAll(t.dstDir, 0o755); err != nil {
-				return "", err
-			}
+	if t.dir == download {
+		// The download folder of the settings may be gone.
+		if err := os.MkdirAll(t.dstDir, 0o755); err != nil {
+			return "", err
 		}
-		// Measured while tar runs already, as walking many folders takes
-		// round trips of its own.
-		go func() {
-			if total, err := t.measure(ctx); err == nil {
-				a.post(func() {
-					if t.state == transferRunning && t.total < 0 {
-						t.total = total
-						a.showTransfers()
-					}
-				})
-			}
-		}()
+	}
+	// Measured while the copy runs already: walking a remote tree of many
+	// folders takes round trips of its own, and the first bytes need not
+	// wait for the total.
+	go func() {
+		if total, err := t.measure(ctx); err == nil {
+			a.post(func() {
+				if t.state == transferRunning && t.total < 0 {
+					t.total = total
+					a.showTransfers()
+				}
+			})
+		}
+	}()
+	if t.archive {
 		if t.dir == upload {
 			return "", remotefs.UploadArchive(ctx, t.ssh, t.srcs, t.dstDir, report)
 		}
 		return "", nil
 	}
-	total, err := t.measure(ctx)
-	if err == nil && t.dir == download {
-		err = os.MkdirAll(t.dstDir, 0o755)
-	}
-	if err != nil {
-		return "", err
-	}
-	a.post(func() {
-		t.total = total
-		a.showTransfers()
-	})
 	progress := func(done int64) { report(done, "") }
 	if t.dir == upload {
 		return "", remotefs.Upload(ctx, t.sftp, t.src, t.dstDir, progress)

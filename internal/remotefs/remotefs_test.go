@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/rand"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -145,6 +146,87 @@ func TestCancel(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(back, "big.bin")); !os.IsNotExist(err) {
 		t.Errorf("partial download left behind: %v", err)
+	}
+}
+
+// TestUploadDownloadManyFiles copies a folder of many files both ways: the
+// files go several at a time (transferWorkers), and each arrives whole.
+// The remote paths are local ones with forward slashes, as the in-process
+// server serves the file system under the test.
+func TestUploadDownloadManyFiles(t *testing.T) {
+	c := newTestClient(t)
+	local, remote, back := t.TempDir(), t.TempDir(), t.TempDir()
+	want := map[string][]byte{}
+	var total int64
+	for i := range 30 {
+		name := fmt.Sprintf("d%d/f%02d.bin", i%3, i)
+		data := randomBytes(1000 + i*997)
+		want[name] = data
+		total += int64(len(data))
+		writeFile(t, filepath.Join(local, "many", filepath.FromSlash(name)), data)
+	}
+	var up int64
+	if err := Upload(context.Background(), c, filepath.Join(local, "many"), remote, func(n int64) { up = n }); err != nil {
+		t.Fatal(err)
+	}
+	if up != total {
+		t.Errorf("upload progress ended at %d of %d", up, total)
+	}
+	for name, data := range want {
+		got, err := os.ReadFile(filepath.Join(remote, "many", filepath.FromSlash(name)))
+		if err != nil || !bytes.Equal(got, data) {
+			t.Fatalf("uploaded %s: %d bytes of %d, %v", name, len(got), len(data), err)
+		}
+	}
+
+	src := filepath.ToSlash(filepath.Join(remote, "many"))
+	size, err := RemoteSize(c, src)
+	if err != nil || size != total {
+		t.Fatalf("remote size %d of %d: %v", size, total, err)
+	}
+	var down int64
+	dst, err := Download(context.Background(), c, src, back, func(n int64) { down = n })
+	if err != nil {
+		t.Fatal(err)
+	}
+	if down != total {
+		t.Errorf("download progress ended at %d of %d", down, total)
+	}
+	for name, data := range want {
+		got, err := os.ReadFile(filepath.Join(dst, filepath.FromSlash(name)))
+		if err != nil || !bytes.Equal(got, data) {
+			t.Fatalf("downloaded %s: %d bytes of %d, %v", name, len(got), len(data), err)
+		}
+	}
+}
+
+// TestCancelFolder cancels a folder's download while its files are being
+// copied: a file is either whole or gone, not left half written.
+func TestCancelFolder(t *testing.T) {
+	c := newTestClient(t)
+	remote, back := t.TempDir(), t.TempDir()
+	const size = 200 << 10
+	for i := range 20 {
+		writeFile(t, filepath.Join(remote, "many", fmt.Sprintf("f%02d.bin", i)), randomBytes(size))
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	src := filepath.ToSlash(filepath.Join(remote, "many"))
+	_, err := Download(ctx, c, src, back, func(n int64) {
+		if n > 300<<10 {
+			cancel()
+		}
+	})
+	if !IsCanceled(err) {
+		t.Fatalf("download: %v, want canceled", err)
+	}
+	entries, err := os.ReadDir(filepath.Join(back, "many"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, e := range entries {
+		if fi, err := e.Info(); err == nil && fi.Size() != size {
+			t.Errorf("%s: %d bytes, a part of a file", e.Name(), fi.Size())
+		}
 	}
 }
 

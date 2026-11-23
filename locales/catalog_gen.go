@@ -8682,6 +8682,26 @@ func (msgs Messages) ShowPanel() string {
 	return Catalog.Format(msgs.locale, "showPanel", nil)
 }
 
+// HideSidebar says "Hide sidebar"
+// in the language the app shows.
+func HideSidebar() string { return In(i18n.Locale()).HideSidebar() }
+
+// HideSidebar says "Hide sidebar"
+// in the language of msgs.
+func (msgs Messages) HideSidebar() string {
+	return Catalog.Format(msgs.locale, "hideSidebar", nil)
+}
+
+// ShowSidebar says "Show sidebar"
+// in the language the app shows.
+func ShowSidebar() string { return In(i18n.Locale()).ShowSidebar() }
+
+// ShowSidebar says "Show sidebar"
+// in the language of msgs.
+func (msgs Messages) ShowSidebar() string {
+	return Catalog.Format(msgs.locale, "showSidebar", nil)
+}
+
 // MovePanelRight says "Move panel to right side"
 // in the language the app shows.
 func MovePanelRight() string { return In(i18n.Locale()).MovePanelRight() }
@@ -8730,6 +8750,16 @@ func ScToggleBottomPanel() string { return In(i18n.Locale()).ScToggleBottomPanel
 // in the language of msgs.
 func (msgs Messages) ScToggleBottomPanel() string {
 	return Catalog.Format(msgs.locale, "scToggleBottomPanel", nil)
+}
+
+// ScToggleSidebar says "Show or hide the sidebar"
+// in the language the app shows.
+func ScToggleSidebar() string { return In(i18n.Locale()).ScToggleSidebar() }
+
+// ScToggleSidebar says "Show or hide the sidebar"
+// in the language of msgs.
+func (msgs Messages) ScToggleSidebar() string {
+	return Catalog.Format(msgs.locale, "scToggleSidebar", nil)
 }
 
 // PanelTabLabel says "{session} | {tab}"

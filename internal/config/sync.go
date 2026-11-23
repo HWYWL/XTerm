@@ -100,6 +100,7 @@ var (
 		"sidebarWidth", "monitorPercent", "terminalPercent", "treeWidth",
 		"procListPercent", "procFieldsPercent", "netListPercent",
 		"monitorHidden", // what this device's monitor shows, as the pane sizes
+		"sidebarHidden",
 		"bottomPanelHidden", "bottomPanelSide", "rightPanelWidth",
 		"monitorSide", "rightMonitorPercent",
 		// The command editor's layout and options, with its text in a

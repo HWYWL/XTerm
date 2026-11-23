@@ -67,6 +67,7 @@ func (a *App) restoreLayout() {
 	if s.TerminalPercent > 0 && s.TerminalPercent < 100 {
 		a.terminalPct = s.TerminalPercent
 	}
+	a.sideHidden = s.SidebarHidden
 	a.bottomHidden = s.BottomPanelHidden
 	if s.BottomPanelSide == config.PanelRight {
 		a.bottomSide = config.PanelRight
@@ -176,6 +177,7 @@ func (a *App) saveLayout() {
 	a.settings.SidebarWidth = a.sideWidth
 	a.settings.MonitorPercent = a.monitorPct
 	a.settings.TerminalPercent = a.terminalPct
+	a.settings.SidebarHidden = a.sideHidden
 	a.settings.BottomPanelHidden = a.bottomHidden
 	a.settings.BottomPanelSide = a.bottomSide
 	a.settings.RightPanelWidth = a.rightWidth

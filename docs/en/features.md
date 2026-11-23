@@ -79,6 +79,14 @@ The main window follows FinalShell's layout:
 - Bottom right: the Files, Transfers, Tunnels, Processes, Network and
   Commands tabs, which can also open in a tab of their own (see below).
 
+The whole left side, the server monitor over the session list, can be
+hidden, and the terminal takes the width. The chevron at the left end of
+the row of session tabs hides it (chevron left, "Hide sidebar") and shows
+it again (chevron right, "Show sidebar"); so do the same two items in the
+tab row's context menu and the shortcut "Show or hide the sidebar" (Cmd+B
+on macOS, Ctrl+Shift+B on Windows and Linux). It is saved with the pane
+sizes, and full screen shows the terminal alone anyway.
+
 The bottom panel can collapse to its row of tabs, which stays at the
 bottom, and the terminal takes the rest of the height. The chevron at the
 right end of the tab row, before "Open in its own tab", hides the panel
@@ -1483,6 +1491,12 @@ With "Ask where to save each download" checked on the Transfers page, the
 download button always asks for the location first with the system's
 folder chooser.
 
+Both ways, each file sends and fetches several chunks at once, which is
+what keeps them fast on a link with a long round trip, and a folder's
+files are copied 8 at a time, with its folders listed 8 at a time too. A
+selection of many files becomes one transfer each, and several run at
+once (see [Transfers tab](#transfers-tab)).
+
 ### Archive transfer
 
 A folder of many small files is slow over SFTP, which takes several round
@@ -1541,7 +1555,7 @@ not created: they point outside the folder"; its tooltip lists the links.
 ### Transfers tab
 
 The "Transfers" tab at the bottom right shows progress, speed, time left
-and a cancel button. At most 3 transfers run at the same time; the rest
+and a cancel button. At most 8 transfers run at the same time; the rest
 wait in a queue.
 
 - When the destination already has an item with the same name, the app
@@ -2408,6 +2422,7 @@ Terminal › Shortcuts page.
 | Switch to tab 1–9 | Cmd+1…9 | Alt+1…9 |
 | Focus command bar (and back to the terminal) | Cmd+Shift+L | Ctrl+Shift+L |
 | Switch sessions / connections (the bottom-left panel's pages) | Cmd+Shift+E | Ctrl+Shift+E |
+| Show or hide the sidebar | Cmd+B | Ctrl+Shift+B |
 | Show or hide the bottom panel | Cmd+J | Ctrl+Shift+J |
 | Split the pane right | Cmd+D | Alt+Shift+= |
 | Split the pane down | Cmd+Shift+D | Alt+Shift+- |

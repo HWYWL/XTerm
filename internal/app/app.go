@@ -163,6 +163,9 @@ type App struct {
 	termTheme   *terminal.Theme
 	look        appearance // the rest of the terminal's look
 
+	// sideHidden hides the whole left side, the monitor over the session
+	// list, and the terminal takes the width (sidebarhide.go).
+	sideHidden bool
 	// bottomHidden collapses the bottom panel to its tabs (panelhide.go).
 	bottomHidden bool
 	// panelTabsScroll is how far the bottom panel's tabs are scrolled
@@ -339,6 +342,11 @@ func (a *App) View(c *ui.Context) {
 		} else {
 			a.terminalArea(c)
 		}
+		a.dialogs(c)
+		return
+	}
+	if a.sideHidden {
+		a.mainArea(c)
 		a.dialogs(c)
 		return
 	}

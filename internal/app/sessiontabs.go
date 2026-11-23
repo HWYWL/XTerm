@@ -31,13 +31,16 @@ const sessionTabMaxWidth = 180
 // do, and the wheel over them scrolls them (sessionTabsWheel).
 func (a *App) sessionTabs(c *ui.Context) {
 	bar := ui.Row(c).Height(sessionTabBarHeight).PaddingX(6).Gap(2).AlignItems(ui.Center).
-		Background(colors.sidebar).BorderWidth(0, 0, 1, 0).BorderColor(colors.line)
+		Background(colors.sidebar).BorderWidth(0, 0, 1, 0).BorderColor(colors.line).
+		ContextMenu(a.sidebarMenu)
 	// What the tabs change runs once the row is built: closing a tab in
 	// the tab would leave the tabs after it to build with fewer sessions
 	// than the row was given.
 	var closing *Session
 	var after func()
 	bar.Children(func() {
+		// The button that hides the left side, and shows it again.
+		a.sidebarButton(c)
 		ui.ScrollHorizontal(c).Grow(1).MinWidth(0).Scrollbars(false).
 			TrackScroll(&a.tabsScroll).HandleInput(a.sessionTabsWheel).Children(func() {
 			ui.Row(c).Gap(2).Shrink(0).AlignItems(ui.Center).Children(func() {

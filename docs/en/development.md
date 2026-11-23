@@ -362,6 +362,8 @@ internal/
     sessiontabs.go   the row of session tabs above the terminal: a tab for
                      each session, its close button, the + that opens a new
                      tab, and sideways scrolling
+    sidebarhide.go   hiding the left side and showing it: the button at the
+                     left end of the row of session tabs, and the setting
     conntree.go      the left panel's Connections page: the switch between its pages, the connection manager's tree in one column, the folders kept open
     paneltab.go      panel rows: a session's bottom panel in a row of the list of its own, sharing the session's connection (connSession)
     local.go         local terminals: a tab running a program on this computer (no Host), opening and starting it, what the monitor and the panel's pages show for it, its option

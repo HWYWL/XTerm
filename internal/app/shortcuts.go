@@ -49,6 +49,7 @@ const (
 	scSwitchTab
 	scFocusBar
 	scLeftPanel
+	scSidebar
 	scBottomPanel
 	scSplitRight
 	scSplitDown
@@ -161,6 +162,12 @@ var shortcutActions = []shortcutAction{
 		id: scLeftPanel, title: locales.ScSwitchLeftPanel,
 		field: func(s *config.Shortcuts) *string { return &s.SwitchLeftPanel },
 		mac:   keyCombo{ui.Super | ui.Shift, ui.KeyE}, other: keyCombo{ui.Ctrl | ui.Shift, ui.KeyE},
+	},
+	{
+		// B as VS Code's side bar, which hides it.
+		id: scSidebar, title: locales.ScToggleSidebar,
+		field: func(s *config.Shortcuts) *string { return &s.ToggleSidebar },
+		mac:   keyCombo{ui.Super, ui.KeyB}, other: keyCombo{ui.Ctrl | ui.Shift, ui.KeyB},
 	},
 	{
 		// J as VS Code's panel; Ctrl+J alone is a newline in the shell.
@@ -532,6 +539,10 @@ func (a *App) shortcuts(c *ui.Context) {
 		a.toggleBarFocus()
 	case pressed(scLeftPanel):
 		a.switchLeftPanel()
+	case pressed(scSidebar) && !a.fullScreen.on:
+		// The row of session tabs that holds the button shows everywhere
+		// but in full screen.
+		a.toggleSidebar()
 	case pressed(scBottomPanel) && !a.fullScreen.on && !a.current().isPanelTab():
 		// Only where the panel under the terminal shows.
 		a.toggleBottomPanel()

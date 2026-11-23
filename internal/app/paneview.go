@@ -351,12 +351,14 @@ func (a *App) paneBox(c *ui.Context, s *Session, p *pane) {
 	box.DrawOver(func(pt *ui.Painter, r ui.Rect) {
 		switch {
 		case moving:
-			pt.Fill(r, paneMovingDim, 0)
+			pt.Fill(r, paneMovingDim, cardRadius)
 		case !focused:
-			pt.Fill(r, paneDim, 0)
+			pt.Fill(r, paneDim, cardRadius)
 		default:
+			// Rounded as the pane's ground, so that its corners are not
+			// squared off by the ring of the pane in use.
 			h := float32(paneBorder) / 2
-			pt.Stroke(ui.Rect{X: r.X + h, Y: r.Y + h, W: r.W - paneBorder, H: r.H - paneBorder}, accent, 0, paneBorder)
+			pt.Stroke(ui.Rect{X: r.X + h, Y: r.Y + h, W: r.W - paneBorder, H: r.H - paneBorder}, accent, max(0, cardRadius-h), paneBorder)
 		}
 		if over != nil {
 			card := ui.Rect{X: r.X + px - paneCardHotspot, Y: r.Y + py - paneCardHotspot, W: paneCardW + 2*paneCardHotspot, H: 72}

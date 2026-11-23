@@ -83,7 +83,7 @@ func TestPanelRow(t *testing.T) {
 	tt.Frame()
 
 	// The bottom panel alone, at the top of the main area: no terminal.
-	if r, ok := tt.Find(locales.BackToTerminal()); !ok || r.Y > 40+cardGap {
+	if r, ok := tt.Find(locales.BackToTerminal()); !ok || r.Y > 40+2*cardGap {
 		t.Errorf("the panel's tab row at %+v, %v", r, ok)
 	}
 	if tt.Image().RGBAAt(termSpotX, termSpotY) == termColor {

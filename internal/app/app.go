@@ -383,9 +383,10 @@ func (a *App) sidebar(c *ui.Context) {
 // (sessiontabs.go), which mainContent builds.
 func (a *App) mainArea(c *ui.Context) {
 	ui.Column(c).Fill().Children(func() {
-		// The row of tabs keeps the gap of the panes at its sides, so that
-		// its corners show as theirs do.
-		ui.Column(c).Padding(0, cardGap, 0, cardGap).Children(func() { a.sessionTabs(c) })
+		// The row of tabs keeps the gap of the panes at its top and sides,
+		// so that it starts level with them and its corners show as theirs
+		// do.
+		ui.Column(c).Padding(cardGap, cardGap, 0, cardGap).Children(func() { a.sessionTabs(c) })
 		ui.Column(c).Grow(1).MinHeight(0).Children(func() { a.mainContent(c) })
 	})
 }

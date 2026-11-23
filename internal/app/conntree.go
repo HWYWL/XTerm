@@ -131,9 +131,9 @@ func (a *App) switchLeftPanel() {
 	a.left.focusSearch = true
 }
 
-// leftPanelHeader is the switch between the pages, and the buttons: the
-// options, then a local terminal and a new tab, or a new connection on
-// the Connections page.
+// leftPanelHeader is the switch between the pages, and the buttons: a local
+// terminal and a new tab, or a new connection on the Connections page. The
+// options are in the row of tabs (sessiontabs.go).
 func (a *App) leftPanelHeader(c *ui.Context) {
 	ui.Row(c).Padding(6, 6, 6, 8).Gap(2).AlignItems(ui.Center).Children(func() {
 		page := a.left.page
@@ -141,9 +141,6 @@ func (a *App) leftPanelHeader(c *ui.Context) {
 			a.setLeftPage(page)
 		}
 		ui.Spacer(c)
-		if headerButton(c, "settings", locales.Options()).Clicked() {
-			a.openOptions()
-		}
 		if a.left.page == leftConnections {
 			if headerButton(c, "plus", locales.NewConnection()).Clicked() {
 				m := &a.connTree
@@ -160,9 +157,9 @@ func (a *App) leftPanelHeader(c *ui.Context) {
 	})
 }
 
-// headerButton is a button of the left panel's header: an icon button a
-// little narrower than the others, so that the page switch keeps its
-// labels beside three of them in a sidebar of the default width.
+// headerButton is a button of the left panel's header, and of the row of
+// tabs: an icon button a little narrower than the others, so that the page
+// switch keeps its labels beside them in a sidebar of the default width.
 func headerButton(c *ui.Context, icon, label string) ui.Element {
 	return widgets.IconButton(c, icon, label).Width(20)
 }

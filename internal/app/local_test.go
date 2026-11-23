@@ -47,11 +47,11 @@ func untilScreen(t *testing.T, p *fakePlatform, s *Session, want string) {
 // headerLocal clicks the session list's Local terminal button.
 func headerLocal(t *testing.T, tt *ui.Tester) {
 	t.Helper()
-	set, ok := tt.Find(locales.Options())
+	r, ok := tt.Find(locales.LocalTerminal())
 	if !ok {
-		t.Fatal("no options button")
+		t.Fatal("no local terminal button")
 	}
-	tt.ClickAt(set.X+set.W+2+set.W/2, set.Y+set.H/2)
+	tt.ClickAt(r.X+r.W/2, r.Y+r.H/2)
 }
 
 // The header's button opens a local terminal at the end of the list and

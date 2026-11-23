@@ -31,7 +31,7 @@ func TestSidebarHideAndShow(t *testing.T) {
 	if !a.sideHidden || !config.LoadSettings().SidebarHidden {
 		t.Fatalf("hidden %v, saved %v", a.sideHidden, config.LoadSettings().SidebarHidden)
 	}
-	if tab, _ = tabBox(t, tt, "web-1"); tab.X > 40 {
+	if tab, _ = tabBox(t, tt, "web-1"); tab.X > 40+cardGap {
 		t.Errorf("the row of tabs at %v with the sidebar hidden", tab.X)
 	}
 	if _, ok := tt.Find(locales.ShowSidebar()); !ok {

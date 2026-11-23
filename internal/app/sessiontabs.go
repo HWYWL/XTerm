@@ -56,6 +56,10 @@ func (a *App) sessionTabs(c *ui.Context) {
 				}
 			})
 		})
+		// The options, at the right end of the row of tabs.
+		if headerButton(c, "settings", locales.Options()).Clicked() {
+			a.openOptions()
+		}
 	})
 	if closing != nil {
 		a.closeSession(closing)

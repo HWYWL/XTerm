@@ -53,7 +53,7 @@ func TestSessionTabsChooseSession(t *testing.T) {
 	if !selected {
 		t.Error("alpha's tab is not the selected one")
 	}
-	if alpha.Y+alpha.H > sessionTabBarHeight {
+	if alpha.Y+alpha.H > sessionTabBarHeight+cardGap {
 		t.Errorf("alpha's tab at %+v, not in the bar above the terminal", alpha)
 	}
 	if _, selected := tabBox(t, tt, "bravo"); selected {

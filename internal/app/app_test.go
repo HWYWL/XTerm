@@ -30,6 +30,9 @@ type fakePlatform struct {
 	downloads string
 	opened    []string // what OpenFiles returns
 	shown     []string
+	// winW and winH are the content size WindowSize reports, which the app
+	// reads for the widths of its dialogs.
+	winW, winH int
 	fakeWindows
 	fakeSystem
 	fakeFilePicker
@@ -52,6 +55,7 @@ func newFakePlatform(t *testing.T) *fakePlatform {
 }
 
 func (p *fakePlatform) Post(fn func())                           { p.posts <- fn }
+func (p *fakePlatform) WindowSize(WindowKind) (int, int)         { return p.winW, p.winH }
 func (p *fakePlatform) OpenFiles(string, bool) ([]string, error) { return p.opened, nil }
 func (p *fakePlatform) DownloadsDir() string                     { return p.downloads }
 func (p *fakePlatform) ShowInFolder(path string)                 { p.shown = append(p.shown, path) }

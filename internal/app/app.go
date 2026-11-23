@@ -92,6 +92,9 @@ type Platform interface {
 	FocusWindow(kind WindowKind)
 	// CloseWindow closes the window of kind, and its children.
 	CloseWindow(kind WindowKind)
+	// WindowSize reports the content size of the window of kind, in DIPs,
+	// that its view lays out in: zeros when the window is not open.
+	WindowSize(kind WindowKind) (width, height int)
 	// Redraw draws every open window again, the main one included.
 	Redraw()
 

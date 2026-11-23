@@ -1,6 +1,8 @@
 package app
 
 import (
+	"time"
+
 	"finallyshell/internal/widgets"
 	"finallyshell/locales"
 
@@ -19,11 +21,17 @@ func (a *App) dialogs(c *ui.Context) {
 		}
 	}
 	if d := a.fileDlg; d != nil {
-		open := true
-		ui.Modal(c, &open, func() { a.fileDialogView(c, d) })
-		// Closed, or its session is gone.
-		if !open || d.sess.sftp == nil {
-			a.closeFileDialog(d)
+		if d.sess.sftp == nil { // its session is gone
+			a.hideFileDialog(d)
+		} else {
+			open := true
+			a.dialogModal(c, &d.motion, &open, func() { a.fileDialogView(c, d) })
+			if !open { // Escape, a click outside, or the dialog's own
+				a.closeFileDialog(d)
+			}
+			if d.motion.gone(time.Now()) {
+				a.hideFileDialog(d)
+			}
 		}
 	}
 	if q := a.replace; q != nil {

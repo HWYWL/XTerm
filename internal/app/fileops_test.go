@@ -10,15 +10,16 @@ import (
 	"finallyshell/locales"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/pkg/sftp"
 )
 
-// settled waits for the file panel to be done: no dialog at work, the
-// folder read.
+// settled waits for the file panel to be done: no dialog at work or going
+// out, the folder read.
 func (f *editorFixture) settled(t *testing.T) {
 	t.Helper()
 	f.p.until(t, "the file panel", func() bool {
 		d := f.a.fileDlg
-		return (d == nil || !d.busy) && !f.s.files.loading && len(f.s.files.treeBusy) == 0
+		return (d == nil || !d.busy && !d.motion.goingOut()) && !f.s.files.loading && len(f.s.files.treeBusy) == 0
 	})
 }
 
@@ -109,7 +110,7 @@ func TestFileOpsInTable(t *testing.T) {
 		t.Errorf("no error for a/b; texts %q", tt.Texts())
 	}
 	tt.Click(locales.Cancel())
-	tt.Frame()
+	f.settled(t)
 	if a.fileDlg != nil {
 		t.Fatal("Cancel left the dialog")
 	}
@@ -142,7 +143,7 @@ func TestFileOpsInTable(t *testing.T) {
 		t.Fatalf("F2: dialog %+v", a.fileDlg)
 	}
 	tt.Key(0, ui.KeyEscape)
-	tt.Frame()
+	f.settled(t)
 	if a.fileDlg != nil {
 		t.Fatal("Escape left the dialog")
 	}
@@ -208,7 +209,7 @@ func TestFileOpsInTable(t *testing.T) {
 	}
 	saveShot(t, tt, "file-rename-zh.png")
 	tt.Key(0, ui.KeyEscape)
-	tt.Frame()
+	f.settled(t)
 	tt.ClickAt(rowCenter(t, tt, "deploy.sh"))
 	tt.Key(0, ui.KeyDelete)
 	tt.Frame()
@@ -291,4 +292,49 @@ func TestFileOpsInTree(t *testing.T) {
 		t.Errorf("menu of /: %q", menu)
 	}
 	tt.CloseMenu()
+}
+
+// The file dialog takes half the window, within its least and greatest
+// widths: its least width where the window is not known.
+func TestFileDialogWidth(t *testing.T) {
+	for _, c := range []struct {
+		win  int
+		want float32
+	}{
+		{0, 400},
+		{600, 400},
+		{800, 400},
+		{1000, 500},
+		{1120, 560},
+		{1920, 560},
+	} {
+		if got := fileDialogWidth(c.win); got != c.want {
+			t.Errorf("window %d: %v wide, want %v", c.win, got, c.want)
+		}
+	}
+}
+
+// The file dialog widens with its window, as the window resizes.
+func TestFileDialogFollowsTheWindow(t *testing.T) {
+	a, p := testApp(t)
+	s := demoSession(a, "web-1", "45.56.78.90")
+	s.sftp = &sftp.Client{} // enough for the dialog to stay open
+	a.active = 0
+	a.fileDlg = &fileDialog{sess: s, op: opRename, dir: "/", old: "app.yaml", name: "app.yaml"}
+	title := locales.RenameFileTitle("app.yaml")
+
+	p.winW, p.winH = 1280, 820
+	tt := ui.NewTester(a.View, 1280, 820)
+	p.tt = tt
+	tt.Frame()
+	if r, ok := tt.Find(title); !ok || r.W != 560 {
+		t.Fatalf("the dialog is %v wide in 1280, ok %v; texts %q", r.W, ok, tt.Texts())
+	}
+
+	tt.SetSize(800, 820)
+	p.winW = 800
+	tt.Frame()
+	if r, ok := tt.Find(title); !ok || r.W != 400 {
+		t.Fatalf("the dialog is %v wide in 800, ok %v", r.W, ok)
+	}
 }

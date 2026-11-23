@@ -6,6 +6,7 @@ import (
 	"path"
 	"slices"
 	"strings"
+	"time"
 	"unicode/utf8"
 
 	"finallyshell/internal/remotefs"
@@ -43,6 +44,8 @@ type fileDialog struct {
 	busy   bool
 	err    error
 	cancel context.CancelFunc
+	// motion is how the dialog comes in and goes out.
+	motion dialogMotion
 }
 
 func (d *fileDialog) title() string {
@@ -100,7 +103,22 @@ func (a *App) askDeleteChosen(s *Session) {
 	a.askDelete(s, f.cwd, names, dirs)
 }
 
+// closeFileDialog makes d go out; hideFileDialog takes it off the window
+// once it has.
 func (a *App) closeFileDialog(d *fileDialog) {
+	if d.cancel != nil {
+		d.cancel()
+	}
+	if d.motion.goingOut() {
+		return
+	}
+	d.motion.begin(time.Now())
+	a.redraw()
+}
+
+// hideFileDialog takes d off the window at once, as the session it acts on
+// being gone leaves no time to go out.
+func (a *App) hideFileDialog(d *fileDialog) {
 	if d.cancel != nil {
 		d.cancel()
 	}
@@ -158,7 +176,7 @@ func (a *App) runFileDialog(d *fileDialog) {
 				return
 			}
 			if err == nil || remotefs.IsCanceled(err) {
-				a.fileDlg = nil
+				a.closeFileDialog(d)
 				return
 			}
 			d.err = err
@@ -254,9 +272,27 @@ func stemLength(name string, dir bool) int {
 	return utf8.RuneCountInString(name)
 }
 
+// The file dialog takes this share of the window, within these widths, so
+// that it follows a resize.
+const (
+	fileDialogShare    = 0.5
+	fileDialogMinWidth = 400
+	fileDialogMaxWidth = 560
+)
+
+// fileDialogWidth is how wide the file dialog is in a window win DIPs wide:
+// its least width where win is not known.
+func fileDialogWidth(win int) float32 {
+	if win <= 0 {
+		return fileDialogMinWidth
+	}
+	return min(max(float32(win)*fileDialogShare, fileDialogMinWidth), fileDialogMaxWidth)
+}
+
 // fileDialogView draws the file dialog, as a modal of the main window.
 func (a *App) fileDialogView(c *ui.Context, d *fileDialog) {
-	ui.Column(c).Width(400).Gap(12).Children(func() {
+	win, _ := a.plat.WindowSize(WindowMain)
+	ui.Column(c).Width(fileDialogWidth(win)).Gap(12).Children(func() {
 		ui.Text(c, d.title()).FontSize(16).Bold()
 		submit := false
 		empty := false
@@ -301,7 +337,7 @@ func (a *App) fileDialogView(c *ui.Context, d *fileDialog) {
 				submit = true
 			}
 		})
-		if submit && !empty && a.fileDlg == d {
+		if submit && !empty && !d.motion.goingOut() && a.fileDlg == d {
 			a.runFileDialog(d)
 		}
 	})

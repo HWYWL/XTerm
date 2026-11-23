@@ -114,6 +114,23 @@ func (p *platform) CloseWindow(kind app.WindowKind) {
 	}
 }
 
+// WindowSize reports the content size of the window of kind, in DIPs, which
+// its view lays out in: zeros when the window is not open.
+func (p *platform) WindowSize(kind app.WindowKind) (int, int) {
+	w := p.win
+	if kind != app.WindowMain {
+		c := p.windows[kind]
+		if c == nil {
+			return 0, 0
+		}
+		w = c.win
+	}
+	if w == nil {
+		return 0, 0
+	}
+	return w.ContentSize()
+}
+
 // retitle sets the windows' titles again in the language shown now.
 func (p *platform) retitle() {
 	p.win.SetTitle(locales.AppTitle())

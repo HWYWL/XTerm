@@ -632,6 +632,16 @@ func (msgs Messages) DuplicateSession() string {
 	return Catalog.Format(msgs.locale, "duplicateSession", nil)
 }
 
+// DuplicateTab says "Duplicate tab"
+// in the language the app shows.
+func DuplicateTab() string { return In(i18n.Locale()).DuplicateTab() }
+
+// DuplicateTab says "Duplicate tab"
+// in the language of msgs.
+func (msgs Messages) DuplicateTab() string {
+	return Catalog.Format(msgs.locale, "duplicateTab", nil)
+}
+
 // ResetName says "Reset name"
 // in the language the app shows.
 func ResetName() string { return In(i18n.Locale()).ResetName() }
@@ -660,6 +670,26 @@ func Close() string { return In(i18n.Locale()).Close() }
 // in the language of msgs.
 func (msgs Messages) Close() string {
 	return Catalog.Format(msgs.locale, "close", nil)
+}
+
+// CloseOtherTabs says "Close others"
+// in the language the app shows.
+func CloseOtherTabs() string { return In(i18n.Locale()).CloseOtherTabs() }
+
+// CloseOtherTabs says "Close others"
+// in the language of msgs.
+func (msgs Messages) CloseOtherTabs() string {
+	return Catalog.Format(msgs.locale, "closeOtherTabs", nil)
+}
+
+// CloseAllTabs says "Close all"
+// in the language the app shows.
+func CloseAllTabs() string { return In(i18n.Locale()).CloseAllTabs() }
+
+// CloseAllTabs says "Close all"
+// in the language of msgs.
+func (msgs Messages) CloseAllTabs() string {
+	return Catalog.Format(msgs.locale, "closeAllTabs", nil)
 }
 
 // CloseSession says "Close session"
@@ -750,6 +780,16 @@ func NewTab() string { return In(i18n.Locale()).NewTab() }
 // in the language of msgs.
 func (msgs Messages) NewTab() string {
 	return Catalog.Format(msgs.locale, "newTab", nil)
+}
+
+// NewTabBeside says "New tab to the same connection"
+// in the language the app shows.
+func NewTabBeside() string { return In(i18n.Locale()).NewTabBeside() }
+
+// NewTabBeside says "New tab to the same connection"
+// in the language of msgs.
+func (msgs Messages) NewTabBeside() string {
+	return Catalog.Format(msgs.locale, "newTabBeside", nil)
 }
 
 // QuickConnect says "Quick connect"

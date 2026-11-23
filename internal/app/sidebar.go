@@ -282,16 +282,10 @@ func (a *App) sessionRow(c *ui.Context, s *Session, active bool) (closed bool) {
 		}
 		if m.Item(locales.DuplicateSession()).Chosen() {
 			// In a tab of its own, though a new tab is selected.
-			if s.isLocal() {
-				a.openLocal(nil)
-			} else {
-				a.openSessionIn(nil, s.Host)
-			}
+			a.duplicateSession(s)
 		}
 		if m.Item(locales.Disconnect()).Disabled(s.status != statusConnected && s.status != statusConnecting).Chosen() {
-			a.transfers.cancelSession(s)
-			s.disconnect()
-			s.status, s.err = statusClosed, nil
+			a.disconnectSession(s)
 		}
 		m.Separator()
 		a.paneMenu(m, s)

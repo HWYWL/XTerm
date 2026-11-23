@@ -69,14 +69,13 @@ supported. [configuration.md](configuration.md) covers the files on disk;
 
 ## Window layout
 
-The main window follows FinalShell's layout, except that the session tabs
-are vertical:
+The main window follows FinalShell's layout:
 
 - Top left: the server monitor of the current session.
 - Bottom left: the vertical session list, or, on its other page, the
   saved connections in their folders (see
   [Connections page](#connections-page)).
-- Top right: the terminal.
+- Top right: the row of session tabs, and under it the terminal.
 - Bottom right: the Files, Transfers, Tunnels, Processes, Network and
   Commands tabs, which can also open in a tab of their own (see below).
 
@@ -131,6 +130,22 @@ green for connected, yellow for
 connecting, red for failed. The list scrolls, and sessions can be
 reordered by dragging. The context menu of a session has Reconnect,
 Duplicate session, Disconnect, Rename and Close.
+
+Above the terminal is FinalShell's row of session tabs: one for each
+session, with its status dot and name, the selected one raised and bold,
+and a × at its end that closes it, which shows on the selected tab and on
+the tab under the pointer. The + follows the last tab, and opens a tab
+for the same connection as it, or as the last tab before it that has a
+connection; with no tab open there is no +, and the panel's header has
+the one that opens an empty new tab. The row and the vertical list are
+one list: choosing a session either way selects it in both, and closing
+one closes it in both. Where the tabs do not fit, they scroll sideways,
+with the wheel over them too.
+
+A tab's context menu has, as FinalShell's: "Duplicate tab", which opens a
+tab for its connection; "Connect" and "Connect all", for a tab that is
+disconnected, and for every such tab; "Disconnect"; "Close"; "Close
+others"; and "Close all".
 
 A session tab can have a name of its own for this run, to tell apart
 several tabs open to the same server. "Rename" in its context menu, or F2

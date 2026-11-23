@@ -46,6 +46,10 @@ func dividers(a *App, tt *ui.Tester) []divider {
 	const h = winH
 	mainX := func() float32 { return a.sideWidth + 1 }
 	mainW := func() float32 { return winW - mainX() }
+	// The terminal and the panel are under the row of session tabs
+	// (sessiontabs.go), which the sidebar is not.
+	mainY := func() float32 { return sessionTabBarHeight }
+	mainH := func() float32 { return h - sessionTabBarHeight }
 	return []divider{
 		{
 			name: "sidebar", size: &a.sideWidth, limits: sidebarLimits,
@@ -59,8 +63,10 @@ func dividers(a *App, tt *ui.Tester) []divider {
 		},
 		{
 			name: "terminal", size: &a.terminalPct, vertical: true, percent: true, limits: terminalLimits,
-			at:   func() (float32, float32) { return mainX() + mainW()/2, a.terminalPct/100*(h-1) + 0.5 },
-			room: func() float32 { return h - 1 },
+			at: func() (float32, float32) {
+				return mainX() + mainW()/2, mainY() + a.terminalPct/100*(mainH()-1) + 0.5
+			},
+			room: func() float32 { return mainH() - 1 },
 		},
 		{
 			name: "tree", size: &a.treeWidth, limits: treeLimits,

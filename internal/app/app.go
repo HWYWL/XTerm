@@ -168,6 +168,9 @@ type App struct {
 	// panelTabsScroll is how far the bottom panel's tabs are scrolled
 	// sideways, where they do not fit.
 	panelTabsScroll ui.ScrollState
+	// tabsScroll is how far the session tabs above the terminal are
+	// scrolled sideways, where they do not fit (sessiontabs.go).
+	tabsScroll ui.ScrollState
 	// bottomSide is where the bottom panel is: "" under the terminal,
 	// config.PanelRight in the right column (rightcolumn.go), rightWidth
 	// wide. rightMonitorPct is the monitor's share of the column when
@@ -364,13 +367,22 @@ func (a *App) sidebar(c *ui.Context) {
 	})
 }
 
-// mainArea is the terminal over the bottom panel, or over its tabs alone
+// mainArea is the row of session tabs over the terminal and the panel
+// (sessiontabs.go), which mainContent builds.
+func (a *App) mainArea(c *ui.Context) {
+	ui.Column(c).Fill().Children(func() {
+		a.sessionTabs(c)
+		ui.Column(c).Grow(1).MinHeight(0).Children(func() { a.mainContent(c) })
+	})
+}
+
+// mainContent is the terminal over the bottom panel, or over its tabs alone
 // while it is collapsed (panelhide.go); the terminal beside the panel in
 // the right column, or beside the strip that shows it while it is hidden
 // (rightcolumn.go); or a panel row's panel (paneltab.go). With the
 // monitor on the right, the right column holds it too, on top, over the
 // panel when that is there.
-func (a *App) mainArea(c *ui.Context) {
+func (a *App) mainContent(c *ui.Context) {
 	var monitor func()
 	if a.monitorOnRight() {
 		monitor = func() { a.rightMonitor(c) }

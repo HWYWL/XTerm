@@ -280,7 +280,9 @@ func (a *App) paneArea(c *ui.Context, s *Session) {
 		a.moving = nil // closed, or another session shows, while it dragged
 	}
 	if !s.split() || t.zoomed {
-		a.terminalBackdrop(c, 0).Grow(1).Padding(4, 0, 0, 6).Children(func() {
+		// Rounded as the pane of glass around it, so that the terminal's
+		// ground and its image keep inside the card's corners.
+		a.terminalBackdrop(c, cardRadius).Grow(1).Padding(4, 0, 0, 6).Children(func() {
 			a.paneTerminal(c, s, t.focus)
 		})
 		return
@@ -324,7 +326,7 @@ func (a *App) paneNode(c *ui.Context, s *Session, n *paneNode) {
 // which shows the four sides it can go to.
 func (a *App) paneBox(c *ui.Context, s *Session, p *pane) {
 	focused := p == s.panes.focus
-	box := a.terminalBackdrop(c.Key(p.id), 0).Fill().Padding(4, paneBorder, paneBorder, 6)
+	box := a.terminalBackdrop(c.Key(p.id), cardRadius).Fill().Padding(4, paneBorder, paneBorder, 6)
 	box.ObserveInput(func(ev ui.InputEvent) {
 		if ev.Kind == ui.InputPointerDown {
 			a.focusPane(s, p, false)

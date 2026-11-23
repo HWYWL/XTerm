@@ -3,6 +3,7 @@ package app
 import (
 	"time"
 
+	"github.com/egoist/mygo/plugins/glass"
 	"github.com/egoist/mygo/ui"
 )
 
@@ -14,6 +15,22 @@ const (
 
 // dialogRise is how far, in DIPs, a dialog rises as it comes in.
 const dialogRise = 8
+
+// The dialog's glass: these round its corners, and blur what it shows of
+// what it dims.
+const (
+	dialogRadius = 18
+	dialogBlur   = 30
+)
+
+// dialogGlass is the fill and the stroke of a dialog in t: a sheet of
+// light over what it dims, in the night and in the day.
+func dialogGlass(t *ui.Theme) (from, to, stroke ui.Color) {
+	if t.Dark {
+		return ui.RGBA(20, 26, 44, 0.72), ui.RGBA(16, 20, 34, 0.62), ui.RGBA(255, 255, 255, 0.115)
+	}
+	return ui.RGBA(255, 255, 255, 0.92), ui.RGBA(255, 255, 255, 0.80), ui.RGBA(255, 255, 255, 0.95)
+}
 
 // dialogMotion is how a dialog comes in, and goes out.
 type dialogMotion struct {
@@ -50,14 +67,14 @@ func (m *dialogMotion) fade(now time.Time) float32 {
 
 func clamp01(v float32) float32 { return max(0, min(v, 1)) }
 
-// dialogModal shows the dialog fn builds over the window, with the look of
-// ui.Modal's panel, coming in and going out as m says.
+// dialogModal shows the dialog fn builds over the window, as ui.Modal does,
+// as a pane of glass that comes in and goes out as m says.
 //
 // ui.Modal's own panel cannot move: it sits on a backdrop that is new in
 // every frame, so no Enter of a Transition plays for it, and it is gone in
 // the frame it closes. The backdrop and the panel here are the same, with
-// a Transition of their own for the motion m gives: *open is cleared by
-// Escape and by a click outside the panel, as before.
+// the glass look and the motion m gives: *open is cleared by Escape and by
+// a click outside the panel, as before.
 func (a *App) dialogModal(c *ui.Context, m *dialogMotion, open *bool, fn func()) {
 	now := time.Now()
 	p := m.fade(now)
@@ -66,12 +83,16 @@ func (a *App) dialogModal(c *ui.Context, m *dialogMotion, open *bool, fn func())
 	}
 	winW, winH := a.plat.WindowSize(WindowMain)
 	t := theme
+	from, to, stroke := dialogGlass(t)
 	ui.DialogBase(c, open, func(back, panel ui.Element) {
-		back.Background(ui.RGBA(0, 0, 0, 0.4*p))
-		panel.Padding(t.Space(5)).Gap(t.Space(3)).Radius(t.Space(2.5)).
-			Background(t.Background).
+		back.Background(ui.RGBA(0, 0, 0, 0.42*p))
+		panel.Padding(t.Space(6)).Gap(t.Space(3)).Radius(dialogRadius).
+			Gradient(from, to, 180).
+			Border(1, stroke).
+			Shadow(0, 20, 50, -18, ui.RGBA(0, 0, 0, 0.72)).
+			InsetShadow(0, 1, 0, 0, ui.RGBA(255, 255, 255, 0.16)).
+			Material(glass.Blur{Radius: dialogBlur}).
 			MaxWidth(float32(winW)-t.Space(10)).MaxHeight(float32(winH)-t.Space(10)).
-			Shadow(0, 10, 30, 0, ui.RGBA(0, 0, 0, 0.3)).
 			Opacity(p).
 			TransformOrigin(0.5, 0.5).
 			Translate(0, (1-p)*dialogRise).

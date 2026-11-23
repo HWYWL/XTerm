@@ -16,9 +16,15 @@ func (a *App) terminalArea(c *ui.Context) {
 	}
 	colors := a.termColors()
 	termText := colors.Foreground
-	area := ui.Column(c.Key(s.ID)).Fill().Background(colors.Background)
-	a.reconnectShortcut(area, s)
-	area.Children(func() {
+	// The night glass shows the sky through the terminal, as through the
+	// panes around it: its theme's background, a little transparent. In the
+	// day the terminal keeps its own dark ground, which the light of the
+	// panes would only wash out.
+	bg := colors.Background
+	if theme.Dark {
+		bg.A = 176
+	}
+	area := card(c, bg, func() {
 		if s.status != statusConnected {
 			a.statusBanner(c, s)
 		}
@@ -47,6 +53,8 @@ func (a *App) terminalArea(c *ui.Context) {
 			a.commandBar(c, s) // disabled, until the shell is there
 		}
 	})
+	area.Key(s.ID)
+	a.reconnectShortcut(area, s)
 }
 
 // statusBanner is the bar over the terminal of a session that is not

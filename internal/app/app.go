@@ -334,6 +334,7 @@ func (a *App) current() *Session {
 func (a *App) View(c *ui.Context) {
 	defer a.stopUnseenPolls()
 	useTheme(c)
+	a.aurora(c)
 	a.showNotices(c)
 	a.shortcuts(c)
 	a.saveLayoutAtRest(c)
@@ -368,7 +369,7 @@ func (a *App) cycle(d int) {
 // alone while the monitor is on the right (rightcolumn.go), monitorPct
 // kept for when it comes back.
 func (a *App) sidebar(c *ui.Context) {
-	ui.Column(c).Fill().Background(colors.sidebar).Children(func() {
+	card(c, ui.Color{}, func() {
 		if a.monitorOnRight() {
 			a.sessionPanel(c)
 			return
@@ -382,7 +383,9 @@ func (a *App) sidebar(c *ui.Context) {
 // (sessiontabs.go), which mainContent builds.
 func (a *App) mainArea(c *ui.Context) {
 	ui.Column(c).Fill().Children(func() {
-		a.sessionTabs(c)
+		// The row of tabs keeps the gap of the panes at its sides, so that
+		// its corners show as theirs do.
+		ui.Column(c).Padding(0, cardGap, 0, cardGap).Children(func() { a.sessionTabs(c) })
 		ui.Column(c).Grow(1).MinHeight(0).Children(func() { a.mainContent(c) })
 	})
 }
@@ -470,7 +473,12 @@ func (a *App) bottomTabs() []bottomTab {
 // terminal, a panel row's own in it.
 func (a *App) bottomPanel(c *ui.Context, tab *int) {
 	tabs := a.bottomTabs()
-	ui.Column(c).Fill().Background(theme.Background).Children(func() {
+	// The column at the right is narrow already: its panel fills it.
+	gap := float32(cardGap)
+	if a.panelOnRight() {
+		gap = 0
+	}
+	cardInset(c, gap, ui.Color{}, func() {
 		a.panelTabRow(c, tabs, tab, false)
 		if *tab >= 0 && *tab < len(tabs) {
 			tabs[*tab].page(c)

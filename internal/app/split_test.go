@@ -58,8 +58,9 @@ func dividers(a *App, tt *ui.Tester) []divider {
 		},
 		{
 			name: "monitor", size: &a.monitorPct, vertical: true, percent: true, limits: monitorLimits,
-			at:   func() (float32, float32) { return a.sideWidth / 2, a.monitorPct/100*(h-1) + 0.5 },
-			room: func() float32 { return h - 1 },
+			// In the sidebar's pane of glass, above and below its gap.
+			at:   func() (float32, float32) { return a.sideWidth / 2, cardGap + a.monitorPct/100*(h-2*cardGap-1) + 0.5 },
+			room: func() float32 { return h - 2*cardGap - 1 },
 		},
 		{
 			name: "terminal", size: &a.terminalPct, vertical: true, percent: true, limits: terminalLimits,
@@ -71,11 +72,12 @@ func dividers(a *App, tt *ui.Tester) []divider {
 		{
 			name: "tree", size: &a.treeWidth, limits: treeLimits,
 			at: func() (float32, float32) {
-				// Level with the table's header, which is in the file panel.
+				// Level with the table's header, which is in the file panel's
+				// pane of glass, right of its gap.
 				box, _ := tt.Find(locales.ColName())
-				return mainX() + a.treeWidth + 0.5, box.Y + box.H/2
+				return mainX() + cardGap + a.treeWidth + 0.5, box.Y + box.H/2
 			},
-			room: func() float32 { return mainW() - 1 },
+			room: func() float32 { return mainW() - 2*cardGap - 1 },
 		},
 	}
 }

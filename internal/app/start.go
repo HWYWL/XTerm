@@ -165,13 +165,15 @@ func (a *App) startPage(c *ui.Context, tab *Session) {
 	if tab != nil {
 		st, key = &tab.start, startKey{tab.ID}
 	}
-	ui.Column(c.Key(key)).Fill().Background(theme.Background).Children(func() {
-		if len(a.hosts.Live()) == 0 {
-			a.startEmpty(c, tab)
-			return
-		}
-		ui.Column(c).Fill().MaxWidth(820).AlignSelf(ui.Center).Padding(24, 28, 16, 28).Gap(12).Children(func() {
-			a.quickConnect(c, tab, st)
+	ui.Column(c.Key(key)).Fill().Children(func() {
+		card(c, ui.Color{}, func() {
+			if len(a.hosts.Live()) == 0 {
+				a.startEmpty(c, tab)
+				return
+			}
+			ui.Column(c).Fill().MaxWidth(820).AlignSelf(ui.Center).Padding(24, 28, 16, 28).Gap(12).Children(func() {
+				a.quickConnect(c, tab, st)
+			})
 		})
 	})
 }

@@ -30,8 +30,10 @@ const sessionTabMaxWidth = 180
 // sideways where they do not fit, the + with them, as the bottom panel's
 // do, and the wheel over them scrolls them (sessionTabsWheel).
 func (a *App) sessionTabs(c *ui.Context) {
+	top, bottom := glassTone()
 	bar := ui.Row(c).Height(sessionTabBarHeight).PaddingX(6).Gap(2).AlignItems(ui.Center).
-		Background(colors.sidebar).BorderWidth(0, 0, 1, 0).BorderColor(colors.line).
+		Radius(sessionTabRadius).Border(1, colors.frame).Clip().
+		Gradient(top, bottom, 180).
 		ContextMenu(a.sidebarMenu)
 	// What the tabs change runs once the row is built: closing a tab in
 	// the tab would leave the tabs after it to build with fewer sessions

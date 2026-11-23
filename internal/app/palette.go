@@ -11,11 +11,55 @@ import (
 // its look at the start of each frame (useTheme), from the appearance
 // MyGo gives the frame.
 
-// newTheme is MyGo's theme t made compact, with fonts that cover Chinese.
+// newTheme is MyGo's theme t made compact, with fonts that cover Chinese,
+// in the glass look the app shows: a deep blue night, and a soft blue-white
+// day, of translucent surfaces, hairline strokes and a cyan accent.
 func newTheme(t *ui.Theme) *ui.Theme {
 	t.Spacing = 3
 	t.FontSize = 13
 	t.Font = "Microsoft YaHei UI, PingFang SC, Noto Sans CJK SC, WenQuanYi Zen Hei, system-ui"
+	t.Radius = 10
+	if t.Dark {
+		t.Background = ui.Hex("#070a13")
+		t.Surface = ui.RGBA(255, 255, 255, 0.055)
+		t.SurfaceHover = ui.RGBA(255, 255, 255, 0.085)
+		t.SurfacePressed = ui.RGBA(255, 255, 255, 0.115)
+		t.Border = ui.RGBA(255, 255, 255, 0.115)
+		t.Text = ui.Hex("#e9eefb")
+		t.TextMuted = ui.RGBA(233, 238, 251, 0.64)
+		t.Accent = ui.Hex("#63c8ff")
+		t.AccentHover = ui.Hex("#86d6ff")
+		t.AccentPressed = ui.Hex("#3aa9e0")
+		t.AccentText = ui.Hex("#04202e")
+		t.Danger = ui.Hex("#ff6b6b")
+		t.Warning = ui.Hex("#ffc861")
+		t.Success = ui.Hex("#3ddc97")
+		t.Selection = ui.RGBA(99, 200, 255, 0.30)
+		t.Focus = ui.Hex("#63c8ff")
+		t.Inverse = ui.Hex("#101422")
+		t.InverseText = ui.Hex("#e9eefb")
+		t.Scrollbar = ui.RGBA(255, 255, 255, 0.18)
+		return t
+	}
+	t.Background = ui.Hex("#eef2fa")
+	t.Surface = ui.RGBA(255, 255, 255, 0.62)
+	t.SurfaceHover = ui.RGBA(255, 255, 255, 0.78)
+	t.SurfacePressed = ui.RGBA(255, 255, 255, 0.90)
+	t.Border = ui.RGBA(13, 23, 40, 0.10)
+	t.Text = ui.Hex("#0d1728")
+	t.TextMuted = ui.RGBA(13, 23, 40, 0.64)
+	t.Accent = ui.Hex("#0a7cff")
+	t.AccentHover = ui.Hex("#2b8dff")
+	t.AccentPressed = ui.Hex("#0060d0")
+	t.AccentText = ui.Hex("#ffffff")
+	t.Danger = ui.Hex("#e0453f")
+	t.Warning = ui.Hex("#b8790a")
+	t.Success = ui.Hex("#12a878")
+	t.Selection = ui.RGBA(10, 124, 255, 0.22)
+	t.Focus = ui.Hex("#0a7cff")
+	t.Inverse = ui.Hex("#0d1728")
+	t.InverseText = ui.Hex("#ffffff")
+	t.Scrollbar = ui.RGBA(13, 23, 40, 0.22)
 	return t
 }
 
@@ -80,54 +124,54 @@ type palette struct {
 }
 
 var lightColors = palette{
-	sidebar:       ui.Hex("#f3f4f6"),
-	line:          ui.Hex("#e5e7eb"),
-	rowLine:       ui.Hex("#f1f5f9"),
-	frame:         ui.Hex("#d1d5db"),
-	procTable:     ui.Hex("#fafafa"),
-	diskTable:     ui.Hex("#ffffff"),
-	procHead:      ui.Hex("#60a5fa"),
-	procHeadText:  ui.Hex("#ffffff"),
-	cpu:           ui.Hex("#86efac"),
-	mem:           ui.Hex("#fdba74"),
-	swap:          ui.Hex("#93c5fd"),
-	tx:            ui.Hex("#ea580c"),
-	rx:            ui.Hex("#16a34a"),
-	tableHead:     ui.Hex("#f9fafb"),
-	note:          ui.Hex("#f3f4f6"),
-	dangerBanner:  ui.Hex("#fef2f2"),
-	warningBanner: ui.Hex("#fffbeb"),
-	problemText:   ui.Hex("#b91c1c"),
-	warningText:   ui.Hex("#a16207"),
-	activeLine:    ui.Hex("#f6f7f9"),
-	lineNumber:    ui.Hex("#9ca3af"),
+	sidebar:       ui.RGBA(255, 255, 255, 0.55),
+	line:          ui.RGBA(13, 23, 40, 0.07),
+	rowLine:       ui.RGBA(13, 23, 40, 0.04),
+	frame:         ui.RGBA(13, 23, 40, 0.10),
+	procTable:     ui.RGBA(255, 255, 255, 0.45),
+	diskTable:     ui.RGBA(255, 255, 255, 0.55),
+	procHead:      ui.RGBA(10, 124, 255, 0.16),
+	procHeadText:  ui.Hex("#0d1728"),
+	cpu:           ui.RGBA(18, 168, 120, 0.45),
+	mem:           ui.RGBA(184, 121, 10, 0.35),
+	swap:          ui.RGBA(10, 124, 255, 0.35),
+	tx:            ui.Hex("#c2580a"),
+	rx:            ui.Hex("#0b8256"),
+	tableHead:     ui.RGBA(255, 255, 255, 0.60),
+	note:          ui.RGBA(13, 23, 40, 0.05),
+	dangerBanner:  ui.RGBA(224, 69, 63, 0.10),
+	warningBanner: ui.RGBA(184, 121, 10, 0.12),
+	problemText:   ui.Hex("#b3261e"),
+	warningText:   ui.Hex("#8a5f00"),
+	activeLine:    ui.RGBA(10, 124, 255, 0.07),
+	lineNumber:    ui.RGBA(13, 23, 40, 0.40),
 }
 
 // darkColors are lightColors for the dark theme's background (#18181b):
 // the panels a little lighter than it, the tables in them darker, and
 // the fills under text deep enough for the theme's light text.
 var darkColors = palette{
-	sidebar:       ui.Hex("#202024"),
-	line:          ui.Hex("#2e2e33"),
-	rowLine:       ui.Hex("#232327"),
-	frame:         ui.Hex("#3f3f46"),
-	procTable:     ui.Hex("#1b1b1e"),
-	diskTable:     ui.Hex("#18181b"),
-	procHead:      ui.Hex("#1d4ed8"),
-	procHeadText:  ui.Hex("#ffffff"),
-	cpu:           ui.Hex("#166534"),
-	mem:           ui.Hex("#9a3412"),
-	swap:          ui.Hex("#1e40af"),
-	tx:            ui.Hex("#fb923c"),
-	rx:            ui.Hex("#4ade80"),
-	tableHead:     ui.Hex("#202024"),
-	note:          ui.Hex("#27272a"),
-	dangerBanner:  ui.Hex("#3b1d1f"),
-	warningBanner: ui.Hex("#3a2c12"),
-	problemText:   ui.Hex("#f87171"),
-	warningText:   ui.Hex("#facc15"),
+	sidebar:       ui.RGBA(255, 255, 255, 0.020),
+	line:          ui.RGBA(255, 255, 255, 0.060),
+	rowLine:       ui.RGBA(255, 255, 255, 0.035),
+	frame:         ui.RGBA(255, 255, 255, 0.115),
+	procTable:     ui.RGBA(255, 255, 255, 0.030),
+	diskTable:     ui.RGBA(255, 255, 255, 0.030),
+	procHead:      ui.RGBA(99, 200, 255, 0.20),
+	procHeadText:  ui.Hex("#e9eefb"),
+	cpu:           ui.RGBA(61, 220, 151, 0.55),
+	mem:           ui.RGBA(255, 200, 97, 0.55),
+	swap:          ui.RGBA(99, 200, 255, 0.55),
+	tx:            ui.Hex("#ffb37a"),
+	rx:            ui.Hex("#7ee0c0"),
+	tableHead:     ui.RGBA(255, 255, 255, 0.045),
+	note:          ui.RGBA(255, 255, 255, 0.055),
+	dangerBanner:  ui.RGBA(255, 107, 107, 0.13),
+	warningBanner: ui.RGBA(255, 200, 97, 0.13),
+	problemText:   ui.Hex("#ff8a8a"),
+	warningText:   ui.Hex("#ffcb6b"),
 	activeLine:    ui.RGBA(255, 255, 255, 0.045),
-	lineNumber:    ui.Hex("#71717a"),
+	lineNumber:    ui.RGBA(233, 238, 251, 0.38),
 }
 
 // Colors that read on both backgrounds.

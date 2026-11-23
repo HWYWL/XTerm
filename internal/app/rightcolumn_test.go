@@ -42,7 +42,7 @@ func TestPanelOnRight(t *testing.T) {
 	}
 	left := winW - a.rightWidth
 	r, ok := tt.Find(locales.TabFiles())
-	if !ok || r.X < left || r.Y > 40 {
+	if !ok || r.X < left || r.Y > 40+cardGap {
 		t.Errorf("Files tab at %+v, %v; the column starts at %v", r, ok, left)
 	}
 	if !tt.HasText("7 processes") {
@@ -240,7 +240,7 @@ func TestPanelHiddenOnRight(t *testing.T) {
 	a.setBottomPanelHidden(false)
 	a.openPanelTab(web, tabNetwork)
 	tt.Frame()
-	if r, ok := tt.Find(locales.BackToTerminal()); !ok || r.Y > 40 {
+	if r, ok := tt.Find(locales.BackToTerminal()); !ok || r.Y > 40+cardGap {
 		t.Errorf("the panel row's tab row at %+v, %v", r, ok)
 	}
 	if r, ok := tt.Find(locales.TabFiles()); !ok || r.X > a.sideWidth+60 {

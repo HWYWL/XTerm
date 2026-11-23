@@ -11,6 +11,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 )
 
@@ -198,7 +199,28 @@ func (h *Host) UnmarshalJSON(data []byte) error {
 }
 
 // NewHostID returns an ID for a new host.
-func NewHostID() string { return fmt.Sprintf("h%d", time.Now().UnixNano()) }
+func NewHostID() string { return fmt.Sprintf("h%d", newIDNumber()) }
+
+// lastIDNumber is the highest number an ID has taken, so that two made in
+// a row differ even where the clock repeats itself within a tick, as it
+// does on Windows: a host and a folder sharing an ID would share the tree,
+// and two hosts one would overwrite the other.
+var lastIDNumber atomic.Int64
+
+// newIDNumber is the number of an ID: the clock's nanoseconds, at least
+// one more than the number before it.
+func newIDNumber() int64 {
+	now := time.Now().UnixNano()
+	for {
+		last := lastIDNumber.Load()
+		if now <= last {
+			now = last + 1
+		}
+		if lastIDNumber.CompareAndSwap(last, now) {
+			return now
+		}
+	}
+}
 
 // Folder groups hosts. Folders nest by Parent.
 type Folder struct {
@@ -228,7 +250,7 @@ func (f *Folder) UnmarshalJSON(data []byte) error {
 }
 
 // NewFolderID returns an ID for a new folder.
-func NewFolderID() string { return fmt.Sprintf("f%d", time.Now().UnixNano()) }
+func NewFolderID() string { return fmt.Sprintf("f%d", newIDNumber()) }
 
 // Store is the content of hosts.json: the saved hosts, deleted ones
 // included, and their folders, both in the order the user keeps them.

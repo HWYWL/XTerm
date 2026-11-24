@@ -15,6 +15,9 @@ type WindowKind string
 // The secondary windows.
 const (
 	WindowOptions WindowKind = "options"
+	// WindowAssets is the assets window, opened from the icon at the right
+	// end of the row of session tabs (assets.go).
+	WindowAssets WindowKind = "assets"
 )
 
 // WindowMain is the main window, as a Parent and for FocusWindow.

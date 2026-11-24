@@ -44,6 +44,396 @@ func (msgs Messages) AppTitle() string {
 	return Catalog.Format(msgs.locale, "appTitle", nil)
 }
 
+// AssetsTitle says "Assets"
+// in the language the app shows.
+func AssetsTitle() string { return In(i18n.Locale()).AssetsTitle() }
+
+// AssetsTitle says "Assets"
+// in the language of msgs.
+func (msgs Messages) AssetsTitle() string {
+	return Catalog.Format(msgs.locale, "assetsTitle", nil)
+}
+
+// AssetsTotal says "Connections"
+// in the language the app shows.
+func AssetsTotal() string { return In(i18n.Locale()).AssetsTotal() }
+
+// AssetsTotal says "Connections"
+// in the language of msgs.
+func (msgs Messages) AssetsTotal() string {
+	return Catalog.Format(msgs.locale, "assetsTotal", nil)
+}
+
+// AssetsOnline says "Online"
+// in the language the app shows.
+func AssetsOnline() string { return In(i18n.Locale()).AssetsOnline() }
+
+// AssetsOnline says "Online"
+// in the language of msgs.
+func (msgs Messages) AssetsOnline() string {
+	return Catalog.Format(msgs.locale, "assetsOnline", nil)
+}
+
+// AssetsRecent says "Connected in 7 days"
+// in the language the app shows.
+func AssetsRecent() string { return In(i18n.Locale()).AssetsRecent() }
+
+// AssetsRecent says "Connected in 7 days"
+// in the language of msgs.
+func (msgs Messages) AssetsRecent() string {
+	return Catalog.Format(msgs.locale, "assetsRecent", nil)
+}
+
+// AssetsNever says "Never connected"
+// in the language the app shows.
+func AssetsNever() string { return In(i18n.Locale()).AssetsNever() }
+
+// AssetsNever says "Never connected"
+// in the language of msgs.
+func (msgs Messages) AssetsNever() string {
+	return Catalog.Format(msgs.locale, "assetsNever", nil)
+}
+
+// AssetsSessions says "Sessions"
+// in the language the app shows.
+func AssetsSessions() string { return In(i18n.Locale()).AssetsSessions() }
+
+// AssetsSessions says "Sessions"
+// in the language of msgs.
+func (msgs Messages) AssetsSessions() string {
+	return Catalog.Format(msgs.locale, "assetsSessions", nil)
+}
+
+// AssetsAuth says "Authentication"
+// in the language the app shows.
+func AssetsAuth() string { return In(i18n.Locale()).AssetsAuth() }
+
+// AssetsAuth says "Authentication"
+// in the language of msgs.
+func (msgs Messages) AssetsAuth() string {
+	return Catalog.Format(msgs.locale, "assetsAuth", nil)
+}
+
+// AssetsActivity says "Activity"
+// in the language the app shows.
+func AssetsActivity() string { return In(i18n.Locale()).AssetsActivity() }
+
+// AssetsActivity says "Activity"
+// in the language of msgs.
+func (msgs Messages) AssetsActivity() string {
+	return Catalog.Format(msgs.locale, "assetsActivity", nil)
+}
+
+// AssetsEmpty says "No connections yet"
+// in the language the app shows.
+func AssetsEmpty() string { return In(i18n.Locale()).AssetsEmpty() }
+
+// AssetsEmpty says "No connections yet"
+// in the language of msgs.
+func (msgs Messages) AssetsEmpty() string {
+	return Catalog.Format(msgs.locale, "assetsEmpty", nil)
+}
+
+// AssetsHeatNote says "Last 30 weeks, by the commands of each day"
+// in the language the app shows.
+func AssetsHeatNote() string { return In(i18n.Locale()).AssetsHeatNote() }
+
+// AssetsHeatNote says "Last 30 weeks, by the commands of each day"
+// in the language of msgs.
+func (msgs Messages) AssetsHeatNote() string {
+	return Catalog.Format(msgs.locale, "assetsHeatNote", nil)
+}
+
+// AssetsOffline says "Offline"
+// in the language the app shows.
+func AssetsOffline() string { return In(i18n.Locale()).AssetsOffline() }
+
+// AssetsOffline says "Offline"
+// in the language of msgs.
+func (msgs Messages) AssetsOffline() string {
+	return Catalog.Format(msgs.locale, "assetsOffline", nil)
+}
+
+// AssetsPassword says "Password"
+// in the language the app shows.
+func AssetsPassword() string { return In(i18n.Locale()).AssetsPassword() }
+
+// AssetsPassword says "Password"
+// in the language of msgs.
+func (msgs Messages) AssetsPassword() string {
+	return Catalog.Format(msgs.locale, "assetsPassword", nil)
+}
+
+// AssetsKey says "Key"
+// in the language the app shows.
+func AssetsKey() string { return In(i18n.Locale()).AssetsKey() }
+
+// AssetsKey says "Key"
+// in the language of msgs.
+func (msgs Messages) AssetsKey() string {
+	return Catalog.Format(msgs.locale, "assetsKey", nil)
+}
+
+// AssetsAgent says "Agent"
+// in the language the app shows.
+func AssetsAgent() string { return In(i18n.Locale()).AssetsAgent() }
+
+// AssetsAgent says "Agent"
+// in the language of msgs.
+func (msgs Messages) AssetsAgent() string {
+	return Catalog.Format(msgs.locale, "assetsAgent", nil)
+}
+
+// AssetsRange says "Range"
+// in the language the app shows.
+func AssetsRange() string { return In(i18n.Locale()).AssetsRange() }
+
+// AssetsRange says "Range"
+// in the language of msgs.
+func (msgs Messages) AssetsRange() string {
+	return Catalog.Format(msgs.locale, "assetsRange", nil)
+}
+
+// AssetsRangeRun says "This run"
+// in the language the app shows.
+func AssetsRangeRun() string { return In(i18n.Locale()).AssetsRangeRun() }
+
+// AssetsRangeRun says "This run"
+// in the language of msgs.
+func (msgs Messages) AssetsRangeRun() string {
+	return Catalog.Format(msgs.locale, "assetsRangeRun", nil)
+}
+
+// AssetsRange3d says "3 days"
+// in the language the app shows.
+func AssetsRange3d() string { return In(i18n.Locale()).AssetsRange3d() }
+
+// AssetsRange3d says "3 days"
+// in the language of msgs.
+func (msgs Messages) AssetsRange3d() string {
+	return Catalog.Format(msgs.locale, "assetsRange3d", nil)
+}
+
+// AssetsRange7d says "7 days"
+// in the language the app shows.
+func AssetsRange7d() string { return In(i18n.Locale()).AssetsRange7d() }
+
+// AssetsRange7d says "7 days"
+// in the language of msgs.
+func (msgs Messages) AssetsRange7d() string {
+	return Catalog.Format(msgs.locale, "assetsRange7d", nil)
+}
+
+// AssetsRange15d says "15 days"
+// in the language the app shows.
+func AssetsRange15d() string { return In(i18n.Locale()).AssetsRange15d() }
+
+// AssetsRange15d says "15 days"
+// in the language of msgs.
+func (msgs Messages) AssetsRange15d() string {
+	return Catalog.Format(msgs.locale, "assetsRange15d", nil)
+}
+
+// AssetsRange30d says "1 month"
+// in the language the app shows.
+func AssetsRange30d() string { return In(i18n.Locale()).AssetsRange30d() }
+
+// AssetsRange30d says "1 month"
+// in the language of msgs.
+func (msgs Messages) AssetsRange30d() string {
+	return Catalog.Format(msgs.locale, "assetsRange30d", nil)
+}
+
+// AssetsRangeAll says "All"
+// in the language the app shows.
+func AssetsRangeAll() string { return In(i18n.Locale()).AssetsRangeAll() }
+
+// AssetsRangeAll says "All"
+// in the language of msgs.
+func (msgs Messages) AssetsRangeAll() string {
+	return Catalog.Format(msgs.locale, "assetsRangeAll", nil)
+}
+
+// AssetsProtocols says "Protocols"
+// in the language the app shows.
+func AssetsProtocols() string { return In(i18n.Locale()).AssetsProtocols() }
+
+// AssetsProtocols says "Protocols"
+// in the language of msgs.
+func (msgs Messages) AssetsProtocols() string {
+	return Catalog.Format(msgs.locale, "assetsProtocols", nil)
+}
+
+// AssetsHealth says "Health"
+// in the language the app shows.
+func AssetsHealth() string { return In(i18n.Locale()).AssetsHealth() }
+
+// AssetsHealth says "Health"
+// in the language of msgs.
+func (msgs Messages) AssetsHealth() string {
+	return Catalog.Format(msgs.locale, "assetsHealth", nil)
+}
+
+// AssetsCmdRisk says "Risky commands"
+// in the language the app shows.
+func AssetsCmdRisk() string { return In(i18n.Locale()).AssetsCmdRisk() }
+
+// AssetsCmdRisk says "Risky commands"
+// in the language of msgs.
+func (msgs Messages) AssetsCmdRisk() string {
+	return Catalog.Format(msgs.locale, "assetsCmdRisk", nil)
+}
+
+// AssetsLogins says "Logins"
+// in the language the app shows.
+func AssetsLogins() string { return In(i18n.Locale()).AssetsLogins() }
+
+// AssetsLogins says "Logins"
+// in the language of msgs.
+func (msgs Messages) AssetsLogins() string {
+	return Catalog.Format(msgs.locale, "assetsLogins", nil)
+}
+
+// AssetsScale says "Scale"
+// in the language the app shows.
+func AssetsScale() string { return In(i18n.Locale()).AssetsScale() }
+
+// AssetsScale says "Scale"
+// in the language of msgs.
+func (msgs Messages) AssetsScale() string {
+	return Catalog.Format(msgs.locale, "assetsScale", nil)
+}
+
+// AssetsRecordings says "Recordings"
+// in the language the app shows.
+func AssetsRecordings() string { return In(i18n.Locale()).AssetsRecordings() }
+
+// AssetsRecordings says "Recordings"
+// in the language of msgs.
+func (msgs Messages) AssetsRecordings() string {
+	return Catalog.Format(msgs.locale, "assetsRecordings", nil)
+}
+
+// AssetsCommands says "Commands"
+// in the language the app shows.
+func AssetsCommands() string { return In(i18n.Locale()).AssetsCommands() }
+
+// AssetsCommands says "Commands"
+// in the language of msgs.
+func (msgs Messages) AssetsCommands() string {
+	return Catalog.Format(msgs.locale, "assetsCommands", nil)
+}
+
+// AssetsLoginOK says "Successful logins"
+// in the language the app shows.
+func AssetsLoginOK() string { return In(i18n.Locale()).AssetsLoginOK() }
+
+// AssetsLoginOK says "Successful logins"
+// in the language of msgs.
+func (msgs Messages) AssetsLoginOK() string {
+	return Catalog.Format(msgs.locale, "assetsLoginOK", nil)
+}
+
+// AssetsLoginFail says "Failed logins"
+// in the language the app shows.
+func AssetsLoginFail() string { return In(i18n.Locale()).AssetsLoginFail() }
+
+// AssetsLoginFail says "Failed logins"
+// in the language of msgs.
+func (msgs Messages) AssetsLoginFail() string {
+	return Catalog.Format(msgs.locale, "assetsLoginFail", nil)
+}
+
+// AssetsReset says "Reset"
+// in the language the app shows.
+func AssetsReset() string { return In(i18n.Locale()).AssetsReset() }
+
+// AssetsReset says "Reset"
+// in the language of msgs.
+func (msgs Messages) AssetsReset() string {
+	return Catalog.Format(msgs.locale, "assetsReset", nil)
+}
+
+// AssetsNormal says "Normal"
+// in the language the app shows.
+func AssetsNormal() string { return In(i18n.Locale()).AssetsNormal() }
+
+// AssetsNormal says "Normal"
+// in the language of msgs.
+func (msgs Messages) AssetsNormal() string {
+	return Catalog.Format(msgs.locale, "assetsNormal", nil)
+}
+
+// AssetsRisky says "Risky"
+// in the language the app shows.
+func AssetsRisky() string { return In(i18n.Locale()).AssetsRisky() }
+
+// AssetsRisky says "Risky"
+// in the language of msgs.
+func (msgs Messages) AssetsRisky() string {
+	return Catalog.Format(msgs.locale, "assetsRisky", nil)
+}
+
+// AssetsAvailable says "Available"
+// in the language the app shows.
+func AssetsAvailable() string { return In(i18n.Locale()).AssetsAvailable() }
+
+// AssetsAvailable says "Available"
+// in the language of msgs.
+func (msgs Messages) AssetsAvailable() string {
+	return Catalog.Format(msgs.locale, "assetsAvailable", nil)
+}
+
+// AssetsUnavailable says "Unavailable"
+// in the language the app shows.
+func AssetsUnavailable() string { return In(i18n.Locale()).AssetsUnavailable() }
+
+// AssetsUnavailable says "Unavailable"
+// in the language of msgs.
+func (msgs Messages) AssetsUnavailable() string {
+	return Catalog.Format(msgs.locale, "assetsUnavailable", nil)
+}
+
+// AssetsUnknown says "Unknown"
+// in the language the app shows.
+func AssetsUnknown() string { return In(i18n.Locale()).AssetsUnknown() }
+
+// AssetsUnknown says "Unknown"
+// in the language of msgs.
+func (msgs Messages) AssetsUnknown() string {
+	return Catalog.Format(msgs.locale, "assetsUnknown", nil)
+}
+
+// AssetsSuccess says "Success"
+// in the language the app shows.
+func AssetsSuccess() string { return In(i18n.Locale()).AssetsSuccess() }
+
+// AssetsSuccess says "Success"
+// in the language of msgs.
+func (msgs Messages) AssetsSuccess() string {
+	return Catalog.Format(msgs.locale, "assetsSuccess", nil)
+}
+
+// AssetsFailed says "Failed"
+// in the language the app shows.
+func AssetsFailed() string { return In(i18n.Locale()).AssetsFailed() }
+
+// AssetsFailed says "Failed"
+// in the language of msgs.
+func (msgs Messages) AssetsFailed() string {
+	return Catalog.Format(msgs.locale, "assetsFailed", nil)
+}
+
+// AssetsSsh says "SSH"
+// in the language the app shows.
+func AssetsSsh() string { return In(i18n.Locale()).AssetsSsh() }
+
+// AssetsSsh says "SSH"
+// in the language of msgs.
+func (msgs Messages) AssetsSsh() string {
+	return Catalog.Format(msgs.locale, "assetsSsh", nil)
+}
+
 // NotConnected says "Not connected"
 // in the language the app shows.
 func NotConnected() string { return In(i18n.Locale()).NotConnected() }

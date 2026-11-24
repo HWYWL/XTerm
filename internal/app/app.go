@@ -205,6 +205,12 @@ type App struct {
 	left     leftPanel
 	connTree managerState
 
+	// The assets window's counts (assets.go): this run's, the days kept in
+	// asset_stats.json, and the range the window shows.
+	assetRun   assetTotals
+	assetDays  []config.AssetDay
+	assetRange string
+
 	// The connection editor's fields, while its window is open.
 	editor *connEditor
 
@@ -315,6 +321,8 @@ func New(plat Platform) *App {
 	}
 	a.hosts, _ = config.LoadHosts()
 	a.settings = config.LoadSettings()
+	a.assetDays = config.LoadAssetStats()
+	a.assetRange = assetRange7d // the window's first range, a week
 	a.loadAppearance()
 	a.restoreLayout()
 	a.restoreLeftPanel()

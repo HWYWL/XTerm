@@ -262,6 +262,7 @@ func (a *App) sendLine(s *Session, line string, enter bool) {
 		return
 	}
 	term.Send([]byte(line + "\r"))
+	a.assetCommand(line) // the assets window counts what runs
 	s.shellCommandSent()
 	if cmd := strings.TrimSpace(line); a.historyOn() && config.Keepable(cmd) {
 		a.addHistory(s.historyID(), cmd)

@@ -67,6 +67,10 @@ type Session struct {
 	// saved (rename.go).
 	name string
 
+	// cmdLine is the line typed in this session's shell so far, for the
+	// assets window's command count (assets.go).
+	cmdLine string
+
 	// A panel row's session, whose bottom panel it shows, and the tab of
 	// the panel it has chosen (paneltab.go): panelOf is nil on every
 	// other row.
@@ -122,6 +126,7 @@ func (a *App) connect(s *Session, secret string) {
 	opts, err := a.dialOptions(s.Host, secret, func(q *sshx.HostKeyQuestion) { a.post(func() { s.hostKeyQ = q }) })
 	if err != nil {
 		s.status, s.err = statusFailed, err
+		a.assetLogin(false)
 		return
 	}
 	// On the host's connection and each jump host's, as long as each is
@@ -141,6 +146,7 @@ func (a *App) connect(s *Session, secret string) {
 		a.post(func() {
 			s.status, s.err = statusFailed, err
 			if ctx.Err() == nil {
+				a.assetLogin(false)
 				a.loginFailed(s, err)
 			}
 		})
@@ -211,6 +217,7 @@ func (a *App) connect(s *Session, secret string) {
 				a.notify(paneError(refused))
 			}
 			s.status, s.err = statusConnected, nil
+			a.assetLogin(true)
 			a.noteConnected(s.Host)
 			a.showMonitorOfConnection()
 			a.startTunnels(s, h.Tunnels)
@@ -282,7 +289,8 @@ func (a *App) openPaneShell(s *Session, p *pane, client *ssh.Client, spec shellS
 	topts.Conn = termenc.Wrap(shell, spec.enc)
 	keys := keySequences(spec.bs, spec.del, func() *terminal.Terminal { return p.term })
 	topts.OnKey = func(mods ui.Modifiers, key ui.Key) bool {
-		p.shellKey(mods, key) // for the file panel to follow a cd, and the tab its agent
+		a.assetKey(s, mods, key) // the line typed, for the assets window
+		p.shellKey(mods, key)    // for the file panel to follow a cd, and the tab its agent
 		return keys != nil && keys(mods, key)
 	}
 	topts.OnExit = func(int) { a.post(func() { a.paneExited(s, p) }) }

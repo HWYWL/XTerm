@@ -35,6 +35,7 @@ XTerm 把主机和设置存在普通的 JSON 文件里。密码从不写进去�
 | `sync-state.json` | 上次同步的状态（见[同步](#同步)）。 |
 | `hosts.before-sync.json` | 上次改动了它的同步之前的 `hosts.json`。 |
 | `history/<主机 ID>.txt` | 命令输入框按主机保存的历史，本地终端的历史是 `history/local.txt`（见[命令历史](#命令历史)）。 |
+| `asset_stats.json` | 资产窗口按天保存的计数：登录成功、登录失败、命令、高风险命令，最多 180 天（见[资产](features.md#资产)）。 |
 | `quickcommands.json` | 命令页的快捷命令（见 [quickcommands.json](#quickcommandsjson)）。 |
 | `quickcommands.json.broken-<日期-时间>` | 读不出来的 `quickcommands.json` 的副本。 |
 | `commandeditor.txt` | 命令页里命令编辑器的文本（见 [commandeditor.txt](#commandeditortxt)）。 |

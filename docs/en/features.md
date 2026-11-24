@@ -2,7 +2,12 @@
 
 English · [简体中文](../zh-CN/features.md)
 
-This page describes what Finallyshell does, screen by screen, including
+XTerm is a secondary development based on the open source project
+[FinalShell](https://github.com/TooonyChen/finallyshell); its own versions
+start at 0.0.1, and the upstream project's history stays in
+[its repository](https://github.com/TooonyChen/XTerm/releases).
+
+This page describes what XTerm does, screen by screen, including
 the `settings.json` keys behind each option and the limits of what is
 supported. [configuration.md](configuration.md) covers the files on disk;
 [development.md](development.md) covers building and the code.
@@ -71,16 +76,21 @@ supported. [configuration.md](configuration.md) covers the files on disk;
 
 The main window follows FinalShell's layout:
 
-- Top left: the server monitor of the current session.
-- Bottom left: the vertical session list, or, on its other page, the
-  saved connections in their folders (see
+- Left: the row of tabs of the left column, "System | Sessions (N) |
+  Connections", in a pane of its own over the pane of the page they
+  choose, which keeps the row of its buttons at its top: the server
+  monitor of the current session, the vertical session list, or the saved
+  connections in their folders (see
   [Connections page](#connections-page)).
 - Top right: the row of session tabs, and under it the terminal.
 - Bottom right: the Files, Transfers, Tunnels, Processes, Network and
   Commands tabs, which can also open in a tab of their own (see below).
 
-The whole left side, the server monitor over the session list, can be
-hidden, and the terminal takes the width. The chevron at the left end of
+The window draws its own title bar, with the app's name in it, so the
+sky and a wallpaper show behind the window's buttons too. The bar drags
+the window, and a double click maximizes it.
+
+The whole left column can be hidden, and the terminal takes the width. The chevron at the left end of
 the row of session tabs hides it (chevron left, "Hide sidebar") and shows
 it again (chevron right, "Show sidebar"); so do the same two items in the
 tab row's context menu and the shortcut "Show or hide the sidebar" (Cmd+B
@@ -118,8 +128,8 @@ screen is unchanged.
 
 The server monitor can go on the right too: "Move to right side" at the
 top of its context menu puts it in the same column, and "Move to left
-side" puts it back. The session list then fills the left column, and the
-monitor's old height there comes back with it. With the bottom panel
+side" puts it back. Its tab then leaves the left column's row, and its
+page comes back with it. With the bottom panel
 under the terminal, the monitor has the column alone, full height, next
 to the terminal and the panel. With the panel on the right as well, the
 monitor is on top and the panel below, with a divider between them.
@@ -132,8 +142,8 @@ in a tab of its own has it beside it. The side is kept in
 
 ## Sessions and tabs
 
-The bottom left of the window is a vertical list of sessions, on the
-"Sessions (N)" page of the switch at its top. Each has a status dot:
+The left column is a vertical list of sessions, on its "Sessions (N)"
+tab. Each has a status dot:
 green for connected, yellow for
 connecting, red for failed. The list scrolls, and sessions can be
 reordered by dragging. The context menu of a session has Reconnect,
@@ -194,7 +204,7 @@ than looking connected until something is typed. The interval is set in
 Options › General; 0 turns keepalives off.
 
 On the first connection to a host, a dialog shows the host key
-fingerprint. Once trusted, it is written to `finallyshell/known_hosts` in
+fingerprint. Once trusted, it is written to `XTerm/known_hosts` in
 the config directory. A connection whose host key has changed is refused.
 
 ### Bottom panel in a tab of its own
@@ -301,9 +311,8 @@ owners' trademarks, shown only to name the program that is running.
 
 ## Connections page
 
-The switch at the top of the bottom-left panel, "Sessions (N) |
-Connections", shows the session tabs or the saved connections. The
-Connections page is the connection manager's tree of folders and
+The left column's "Connections" tab shows the saved connections: the
+connection manager's tree of folders and
 connections, kept in the main window as MobaXterm's session tree and
 Xshell's Sessions pane are, without taking width from the terminal. It
 shows the names only, in the order the connection manager shows them
@@ -311,14 +320,15 @@ unsorted, and never the deleted connections. A connection's tooltip
 shows `user@host:port` and the first line of its notes. A connection
 with a session open has a dot after its name, in the color of that
 session's dot in the session list: green when connected, yellow while
-connecting.
+connecting. The app opens on this page, to pick a host first.
 
 - Double-click a connection, or select it and press Enter, to open a
   session, in the selected tab if it is a new tab, as quick connect does.
-  The session shows on the right, and the panel stays on Connections, so
-  several connections can be opened in a row; "Sessions (N)" counts the
-  new ones. Double-click or Enter on a folder opens or closes it, as do
-  its arrow and the Left and Right keys.
+  The session shows on the right, and, once it is connected, the left
+  column shows the server monitor, the page to watch next; back on
+  Connections, the next connection opens in a row. "Sessions (N)" counts
+  the new ones. Double-click or Enter on a folder opens or closes it, as
+  do its arrow and the Left and Right keys.
 - The search box at the top filters as the connection manager's does:
   every word must be in the name, address, user or notes, ignoring case.
   The folders holding the results open and the first result is
@@ -455,7 +465,7 @@ folders and connections, with the columns Name, Host, Port, User and
 Notes (only the first line of the notes is shown). Clicking a column
 header sorts by it, and dragging the edge of a header resizes the column.
 
-The host list is stored in `<user config dir>/finallyshell/hosts.json`.
+The host list is stored in `<user config dir>/XTerm/hosts.json`.
 Passwords are never written to it; they are kept in the system's
 credential store (see
 [Where passwords are stored](configuration.md#where-passwords-are-stored)).
@@ -545,7 +555,7 @@ Import, in the connection manager's toolbar, opens the "Import connections"
 window, a modal window of the connection manager. "Import from" at its top
 chooses where the connections come from: the sources below, each in
 its own section. The window opens
-on the source chosen last since Finallyshell started (FinalShell the first
+on the source chosen last since XTerm started (FinalShell the first
 time).
 
 Choosing a source looks for its file or folder in the places that source
@@ -589,7 +599,7 @@ For every source:
 - The time added (`createdAt`) is the time of the import, so imported
   connections come first under "Other connections" in quick connect.
 - Passwords that other clients store are not imported: they encrypt them
-  with keys of their own, and Finallyshell does not decrypt them. Each
+  with keys of their own, and XTerm does not decrypt them. Each
   password is asked for at the first connection (remembered by default,
   in the system keychain). A list of servers that has passwords in it
   puts each in the system keychain, as "Remember password" does, never in
@@ -602,7 +612,7 @@ For every source:
 ### From FinalShell
 
 FinalShell keeps its connections in the `conn` folder of its data folder,
-which Finallyshell looks for in order:
+which XTerm looks for in order:
 
 - Windows: `%LOCALAPPDATA%\finalshell`, `%APPDATA%\finalshell`,
   `%ProgramFiles%\FinalShell`, `%ProgramFiles(x86)%\FinalShell`,
@@ -620,7 +630,7 @@ connection with it turned off is imported with the server monitor turned
 off). The time added is not FinalShell's `create_time`.
 
 - Passwords are not imported. FinalShell stores them encrypted in its
-  files; Finallyshell does not decrypt them and does not read that field.
+  files; XTerm does not decrypt them and does not read that field.
 - A connection that uses a private key is imported with "Private key"
   authentication but no key file. FinalShell stores private keys in its
   own `config.json` and the connection only records the key's ID; that
@@ -640,7 +650,7 @@ a port written as a string is accepted.
 ### From Xshell
 
 Xshell keeps each session in a file of its own, `<name>.xsh`, in its
-`Sessions` folder; subfolders are its folders. On Windows, Finallyshell
+`Sessions` folder; subfolders are its folders. On Windows, XTerm
 looks for that folder in order:
 
 - `Documents\NetSarang Computer\<version>\Xshell\Sessions` (Xshell 6 and
@@ -663,7 +673,7 @@ method. Only SSH sessions are imported; Telnet, Rlogin, serial and other
 sessions are skipped.
 
 - Passwords are not imported. Xshell stores them encrypted in the session
-  file; Finallyshell does not decrypt them and does not read that field.
+  file; XTerm does not decrypt them and does not read that field.
 - A session that uses a public key is imported with "Private key"
   authentication but no key file: Xshell keeps its keys in its own key
   store, and the session only names the key. Edit the connection and
@@ -684,7 +694,7 @@ port is 22.
 ### From SecureCRT
 
 SecureCRT keeps one `.ini` file per session in the `Sessions` folder of
-its config folder, with a subfolder for each of its folders. Finallyshell
+its config folder, with a subfolder for each of its folders. XTerm
 looks for the config folder at:
 
 - Windows: `%APPDATA%\VanDyke\Config`.
@@ -705,7 +715,7 @@ sessions are imported; Telnet, Serial, RLogin, RDP and other sessions
 count as skipped.
 
 - Passwords are not imported. SecureCRT stores them encrypted in the
-  session files; Finallyshell does not decrypt them and does not read
+  session files; XTerm does not decrypt them and does not read
   those lines.
 - A session with a key file of its own (public key options) is imported
   with "Private key" authentication and that key file: the private key,
@@ -732,7 +742,7 @@ defaults (SSH2, port 22, password authentication), and multi-line values
 
 ### From MobaXterm
 
-MobaXterm keeps its sessions in `MobaXterm.ini`. On Windows, Finallyshell
+MobaXterm keeps its sessions in `MobaXterm.ini`. On Windows, XTerm
 looks for it in `%APPDATA%\MobaXterm` (the installed version), then in
 `Documents\MobaXterm`. The portable version keeps it next to
 `MobaXterm.exe`: choose it there. You can also choose a file of sessions
@@ -751,7 +761,7 @@ Linux, a key path of Windows is not a file there: the host has "Private key" aut
 without a key file, to choose after importing.
 
 - Passwords are not imported. MobaXterm stores them encrypted (behind its
-  master password), apart from the sessions; Finallyshell does not read
+  master password), apart from the sessions; XTerm does not read
   them.
 - SSH gateways (jump hosts) and proxies are not imported: the host
   connects directly, and the Note column says so. Its jump host can be
@@ -1058,7 +1068,12 @@ chosen is left, the graph shows the busiest again and its label says
 "eth0 (auto)", with the missing names in its tooltip. Those stay checked
 in the menu, marked "not found", until unchecked.
 
-The "System info" button below the IP opens a popover with the host name,
+The copy button beside the System info button, an icon with its tooltip,
+puts the address in the clipboard, and a pill at the bottom of the window
+says "Copied" and fades out two seconds later; the popover's "Copy" says
+so too.
+
+The "System info" button at the end of the IP line opens a popover with the host name,
 OS (`/etc/os-release`), kernel, architecture, CPU model and cores, memory,
 uptime, IP addresses and disks. "Copy" copies them as plain text. They are
 read once each time the popover opens, over an exec channel, by a POSIX sh
@@ -1303,7 +1318,7 @@ Background image:
 - "Choose…" opens the system's open dialog for a PNG, JPEG, GIF, WebP or
   BMP image (a file of at most 64 MB and at most 100 million pixels). The
   image is decoded first to make sure it can be shown, then copied into
-  the config directory (`finallyshell/background-<time>.<extension>`), so
+  the config directory (`XTerm/background-<time>.<extension>`), so
   moving or deleting the original does not matter. Choosing another image,
   or "Remove", deletes the old copy.
 - Fit: Cover (cropped), Contain or Tile. Opacity: 5% to 100%, 30% by
@@ -1649,7 +1664,7 @@ temporary file), with progress shown for large files, and shown through
 - A file over 10 MB asks first ("Open Anyway").
 - A file with a NUL byte in its first 8000 bytes is treated as binary and is
   not opened. "Open with the Default App" downloads it to the app's cache
-  folder (`<cache dir>/finallyshell/opened/<time>/`; folders older than a
+  folder (`<cache dir>/XTerm/opened/<time>/`; folders older than a
   day are deleted the next time one is opened) and opens it with the
   system's default app. Changes to that copy are not sent back to the
   server.
@@ -1657,7 +1672,7 @@ temporary file), with progress shown for large files, and shown through
 ### Saving
 
 The editor first writes a hidden temporary file in the same folder
-(`.<file name>.finallyshell-<random>.tmp`), gives it the original file's
+(`.<file name>.xterm-<random>.tmp`), gives it the original file's
 owner (when the owner differs) and permissions (including setuid and
 similar bits), then replaces the original with `posix-rename@openssh.com`.
 If the server does not have that extension (or it fails), the original is
@@ -2066,7 +2081,7 @@ commands, and opening the editor in a window of its own.
 
 ## Options window
 
-The gear button next to the "Sessions" title at the bottom left opens the
+The gear button at the right end of the row of session tabs opens the
 Options window. As in FinalShell, it has a tree of pages on the left and
 the page on the right. Every option is saved to `settings.json` as soon as
 it changes, and takes effect at once, except for the two Mouse options
@@ -2091,7 +2106,7 @@ file icon theme page under [File icon themes](#file-icon-themes).
   new one is still selected.
 - Minimize to tray when closed (off by default): the main window's close
   button hides the window to a tray icon (the menu bar on macOS). The
-  icon's menu has "Show Finallyshell", "Check for Updates…" and "Quit". On Windows, left-clicking
+  icon's menu has "Show XTerm", "Check for Updates…" and "Quit". On Windows, left-clicking
   the icon also shows the window; on macOS, so does clicking the Dock icon.
   When the system has no tray (Linux without
   `libayatana-appindicator3`), the option behaves as if it were off.
@@ -2329,20 +2344,20 @@ sending the server's peers to a service, is each computer's own.
 ### Sync
 
 Options › Sync keeps connections and settings the same on several
-computers, through storage you already have. Finallyshell runs no server
+computers, through storage you already have. XTerm runs no server
 for it, and it is off until you choose a service:
 
 | Service | What you enter | Free for personal use |
 |---|---|---|
-| GitHub Gist | A personal access token with the `gist` scope ("Create a token on GitHub" opens the page with the scope chosen). The Gist ID can stay empty: the first sync finds a gist of yours holding `finallyshell-sync.json`, or creates a secret one, and keeps its ID. | Any GitHub account. |
+| GitHub Gist | A personal access token with the `gist` scope ("Create a token on GitHub" opens the page with the scope chosen). The Gist ID can stay empty: the first sync finds a gist of yours holding `xterm-sync.json`, or creates a secret one, and keeps its ID. | Any GitHub account. |
 | WebDAV | The folder's URL, a user and a password (an app password where the service has them). A missing folder is created. | Jianguoyun (坚果云), Nextcloud, Synology, Box and others. |
-| S3-compatible storage | The endpoint, region (`auto` for Cloudflare R2; `us-east-1` when empty), bucket, file name (`finallyshell-sync.json` when empty), access key ID and secret access key. Requests are path-style and signed with AWS Signature Version 4. | Cloudflare R2 and Backblaze B2 have free tiers; MinIO runs anywhere. |
+| S3-compatible storage | The endpoint, region (`auto` for Cloudflare R2; `us-east-1` when empty), bucket, file name (`xterm-sync.json` when empty), access key ID and secret access key. Requests are path-style and signed with AWS Signature Version 4. | Cloudflare R2 and Backblaze B2 have free tiers; MinIO runs anywhere. |
 
 The service keeps one file. Before it leaves the computer, its content is
 encrypted with AES-256-GCM, with a key derived by Argon2id (3 passes,
 64 MiB, 4 lanes, a random salt) from the **sync password**, which you
 choose and enter on each computer. The service sees only that the file is
-an encrypted Finallyshell file and the key derivation's parameters; host
+an encrypted XTerm file and the key derivation's parameters; host
 names, addresses and the computer's name are inside the ciphertext. The
 sync password cannot be recovered. With a wrong one, sync says so and
 changes nothing.
@@ -2421,7 +2436,7 @@ Terminal › Shortcuts page.
 | New tab | Cmd+T | Ctrl+Shift+T |
 | Switch to tab 1–9 | Cmd+1…9 | Alt+1…9 |
 | Focus command bar (and back to the terminal) | Cmd+Shift+L | Ctrl+Shift+L |
-| Switch sessions / connections (the bottom-left panel's pages) | Cmd+Shift+E | Ctrl+Shift+E |
+| Switch sessions / connections (the left column's pages) | Cmd+Shift+E | Ctrl+Shift+E |
 | Show or hide the sidebar | Cmd+B | Ctrl+Shift+B |
 | Show or hide the bottom panel | Cmd+J | Ctrl+Shift+J |
 | Split the pane right | Cmd+D | Alt+Shift+= |
@@ -2451,7 +2466,7 @@ Notes:
   types a character (¡, ™, £, ...).
 - On Windows, the terminal plugin by default also binds Ctrl+C (copy when
   there is a selection) and Ctrl+V (paste when the clipboard has
-  something). Finallyshell removes those, leaving them to the shell as on
+  something). XTerm removes those, leaving them to the shell as on
   Linux (interrupt, and insert the next key literally). Copy and paste with
   Ctrl+Shift+C and Ctrl+Shift+V, or Ctrl+Insert and Shift+Insert.
 - Focus command bar is not Ctrl+Shift+K: on Windows that is the
@@ -2490,7 +2505,7 @@ The dividers between the areas of the window can be dragged to resize them
 (or moved with the arrow keys once they have focus), and double-clicking a
 divider restores the default size. Every area has a minimum size, so it
 cannot be dragged out of sight. The sizes are saved in
-`finallyshell/settings.json` and restored at the next start. This includes
+`XTerm/settings.json` and restored at the next start. This includes
 the dividers of the Processes and Network tabs, which every session
 shares, in the bottom panel and in a panel opened in a tab of its own.
 
@@ -2520,18 +2535,18 @@ buttons or under them; it is saved with the other sizes (see
 
 The UI is in English and Simplified Chinese. By default it follows the
 system language. Change it on the General page of the Options window
-(the gear button next to the "Sessions" title at the bottom left); the
+(the gear button at the right end of the row of session tabs); the
 choice is saved.
 
 ## Updates
 
-Finallyshell updates itself from the releases on GitHub, with MyGo's
+XTerm updates itself from the releases on GitHub, with MyGo's
 signed updates and its update window (the updater plugin, in native UI).
 
 - Checking: 10 seconds after launch, then once a day while the app runs,
   it reads the update manifest of the latest release
   (`update-<platform>.json`, one small file from
-  `github.com/TooonyChen/finallyshell/releases/latest/download/`, not the
+  `github.com/HWYWL/XTerm/releases/latest/download/`, not the
   GitHub API). "Check for updates automatically" in Options › General
   turns this off; it is on by default.
 - When a newer version is out, a window offers **Install Update**,
@@ -2546,7 +2561,7 @@ signed updates and its update window (the updater plugin, in native UI).
 - "Check for Updates…" checks at once and says when the app is up to date
   or the check failed; it offers skipped versions too. It is in
   Options › General, in the tray icon's menu, and on macOS in the app
-  menu (Finallyshell › Check for Updates…).
+  menu (XTerm › Check for Updates…).
 - Options › General also shows the version running and, once a check
   found one, "Version x.y.z is available".
 - The window speaks the language the app shows (the Language option), and
@@ -2563,7 +2578,7 @@ Where a copy can update itself:
 | Any | A development build (`go run`, `mygo dev`) | No |
 
 Where it cannot, Options › General says why and links to the
-[releases page](https://github.com/TooonyChen/finallyshell/releases)
+[releases page](https://github.com/HWYWL/XTerm/releases)
 instead of offering to check, and "Check for Updates…" in the menus opens
 a window that says so.
 
@@ -2572,7 +2587,7 @@ Notes:
 - Versions up to 0.2.0 have no updater: install the first version that
   has one by hand, once. The ones after it update themselves.
 - The macOS app is signed ad hoc, so each build's signature differs. After
-  an update, macOS may ask again whether Finallyshell may use the
+  an update, macOS may ask again whether XTerm may use the
   passwords it saved in the keychain, as it does after installing a new
   version by hand. This is not yet checked on a real Mac.
 - The update window shows the new version's release notes, in English and

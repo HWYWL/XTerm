@@ -2,7 +2,7 @@
 
 English · [简体中文](../zh-CN/configuration.md)
 
-Finallyshell keeps its hosts and settings in plain JSON files. Passwords
+XTerm keeps its hosts and settings in plain JSON files. Passwords
 are never written to them; they go to the system's credential store. This
 page describes the files. [features.md](features.md) describes the options
 behind each setting.
@@ -24,7 +24,7 @@ behind each setting.
 
 ## Config directory
 
-All files live in `<user config dir>/finallyshell/`, where the user config
+All files live in `<user config dir>/XTerm/`, where the user config
 dir is Go's `os.UserConfigDir()`: `~/Library/Application Support` on macOS,
 `%APPDATA%` on Windows, and `$XDG_CONFIG_HOME` or `~/.config` on Linux. If
 the environment variable `FINALLYSHELL_DIR` is set, that directory is used
@@ -51,7 +51,7 @@ instead.
 they share hosts and settings.
 
 Files the editor downloads to open with the default app go to the cache
-directory instead: `<cache dir>/finallyshell/opened/<time>/`. Folders older
+directory instead: `<cache dir>/XTerm/opened/<time>/`. Folders older
 than a day are deleted the next time a file is opened this way.
 
 ## hosts.json
@@ -201,11 +201,11 @@ default.
 | `geoLocationsV6` | The same for the IPv6 data. | Asked the first time an IPv6 peer shows. |
 | `geoOnline` | `true` looks up online (ip-api.com) the addresses the data has no city or ISP for. | Off. |
 | `sidebarWidth`, `treeWidth` | Widths of the sidebar and the file panel's folder tree, as last dragged. | The app's defaults. |
-| `monitorPercent`, `terminalPercent` | The server monitor's share of the sidebar and the terminal's share of the main area, in percent. | The app's defaults. |
+| `monitorPercent`, `terminalPercent` | The terminal's share of the main area, in percent; `monitorPercent` is kept from earlier versions, where the server monitor shared the left column. | The app's defaults. |
 | `monitorHidden` | The parts of the server monitor hidden from its context menu, for every host: any of `uptime`, `cpu`, `processes`, `network`, `latency`, `disks`, such as `["processes", "disks"]`. A part added in a later version shows until hidden. | Every part shows. |
 | `procListPercent`, `procFieldsPercent` | In the Processes tab, the process list's share above the details, and the details' fields' share beside the environment variables, in percent. | The app's defaults. |
 | `netListPercent` | In the Network tab, the table's share above the connections and trace tabs, in percent. | The app's defaults. |
-| `sidebarHidden` | `true` hides the whole left side, the server monitor over the session list, and the terminal takes the width. | Shown. |
+| `sidebarHidden` | `true` hides the whole left column, and the terminal takes the width. | Shown. |
 | `bottomPanelHidden` | `true` collapses the bottom panel under the terminal to its row of tabs, or, on the right, hides its column. | Open. |
 | `bottomPanelSide` | `right` puts the bottom panel in a column on the terminal's right. | `""`, under the terminal. |
 | `rightPanelWidth` | Width of the column on the terminal's right, in DIPs, as last dragged. | The app's default (460). |
@@ -216,7 +216,7 @@ default.
 | `commandEditorPercent` | The command buttons' share of the Commands tab's height above the command editor, where the tab is too narrow to have it beside them, in percent. | The app's default (40). |
 | `commandEditorNoEnter` | `true` turns off the command editor's "Press Enter after each line": the last line it sends goes without a carriage return. | Every line runs. |
 | `commandEditorClear` | `true` turns on the command editor's "Clear after sending". | Off. |
-| `leftPanelPage` | `connections` shows the Connections page in the bottom-left panel. | The session tabs. |
+| `leftPanelPage` | `system` or `connections` shows the server monitor or the Connections page in the left column. | The session list. |
 | `connectionTreeExpanded` | IDs of the folders open on the Connections page, such as `["f1730000000000000000"]`; `[]` for none. By ID, so a renamed or moved folder stays open. | Every folder open. |
 | `sync` | The Sync page's settings (see [Sync](#sync)). | Sync is off. |
 
@@ -353,9 +353,9 @@ app starts again.
 The choices of the update window (see [Updates](features.md#updates)) are
 kept by MyGo's updater plugin in `updater.json`, in the app's user data
 folder rather than the config directory above: `~/Library/Application
-Support/Finallyshell` on macOS (on its default file system, which ignores
-case, the same folder as the config directory), `%APPDATA%\Finallyshell` on Windows,
-and `$XDG_CONFIG_HOME/Finallyshell` or `~/.config/Finallyshell` on Linux.
+Support/XTerm` on macOS (on its default file system, which ignores
+case, the same folder as the config directory), `%APPDATA%\XTerm` on Windows,
+and `$XDG_CONFIG_HOME/XTerm` or `~/.config/XTerm` on Linux.
 `FINALLYSHELL_DIR` does not move it.
 
 | Key | Meaning | Default (when missing) |
@@ -375,7 +375,7 @@ the key they must be signed with.
 ```json
 "updates": {
   "publicKey": "fwcqse2POLiSdWytl0BHeURrztxcDObwmos+4IlTqHQ=",
-  "github": "TooonyChen/finallyshell"
+  "github": "HWYWL/XTerm"
 }
 ```
 
@@ -390,7 +390,7 @@ the key they must be signed with.
 
 Passwords and private key passphrases are stored with MyGo's
 `mygo.Secrets` in the system's credential store, which the system encrypts
-for the current user. The service name is `finallyshell`, not the app's
+for the current user. The service name is `xterm`, not the app's
 identifier, so that `mygo dev`, `go run` and the installed app share the
 same entries, as they share `hosts.json`. The keys are:
 
@@ -407,9 +407,9 @@ host.
 
 | System | Where | How to look at it |
 |---|---|---|
-| macOS | A generic password in the login keychain, with the name (service) `finallyshell` and the key as the account | Keychain Access |
-| Windows | A generic credential in Credential Manager, with the target `finallyshell/<key>` | Control Panel → Credential Manager → Windows Credentials |
-| Linux | Secret Service (GNOME Keyring, KWallet, KeePassXC and others, through libsecret), with the attribute `service` set to `finallyshell` and `account` set to the key | "Passwords and Keys" (Seahorse), or `secret-tool lookup service finallyshell account host/<host ID>/password` |
+| macOS | A generic password in the login keychain, with the name (service) `xterm` and the key as the account | Keychain Access |
+| Windows | A generic credential in Credential Manager, with the target `XTerm/<key>` | Control Panel → Credential Manager → Windows Credentials |
+| Linux | Secret Service (GNOME Keyring, KWallet, KeePassXC and others, through libsecret), with the attribute `service` set to `xterm` and `account` set to the key | "Passwords and Keys" (Seahorse), or `secret-tool lookup service xterm account host/<host ID>/password` |
 
 How passwords are used:
 

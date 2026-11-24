@@ -2,9 +2,13 @@
 
 Thanks for helping. Issues and pull requests are welcome.
 
+XTerm is a secondary development based on the open source project
+[FinalShell](https://github.com/TooonyChen/finallyshell); the licenses and
+the contribution terms below come from it and still apply.
+
 ## License of contributions
 
-Finallyshell is offered under the PolyForm Noncommercial License 1.0.0 or
+XTerm is offered under the PolyForm Noncommercial License 1.0.0 or
 the PolyForm Internal Use License 1.0.0 (see [LICENSE](LICENSE)), and its
 author also offers it under separate commercial licenses. To keep that
 possible, contributions are accepted on these terms:

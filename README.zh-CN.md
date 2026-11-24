@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="resources/icon.png" width="64" height="64" alt="" align="center">&nbsp;Finallyshell
+  <img src="resources/icon.png" width="64" height="64" alt="" align="center">&nbsp;XTerm
 </h1>
 
 <p align="center">
@@ -7,14 +7,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/TooonyChen/finallyshell/releases/latest"><img src="https://img.shields.io/github/v/release/TooonyChen/finallyshell?label=release" alt="最新版本"></a>
-  <a href="https://github.com/TooonyChen/finallyshell/actions/workflows/ci.yml"><img src="https://github.com/TooonyChen/finallyshell/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/HWYWL/XTerm/releases/latest"><img src="https://img.shields.io/github/v/release/HWYWL/XTerm?label=release" alt="最新版本"></a>
+  <a href="https://github.com/HWYWL/XTerm/actions/workflows/ci.yml"><img src="https://github.com/HWYWL/XTerm/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey" alt="macOS、Windows、Linux">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-PolyForm%20Noncommercial-blue" alt="许可证"></a>
-  <br>
-  <a href="https://awesomemygo.dev/apps/finallyshell"><img src="https://awesomemygo.dev/badge.svg" alt="已收录于 Awesome MyGo"></a>
-  <br>
-  <a href="https://trendshift.io/repositories/343771?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-343771" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/trendshift/repositories/343771/daily?language=Go" alt="TooonyChen%2Ffinallyshell | Trendshift" width="250" height="55"/></a>
 </p>
 
 <p align="center">
@@ -24,49 +20,48 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/main-zh-CN.png" alt="Finallyshell 主窗口：服务器监控、会话列表、终端和文件面板">
+  <img src="docs/screenshots/main-zh-CN.png" alt="XTerm 主窗口：服务器监控、会话列表、终端和文件面板">
 </p>
 
-用过 FinalShell 的话，打开就会用：左上是服务器状态，下面是会话，右边是终端，终端下面是服务器上的文件。Finallyshell 保留了这个布局，把会话标签放进左下角的竖向列表，可以滚动，也可以拖动排序。
+用过 FinalShell 的话，打开就会用：左上是服务器状态，下面是会话，右边是终端，终端下面是服务器上的文件。XTerm 保留了这个布局，把会话标签放进左下角的竖向列表，可以滚动，也可以拖动排序。
 
 它是用 Go 和 [MyGo](https://github.com/egoist/mygo) 界面库写的原生程序，不需要装 Java。终端用的是 [Ghostty](https://ghostty.org) 的终端引擎 libghostty-vt。密码存在系统的钥匙串里，不写进文件。
 
 ## 关于本仓库
 
-本仓库是在开源项目 [Finallyshell](https://github.com/TooonyChen/finallyshell)
+XTerm 是在开源项目 [FinalShell](https://github.com/TooonyChen/finallyshell)
 的基础上进行**二次开发**的版本：界面布局、代码和文档都来自该项目，本仓库在其之上修改和新增。
-原作品的著作权归 Tony Chen 和 Finallyshell 的贡献者所有。[LICENSE](LICENSE) 中的许可证仍然适用：非商业用途使用 PolyForm Noncommercial License 1.0.0，单位内部业务使用 PolyForm Internal Use License 1.0.0。本仓库的问题请提到本仓库的 issue 里，不要提到上游项目的 issue 里。
+原作品的著作权归 Tony Chen 和 FinalShell 的贡献者所有。[LICENSE](LICENSE) 中的许可证仍然适用：非商业用途使用 PolyForm Noncommercial License 1.0.0，单位内部业务使用 PolyForm Internal Use License 1.0.0。本仓库的问题请提到本仓库的 issue 里，不要提到上游项目的 issue 里。
 
-> [!IMPORTANT]
-> 上游项目的官方渠道只有[它的仓库](https://github.com/TooonyChen/finallyshell)和它的网站 [tooonychen.github.io/finallyshell](https://tooonychen.github.io/finallyshell/zh-CN/)，那里的 [Releases](https://github.com/TooonyChen/finallyshell/releases) 是上游程序唯一的官方下载来源。其他以 Finallyshell 名义提供下载的网站都与上游项目无关。
+XTerm 有自己的版本号，从 **0.0.1** 开始；上游项目的版本独立演进，仍在[它的仓库](https://github.com/TooonyChen/finallyshell/releases)发布。
 
 ## 安装
 
-在 [Releases](https://github.com/TooonyChen/finallyshell/releases/latest) 下载最新版本：
+在 [Releases](https://github.com/HWYWL/XTerm/releases/latest) 下载最新版本：
 
 | 系统 | 文件 |
 |---|---|
-| macOS（Apple 芯片） | `finallyshell-<版本>-arm64.dmg` |
-| macOS（Intel 芯片） | `finallyshell-<版本>-amd64.dmg` |
-| Windows（x64） | 安装程序 `finallyshell-setup-<版本>-amd64.exe`，或免安装的 `.zip` |
-| Debian、Ubuntu（x64） | `finallyshell_<版本>_amd64.deb` |
-| 其他 Linux（x64） | `finallyshell-<版本>-linux-amd64.tar.gz`，运行 `sh install.sh` 装到 `~/.local` |
-| Debian、Ubuntu（ARM64） | `finallyshell_<版本>_arm64.deb` |
-| 其他 Linux（ARM64） | `finallyshell-<版本>-linux-arm64.tar.gz`，运行 `sh install.sh` 装到 `~/.local` |
+| macOS（Apple 芯片） | `xterm-<版本>-arm64.dmg` |
+| macOS（Intel 芯片） | `xterm-<版本>-amd64.dmg` |
+| Windows（x64） | 安装程序 `xterm-setup-<版本>-amd64.exe`，或免安装的 `.zip` |
+| Debian、Ubuntu（x64） | `xterm_<版本>_amd64.deb` |
+| 其他 Linux（x64） | `xterm-<版本>-linux-amd64.tar.gz`，运行 `sh install.sh` 装到 `~/.local` |
+| Debian、Ubuntu（ARM64） | `xterm_<版本>_arm64.deb` |
+| 其他 Linux（ARM64） | `xterm-<版本>-linux-arm64.tar.gz`，运行 `sh install.sh` 装到 `~/.local` |
 
-想在发布之前试用 main 上的改动：每次合并都会在 [Releases](https://github.com/TooonyChen/finallyshell/releases) 页面发布一个预览版，标为 Pre-release。已安装的应用不会更新到预览版，需要手动下载。
+想在发布之前试用 main 上的改动：每次合并都会在 [Releases](https://github.com/HWYWL/XTerm/releases) 页面发布一个预览版，标为 Pre-release。已安装的应用不会更新到预览版，需要手动下载。
 
 macOS 版还没有经过 Apple 公证，第一次打开会被拦下。拖进“应用程序”后运行：
 
 ```bash
-xattr -dr com.apple.quarantine /Applications/Finallyshell.app
+xattr -dr com.apple.quarantine /Applications/XTerm.app
 ```
 
 或者在“系统设置 › 隐私与安全性”里点“仍要打开”。Windows 的 SmartScreen 可能会提示安装程序没有签名，点“更多信息”，再点“仍要运行”。
 
 Linux 上托盘图标需要 `libayatana-appindicator3`，记住密码需要 Secret Service 密钥环（GNOME Keyring、KWallet、KeePassXC 等）。没有的话程序照样能用，只是密码只留在内存里。
 
-之后 Finallyshell 会自行更新；`.deb` 除外，装新的 `.deb` 就是更新。0.2.0 及更早的版本不能自行更新：手动安装一次新版本。
+之后 XTerm 会从本仓库的 Releases 检查并自行更新；`.deb` 除外，装新的 `.deb` 就是更新。
 
 ## 功能
 
@@ -204,7 +199,7 @@ locale 不是 UTF-8 的服务器也能用：终端可以转换 GBK、GB18030、B
 
 **macOS 提示应用已损坏、无法打开。** 还没有公证，运行[安装](#安装)里的 `xattr` 命令。
 
-**主机和密码存在哪里？** 主机和设置是用户配置目录里的 JSON 文件（macOS 是 `~/Library/Application Support/finallyshell`，Windows 是 `%AppData%\finallyshell`，Linux 是 `~/.config/finallyshell`）。密码在系统钥匙串里，服务名是 `finallyshell`。详见 [docs/zh-CN/configuration.md](docs/zh-CN/configuration.md)。
+**主机和密码存在哪里？** 主机和设置是用户配置目录里的 JSON 文件（macOS 是 `~/Library/Application Support/XTerm`，Windows 是 `%AppData%\XTerm`，Linux 是 `~/.config/XTerm`）。密码在系统钥匙串里，服务名是 `xterm`。详见 [docs/zh-CN/configuration.md](docs/zh-CN/configuration.md)。
 
 **监控面板一直是空的。** 监控读 `/proc`，只支持 Linux 服务器。有些跳板机不允许它额外开的通道，可以在这个主机的设置里关掉“启用 exec 通道（服务器监控）”。
 
@@ -215,11 +210,11 @@ locale 不是 UTF-8 的服务器也能用：终端可以转换 GBK、GB18030、B
 需要 Go 1.27.3 或更新的版本。
 
 ```bash
-git clone https://github.com/TooonyChen/finallyshell.git
+git clone https://github.com/HWYWL/XTerm.git
 ```
 
 ```bash
-cd finallyshell && go tool mygo dev
+cd XTerm && go tool mygo dev
 ```
 
 `go tool mygo dev` 运行程序，改了代码自动重启；`go tool mygo build` 打包到 `build/<平台>/`。第一次运行会把 libghostty-vt 下载到用户缓存目录。测试、发布和代码结构见 [docs/zh-CN/development.md](docs/zh-CN/development.md)。
@@ -238,7 +233,7 @@ cd finallyshell && go tool mygo dev
 
 ## 许可证
 
-Finallyshell 公开源码，但不是 OSI 定义的开源软件。你可以在下面两个许可证里任选一个（全文见 [LICENSE](LICENSE)）：
+XTerm 公开源码，但不是 OSI 定义的开源软件。你可以在下面两个许可证里任选一个（全文见 [LICENSE](LICENSE)）：
 
 - [PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0)：任何非商业用途，包括 fork、修改和分享。
 - [PolyForm Internal Use 1.0.0](https://polyformproject.org/licenses/internal-use/1.0.0)：你和你的公司内部使用，可以修改，但不能对外分发。在公司上班时用它连服务器属于这一种。

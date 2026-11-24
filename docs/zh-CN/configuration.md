@@ -2,7 +2,7 @@
 
 [English](../en/configuration.md) · 简体中文
 
-Finallyshell 把主机和设置存在普通的 JSON 文件里。密码从不写进去，存在系统的凭据存储里。这一页说明这些文件，每项设置背后的选项见 [features.md](features.md)。
+XTerm 把主机和设置存在普通的 JSON 文件里。密码从不写进去，存在系统的凭据存储里。这一页说明这些文件，每项设置背后的选项见 [features.md](features.md)。
 
 - [配置目录](#配置目录)
 - [hosts.json](#hostsjson)
@@ -21,7 +21,7 @@ Finallyshell 把主机和设置存在普通的 JSON 文件里。密码从不写�
 
 ## 配置目录
 
-所有文件都在 `<用户配置目录>/finallyshell/` 里，用户配置目录是 Go 的 `os.UserConfigDir()`：macOS 上是 `~/Library/Application Support`，Windows 上是 `%APPDATA%`，Linux 上是 `$XDG_CONFIG_HOME` 或 `~/.config`。设了环境变量 `FINALLYSHELL_DIR` 时，改用那个目录。
+所有文件都在 `<用户配置目录>/XTerm/` 里，用户配置目录是 Go 的 `os.UserConfigDir()`：macOS 上是 `~/Library/Application Support`，Windows 上是 `%APPDATA%`，Linux 上是 `$XDG_CONFIG_HOME` 或 `~/.config`。设了环境变量 `FINALLYSHELL_DIR` 时，改用那个目录。
 
 | 文件 | 内容 |
 |---|---|
@@ -42,7 +42,7 @@ Finallyshell 把主机和设置存在普通的 JSON 文件里。密码从不写�
 
 `mygo dev`、`go run` 和安装版用的是同一个目录，所以共用主机和设置。
 
-编辑器下载下来、要用默认程序打开的文件不放在这里，而是放在缓存目录：`<缓存目录>/finallyshell/opened/<时间>/`。超过一天的文件夹在下次这样打开文件时删掉。
+编辑器下载下来、要用默认程序打开的文件不放在这里，而是放在缓存目录：`<缓存目录>/XTerm/opened/<时间>/`。超过一天的文件夹在下次这样打开文件时删掉。
 
 ## hosts.json
 
@@ -166,11 +166,11 @@ Finallyshell 把主机和设置存在普通的 JSON 文件里。密码从不写�
 | `geoLocationsV6` | IPv6 数据的同样设置。 | 第一次出现 IPv6 对端时询问。 |
 | `geoOnline` | `true` 在线查询（ip-api.com）数据中没有城市或运营商的地址。 | 关闭。 |
 | `sidebarWidth`、`treeWidth` | 左边栏和文件面板目录树的宽度，最后一次拖动的结果。 | 程序的默认值。 |
-| `monitorPercent`、`terminalPercent` | 服务器监控占左边栏的比例、终端占主区域的比例，单位是百分比。 | 程序的默认值。 |
+| `monitorPercent`、`terminalPercent` | 终端占主区域的比例，单位是百分比；`monitorPercent` 只为兼容旧版本保留，服务器监控已不和会话列表分左边栏。 | 程序的默认值。 |
 | `monitorHidden` | 在服务器监控的右键菜单里隐藏的部分，对所有主机都一样：`uptime`、`cpu`、`processes`、`network`、`latency`、`disks` 中的任意几个，比如 `["processes", "disks"]`。以后版本新增的部分在隐藏之前都显示。 | 全部显示。 |
 | `procListPercent`、`procFieldsPercent` | “进程”页里进程列表（在详情上方）所占的比例，和详情里字段（在环境变量旁边）所占的比例，单位是百分比。 | 程序的默认值。 |
 | `netListPercent` | “网络”页里表格（在连接和路由追踪标签上方）所占的比例，单位是百分比。 | 程序的默认值。 |
-| `sidebarHidden` | `true` 隐藏整个左侧栏（服务器监控和会话列表），终端占满宽度。 | 显示。 |
+| `sidebarHidden` | `true` 隐藏整个左侧栏，终端占满宽度。 | 显示。 |
 | `bottomPanelHidden` | `true` 把终端下方的底部面板收起，只留一行标签；面板在右边时隐藏右边那一栏。 | 展开。 |
 | `bottomPanelSide` | `right` 把底部面板放到终端右边的一栏。 | `""`，在终端下方。 |
 | `rightPanelWidth` | 终端右边那一栏的宽度，单位 DIP，最后一次拖动的结果。 | 程序的默认值（460）。 |
@@ -181,7 +181,7 @@ Finallyshell 把主机和设置存在普通的 JSON 文件里。密码从不写�
 | `commandEditorPercent` | 命令页太窄、命令编辑器放在按钮下面时，命令按钮占命令页高度的比例，单位是百分比。 | 程序的默认值（40）。 |
 | `commandEditorNoEnter` | `true` 关掉命令编辑器的“每行发送后按回车”：发送的最后一行不带回车。 | 每一行都执行。 |
 | `commandEditorClear` | `true` 打开命令编辑器的“发送后清空”。 | 关闭。 |
-| `leftPanelPage` | `connections` 在左下面板显示“连接”页。 | 会话标签。 |
+| `leftPanelPage` | `system` 或 `connections` 在左侧栏显示服务器监控或“连接”页。 | 会话列表。 |
 | `connectionTreeExpanded` | “连接”页里展开的文件夹的 ID，如 `["f1730000000000000000"]`；`[]` 表示全部收起。按 ID 记，文件夹改名或移动后仍保持展开。 | 全部展开。 |
 | `sync` | “同步”页的设置（见[同步](#同步)）。 | 不同步。 |
 
@@ -244,7 +244,7 @@ Finallyshell 把主机和设置存在普通的 JSON 文件里。密码从不写�
 
 ## updater.json
 
-更新窗口的选择（见[更新](features.md#更新)）由 MyGo 的 updater 插件保存在 `updater.json`，它在应用的用户数据文件夹，不在上面的配置目录：macOS 上是 `~/Library/Application Support/Finallyshell`（macOS 默认的文件系统不分大小写，所以和配置目录是同一个），Windows 上是 `%APPDATA%\Finallyshell`，Linux 上是 `$XDG_CONFIG_HOME/Finallyshell` 或 `~/.config/Finallyshell`。`FINALLYSHELL_DIR` 不影响它。
+更新窗口的选择（见[更新](features.md#更新)）由 MyGo 的 updater 插件保存在 `updater.json`，它在应用的用户数据文件夹，不在上面的配置目录：macOS 上是 `~/Library/Application Support/XTerm`（macOS 默认的文件系统不分大小写，所以和配置目录是同一个），Windows 上是 `%APPDATA%\XTerm`，Linux 上是 `$XDG_CONFIG_HOME/XTerm` 或 `~/.config/XTerm`。`FINALLYSHELL_DIR` 不影响它。
 
 | 键 | 含义 | 默认（没有这个键时） |
 |---|---|---|
@@ -262,7 +262,7 @@ Finallyshell 把主机和设置存在普通的 JSON 文件里。密码从不写�
 ```json
 "updates": {
   "publicKey": "fwcqse2POLiSdWytl0BHeURrztxcDObwmos+4IlTqHQ=",
-  "github": "TooonyChen/finallyshell"
+  "github": "HWYWL/XTerm"
 }
 ```
 
@@ -271,7 +271,7 @@ Finallyshell 把主机和设置存在普通的 JSON 文件里。密码从不写�
 
 ## 密码存在哪里
 
-密码和私钥密码用 MyGo 的 `mygo.Secrets` 存在系统的凭据存储里，由系统为当前用户加密。服务名是 `finallyshell`，不是应用的 identifier：这样 `mygo dev`、`go run` 和安装版用的是同一份，和它们共用 `hosts.json` 一样。键是：
+密码和私钥密码用 MyGo 的 `mygo.Secrets` 存在系统的凭据存储里，由系统为当前用户加密。服务名是 `xterm`，不是应用的 identifier：这样 `mygo dev`、`go run` 和安装版用的是同一份，和它们共用 `hosts.json` 一样。键是：
 
 - `host/<主机 ID>/password`：密码；
 - `host/<主机 ID>/passphrase`：私钥密码；
@@ -283,9 +283,9 @@ Finallyshell 把主机和设置存在普通的 JSON 文件里。密码从不写�
 
 | 系统 | 存在哪里 | 怎么查看 |
 |---|---|---|
-| macOS | 登录钥匙串里的通用密码，名称（服务）是 `finallyshell`，账户是键 | “钥匙串访问” |
-| Windows | 凭据管理器里的普通凭据，目标是 `finallyshell/<键>` | 控制面板 → 凭据管理器 → Windows 凭据 |
-| Linux | Secret Service（GNOME Keyring、KWallet、KeePassXC 等，通过 libsecret），属性 `service` 是 `finallyshell`，`account` 是键 | “密码和密钥”（Seahorse），或 `secret-tool lookup service finallyshell account host/<主机 ID>/password` |
+| macOS | 登录钥匙串里的通用密码，名称（服务）是 `xterm`，账户是键 | “钥匙串访问” |
+| Windows | 凭据管理器里的普通凭据，目标是 `XTerm/<键>` | 控制面板 → 凭据管理器 → Windows 凭据 |
+| Linux | Secret Service（GNOME Keyring、KWallet、KeePassXC 等，通过 libsecret），属性 `service` 是 `xterm`，`account` 是键 | “密码和密钥”（Seahorse），或 `secret-tool lookup service xterm account host/<主机 ID>/password` |
 
 密码是这样用的：
 

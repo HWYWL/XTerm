@@ -2,7 +2,7 @@
 
 English · [简体中文](../zh-CN/development.md)
 
-How to build, test and release Finallyshell, and how the code is laid
+How to build, test and release XTerm, and how the code is laid
 out. The repository rules (issues first, branch names, commit messages,
 pull requests) are in [CONTRIBUTING.md](../../CONTRIBUTING.md) and
 [CLAUDE.md](../../CLAUDE.md).
@@ -24,7 +24,7 @@ pull requests) are in [CONTRIBUTING.md](../../CONTRIBUTING.md) and
 
 ## Running
 
-Finallyshell needs Go 1.27.3 or later. The UI is
+XTerm needs Go 1.27.3 or later. The UI is
 [MyGo](https://github.com/egoist/mygo)'s native UI, and the terminal is
 MyGo's terminal plugin, built on libghostty-vt, which is loaded at run
 time, so no cgo is needed.
@@ -110,7 +110,7 @@ editor) come from the existing tests of those windows.
 
 ## Website
 
-The project site, <https://tooonychen.github.io/finallyshell/>, is the
+The project site, <https://hwywl.github.io/XTerm/>, is the
 static pages in `site/`: `index.html` in English, `zh-CN/index.html` in
 Simplified Chinese and one `style.css`, with no build step and no
 scripts. It shows the screenshots of `docs/screenshots/` and
@@ -153,7 +153,7 @@ then push main to the `production` branch.
    from. Keep each bullet on one line, so no line break puts a space
    inside Chinese text. `TestChangelogFile` (tools/release) checks the file
    in every pull request: its headings are versions, newest first, and
-   the newest section has both parts. The file starts at 0.2.1; earlier
+   the newest section has both parts. The file starts at 0.0.1; earlier
    versions' notes are on their GitHub releases.
 2. Merge it, then:
 
@@ -176,8 +176,8 @@ then push main to the `production` branch.
    the version: a breaking change (`feat!:`, `BREAKING CHANGE:`) calls
    for a major bump (minor before 1.0), a `feat` for a minor one, `fix`
    and `perf` for a patch. A version lower than that is a warning on the
-   run, and the release goes on: 0.2.1, after the `feat` commits since
-   0.2.0, is one.
+   run, and the release goes on: 0.0.2, after the `feat` commits since
+   0.0.1, is one.
 2. Runs the same checks as pull requests (`.github/workflows/ci.yml`:
    gofmt, `go vet`, `go tool mygo vet`, `go test -race`).
 3. Builds for five platforms (`.github/workflows/build.yml`, which
@@ -196,7 +196,7 @@ then push main to the `production` branch.
    The build has the secret key `MYGO_UPDATER_PRIVATE_KEY` (see
    [Signing updates](#signing-updates)), so `mygo build` also writes each
    platform's update: the app as an archive
-   (`finallyshell-<version>-<platform>.tar.gz`), deltas from the last
+   (`xterm-<version>-<platform>.tar.gz`), deltas from the last
    three releases that have updates (`…-<from>-to-<version>-….delta`) and
    the manifest `update-<platform>.json`, which names them with their
    signatures. The manifest's notes, which the update window shows, are
@@ -266,7 +266,7 @@ workflow).
 4. It tags `v<version>` on the commit and publishes a GitHub prerelease
    titled `<version>` with the installers, `SHA256SUMS` and the licenses.
    The Debian packages' names have a `~`
-   (`finallyshell_0.4.1~preview.3_amd64.deb`, the Debian version), which
+   (`xterm_0.4.1~preview.3_amd64.deb`, the Debian version), which
    GitHub turns into a dot in an asset's name; the job renames them so
    first, and `SHA256SUMS` names the files as published.
    Its notes say, in English and Chinese, which commit it is and that it
@@ -287,7 +287,7 @@ installed from a preview is offered the next release.
 
 Installed apps accept only updates signed with the project's Ed25519 key
 (MyGo's [auto-updates](https://github.com/egoist/mygo/blob/main/docs/updates.md)).
-The owner made it with `mygo keygen` on 2026-11-08:
+The owner made it with `mygo keygen` on 2026-11-24:
 
 - The secret key is the repository secret `MYGO_UPDATER_PRIVATE_KEY`, and
   the owner keeps a copy. It is never committed, and never written to
@@ -312,14 +312,14 @@ key and serve them from your machine:
 1. `go tool mygo keygen -o /tmp/keys`, and in a copy of `mygo.json` set
    `updates` to that public key and `"url": "https://localhost:8443/u"`.
    A build with a key needs its version's section in `CHANGELOG.md`, so
-   add `## 0.2.0` and `## 0.3.0` sections to a scratch copy, or point
+   add `## 0.0.1` and `## 0.0.2` sections to a scratch copy, or point
    `updates.changelog` at a file that has them.
 2. With `MYGO_UPDATER_PRIVATE_KEY="$(cat /tmp/keys/mygo-update.key)"`,
-   build version 0.2.0 (`go tool mygo build -o dist-old`), serve its
+   build version 0.0.1 (`go tool mygo build -o dist-old`), serve its
    archive and manifest over HTTPS from `u/` with a self-signed
-   certificate for `localhost`, then build 0.3.0, which makes a delta from
-   the served 0.2.0. Serve its archive, delta and manifest.
-3. Extract the 0.2.0 archive to `~/.local/finallyshell.app` (under a
+   certificate for `localhost`, then build 0.0.2, which makes a delta from
+   the served 0.0.1. Serve its archive, delta and manifest.
+3. Extract the 0.0.1 archive to `~/.local/xterm.app` (under a
    separate `HOME`) and start it with `SSL_CERT_FILE` naming a bundle that
    includes the certificate, and `NO_PROXY=localhost`. The update window
    shows after 10 seconds. `{"automaticDownloads": true}` in

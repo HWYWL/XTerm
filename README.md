@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="resources/icon.png" width="64" height="64" alt="" align="center">&nbsp;Finallyshell
+  <img src="resources/icon.png" width="64" height="64" alt="" align="center">&nbsp;XTerm
 </h1>
 
 <p align="center">
@@ -7,14 +7,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/TooonyChen/finallyshell/releases/latest"><img src="https://img.shields.io/github/v/release/TooonyChen/finallyshell?label=release" alt="Latest release"></a>
-  <a href="https://github.com/TooonyChen/finallyshell/actions/workflows/ci.yml"><img src="https://github.com/TooonyChen/finallyshell/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/HWYWL/XTerm/releases/latest"><img src="https://img.shields.io/github/v/release/HWYWL/XTerm?label=release" alt="Latest release"></a>
+  <a href="https://github.com/HWYWL/XTerm/actions/workflows/ci.yml"><img src="https://github.com/HWYWL/XTerm/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey" alt="macOS, Windows, Linux">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-PolyForm%20Noncommercial-blue" alt="License"></a>
-  <br>
-  <a href="https://awesomemygo.dev/apps/finallyshell"><img src="https://awesomemygo.dev/badge.svg" alt="Listed on Awesome MyGo"></a>
-  <br>
-  <a href="https://trendshift.io/repositories/343771?utm_source=trendshift-badge&amp;utm_medium=badge&amp;utm_campaign=badge-trendshift-343771" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/trendshift/repositories/343771/daily?language=Go" alt="TooonyChen%2Ffinallyshell | Trendshift" width="250" height="55"/></a>
 </p>
 
 <p align="center">
@@ -24,59 +20,55 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/main-en.png" alt="Finallyshell's main window: server monitor, session list, terminal and file panel">
+  <img src="docs/screenshots/main-en.png" alt="XTerm's main window: server monitor, session list, terminal and file panel">
 </p>
 
-If you have used FinalShell, you already know your way around: server stats at the top left, sessions under them, the terminal on the right and the remote files below it. Finallyshell keeps that layout and puts the session tabs in a vertical list you can scroll and drag to reorder.
+If you have used FinalShell, you already know your way around: the server stats, the sessions and the saved connections on tabs at the left, the terminal on the right and the remote files below it. XTerm keeps that layout and puts the session tabs in a vertical list you can scroll and drag to reorder.
 
 It is a native app written in Go with the [MyGo](https://github.com/egoist/mygo) UI toolkit, so there's no Java runtime to install. The terminal is libghostty-vt, the terminal engine of [Ghostty](https://ghostty.org). Passwords go to the system's keychain, never to a file.
 
 ## About this repository
 
-This repository is a **secondary development** based on the open source
-project [Finallyshell](https://github.com/TooonyChen/finallyshell): the
-layout, the code and the documentation come from it, and this fork changes
-and adds to them. Copyright of the original work belongs to Tony Chen and
-the Finallyshell contributors. The licenses in [LICENSE](LICENSE) still
-apply: PolyForm Noncommercial License 1.0.0 for noncommercial use, or
-PolyForm Internal Use License 1.0.0 for internal business use. Bugs of this
-fork belong in this repository's issues, not in the upstream project's.
+XTerm is a **secondary development** based on the open source project
+[FinalShell](https://github.com/TooonyChen/finallyshell): the layout, the code
+and the documentation come from it, and this fork changes and adds to them.
+Copyright of the original work belongs to Tony Chen and the FinalShell
+contributors. The licenses in [LICENSE](LICENSE) still apply: PolyForm
+Noncommercial License 1.0.0 for noncommercial use, or PolyForm Internal Use
+License 1.0.0 for internal business use. Bugs of this fork belong in this
+repository's issues, not in the upstream project's.
 
-> [!IMPORTANT]
-> The upstream project's only official places are
-> [its repository](https://github.com/TooonyChen/finallyshell) and its site,
-> [tooonychen.github.io/finallyshell](https://tooonychen.github.io/finallyshell/),
-> and [Releases](https://github.com/TooonyChen/finallyshell/releases) there
-> is the only official download of the upstream app. Any other site that
-> offers downloads under the Finallyshell name is not affiliated with it.
+XTerm keeps its own version line, starting at **0.0.1**. The upstream
+project's releases are separate and stay in
+[its repository](https://github.com/TooonyChen/finallyshell/releases).
 
 ## Install
 
-Download the latest build from [Releases](https://github.com/TooonyChen/finallyshell/releases/latest):
+Download the latest build from [Releases](https://github.com/HWYWL/XTerm/releases/latest):
 
 | System | File |
 |---|---|
-| macOS (Apple silicon) | `finallyshell-<version>-arm64.dmg` |
-| macOS (Intel) | `finallyshell-<version>-amd64.dmg` |
-| Windows (x64) | `finallyshell-setup-<version>-amd64.exe`, or the portable `.zip` |
-| Debian, Ubuntu (x64) | `finallyshell_<version>_amd64.deb` |
-| Other Linux (x64) | `finallyshell-<version>-linux-amd64.tar.gz`; `sh install.sh` installs it in `~/.local` |
-| Debian, Ubuntu (ARM64) | `finallyshell_<version>_arm64.deb` |
-| Other Linux (ARM64) | `finallyshell-<version>-linux-arm64.tar.gz`; `sh install.sh` installs it in `~/.local` |
+| macOS (Apple silicon) | `xterm-<version>-arm64.dmg` |
+| macOS (Intel) | `xterm-<version>-amd64.dmg` |
+| Windows (x64) | `xterm-setup-<version>-amd64.exe`, or the portable `.zip` |
+| Debian, Ubuntu (x64) | `xterm_<version>_amd64.deb` |
+| Other Linux (x64) | `xterm-<version>-linux-amd64.tar.gz`; `sh install.sh` installs it in `~/.local` |
+| Debian, Ubuntu (ARM64) | `xterm_<version>_arm64.deb` |
+| Other Linux (ARM64) | `xterm-<version>-linux-arm64.tar.gz`; `sh install.sh` installs it in `~/.local` |
 
-To try what's on main before it's released, every merge also publishes a preview build on the [Releases](https://github.com/TooonyChen/finallyshell/releases) page, marked Pre-release. Installed apps don't update to previews; download them by hand.
+To try what's on main before it's released, every merge also publishes a preview build on the [Releases](https://github.com/HWYWL/XTerm/releases) page, marked Pre-release. Installed apps don't update to previews; download them by hand.
 
 The macOS app isn't notarized by Apple yet, so macOS blocks it the first time you open it. After dragging it to Applications, run:
 
 ```bash
-xattr -dr com.apple.quarantine /Applications/Finallyshell.app
+xattr -dr com.apple.quarantine /Applications/XTerm.app
 ```
 
 or open System Settings › Privacy & Security and click "Open Anyway". Windows SmartScreen may warn about the unsigned installer: click "More info", then "Run anyway".
 
 On Linux, the tray icon needs `libayatana-appindicator3`, and remembering passwords needs a Secret Service keyring (GNOME Keyring, KWallet, KeePassXC). Without them the app still works; it just keeps passwords in memory.
 
-After that, Finallyshell updates itself, except the `.deb`, which you update by installing the new one. Versions up to 0.2.0 can't: install a newer release by hand once.
+After that, XTerm checks this repository's Releases for updates and installs them, except the `.deb`, which you update by installing the new one.
 
 ## Features
 
@@ -214,7 +206,7 @@ The defaults follow FinalShell; the panes' follow Ghostty on macOS and Windows T
 
 **macOS says the app is damaged or can't be opened.** It isn't notarized yet. Run the `xattr` command under [Install](#install).
 
-**Where are my hosts and passwords stored?** Hosts and settings are JSON files in your user config folder (`~/Library/Application Support/finallyshell` on macOS, `%AppData%\finallyshell` on Windows, `~/.config/finallyshell` on Linux). Passwords are in the system keychain under the service name `finallyshell`. See [docs/en/configuration.md](docs/en/configuration.md).
+**Where are my hosts and passwords stored?** Hosts and settings are JSON files in your user config folder (`~/Library/Application Support/XTerm` on macOS, `%AppData%\XTerm` on Windows, `~/.config/XTerm` on Linux). Passwords are in the system keychain under the service name `xterm`. See [docs/en/configuration.md](docs/en/configuration.md).
 
 **The monitor panel stays empty.** It reads `/proc` and works only with Linux servers. Some jump hosts refuse the extra channel it opens: turn off "Enable exec channel (server monitor)" for that host.
 
@@ -225,11 +217,11 @@ The defaults follow FinalShell; the panes' follow Ghostty on macOS and Windows T
 You need Go 1.27.3 or later.
 
 ```bash
-git clone https://github.com/TooonyChen/finallyshell.git
+git clone https://github.com/HWYWL/XTerm.git
 ```
 
 ```bash
-cd finallyshell && go tool mygo dev
+cd XTerm && go tool mygo dev
 ```
 
 `go tool mygo dev` runs the app and restarts it when the code changes; `go tool mygo build` packages it in `build/<platform>/`. The first run downloads libghostty-vt into your user cache folder. [docs/en/development.md](docs/en/development.md) covers tests, releases and the code's layout.
@@ -248,7 +240,7 @@ Thanks to:
 
 ## License
 
-Finallyshell is source-available, not open source as the OSI defines it. You may use it under either of these licenses ([LICENSE](LICENSE) has the full text):
+XTerm is source-available, not open source as the OSI defines it. You may use it under either of these licenses ([LICENSE](LICENSE) has the full text):
 
 - [PolyForm Noncommercial 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0): any noncommercial use, including forking, changing and sharing it.
 - [PolyForm Internal Use 1.0.0](https://polyformproject.org/licenses/internal-use/1.0.0): use inside your own company, changes included, without distributing it. Using it to manage servers at work falls under this one.

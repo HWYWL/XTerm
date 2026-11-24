@@ -2,7 +2,7 @@
 
 [English](../en/development.md) · 简体中文
 
-怎样编译、测试和发布 Finallyshell，以及代码是怎么组织的。仓库的规则（先开 issue、分支名、提交信息、pull request）见 [CONTRIBUTING.md](../../CONTRIBUTING.md) 和 [CLAUDE.md](../../CLAUDE.md)。
+怎样编译、测试和发布 XTerm，以及代码是怎么组织的。仓库的规则（先开 issue、分支名、提交信息、pull request）见 [CONTRIBUTING.md](../../CONTRIBUTING.md) 和 [CLAUDE.md](../../CLAUDE.md)。
 
 - [运行](#运行)
 - [测试](#测试)
@@ -21,7 +21,7 @@
 
 ## 运行
 
-Finallyshell 需要 Go 1.27.3+。界面用 [MyGo](https://github.com/egoist/mygo) 的原生 UI，终端是 MyGo 的 terminal 插件，底层是 libghostty-vt，运行时加载，所以不需要 cgo。
+XTerm 需要 Go 1.27.3+。界面用 [MyGo](https://github.com/egoist/mygo) 的原生 UI，终端是 MyGo 的 terminal 插件，底层是 libghostty-vt，运行时加载，所以不需要 cgo。
 
 ```sh
 go tool mygo dev     # 开发模式，改代码自动重启
@@ -76,7 +76,7 @@ go run ./tools/screenshots
 
 ## 网站
 
-项目网站 <https://tooonychen.github.io/finallyshell/> 是 `site/` 里的静态页面：英文的 `index.html`、简体中文的 `zh-CN/index.html` 和一份 `style.css`，没有构建步骤，也没有脚本。它用的是 `docs/screenshots/` 里的截图和 `resources/icon.png`，由 `site/build.sh` 复制到页面旁边。本地查看：
+项目网站 <https://hwywl.github.io/XTerm/> 是 `site/` 里的静态页面：英文的 `index.html`、简体中文的 `zh-CN/index.html` 和一份 `style.css`，没有构建步骤，也没有脚本。它用的是 `docs/screenshots/` 里的截图和 `resources/icon.png`，由 `site/build.sh` 复制到页面旁边。本地查看：
 
 ```sh
 sh site/build.sh && python3 -m http.server -d _site
@@ -102,7 +102,7 @@ sh site/build.sh && python3 -m http.server -d _site
    - …
    ```
 
-   标题是版本号，格式是 `MAJOR.MINOR.PATCH`，要比上一个 `v*` tag 高，由所有者决定。两部分都要有：每次发布的说明都有英文和简体中文。写用户看得到、用得到的变化，不要照搬提交标题；`go run ./tools/release draft` 会列出上一个 tag 之后的 `feat`、`fix`、`perf` 和破坏性改动的提交，可以从这里开始写。每条写在一行里，免得换行在中文里多出空格。tools/release 的 `TestChangelogFile` 在每个 PR 里检查这个文件：标题都是版本号、新的在前，最新的一节两种语言都有。这个文件从 0.2.1 开始，更早版本的说明在它们的 GitHub Release 上。
+   标题是版本号，格式是 `MAJOR.MINOR.PATCH`，要比上一个 `v*` tag 高，由所有者决定。两部分都要有：每次发布的说明都有英文和简体中文。写用户看得到、用得到的变化，不要照搬提交标题；`go run ./tools/release draft` 会列出上一个 tag 之后的 `feat`、`fix`、`perf` 和破坏性改动的提交，可以从这里开始写。每条写在一行里，免得换行在中文里多出空格。tools/release 的 `TestChangelogFile` 在每个 PR 里检查这个文件：标题都是版本号、新的在前，最新的一节两种语言都有。这个文件从 0.0.1 开始，更早版本的说明在它们的 GitHub Release 上。
 2. 合并以后运行：
 
    ```sh
@@ -113,11 +113,11 @@ sh site/build.sh && python3 -m http.server -d _site
 
 1. 算版本号（`go run ./tools/release version`）：`CHANGELOG.md` 最新的一节，比上一个 `v*` tag 新的时候就是要发布的版本。这个版本已经打过 tag 时没有要发布的，workflow 到这里结束，所以没有新的一节就推 main，或者重新运行 workflow，都不会发布。这一节比上一个 tag 旧、有标题不是版本号、或者缺英文或中文部分时失败，这时什么都还没编译。还没有 tag 时，最新的一节就是第一次发布。
 
-   上一个 tag 之后的提交类型（Conventional Commits）只用来核对版本号：破坏性改动（`feat!:`、`BREAKING CHANGE:`）应该升主版本（1.0 之前升次版本），`feat` 升次版本，`fix` 和 `perf` 升修订号。版本号比这个低时在运行记录里给出警告，照样发布：0.2.0 之后有 `feat` 提交，0.2.1 就是这种情况。
+   上一个 tag 之后的提交类型（Conventional Commits）只用来核对版本号：破坏性改动（`feat!:`、`BREAKING CHANGE:`）应该升主版本（1.0 之前升次版本），`feat` 升次版本，`fix` 和 `perf` 升修订号。版本号比这个低时在运行记录里给出警告，照样发布：0.0.1 之后有 `feat` 提交，0.0.2 就是这种情况。
 2. 跑和 PR 一样的检查（`.github/workflows/ci.yml`：gofmt、`go vet`、`go tool mygo vet`、`go test -race`）。
 3. 编译五个平台（`.github/workflows/build.yml`，[预览版](#预览版)也用它，只是不签名）：macOS arm64 和 Intel x86_64 在 macOS runner 上（ad hoc 签名、dmg），Linux x86_64、Linux arm64 和 Windows x86_64 在 Linux runner 上交叉编译（Windows 安装程序用 apt 装的 NSIS）。两个 Linux 版本写出的 `install.sh` 相同，它按 `uname -m` 选压缩包，发布里只有一份。版本号只在 runner 里写进 `mygo.json`，main 上的不改。`LICENSE` 和第三方许可证（`go run ./tools/release licenses`）放进 `resources/`，随应用一起打包。
 
-   编译时有私钥 `MYGO_UPDATER_PRIVATE_KEY`（见[给更新签名](#给更新签名)），所以 `mygo build` 还会写出每个平台的更新：打成压缩包的应用（`finallyshell-<版本>-<平台>.tar.gz`）、从最近三个有更新的发布出发的增量更新（`…-<旧版本>-to-<版本>-….delta`），以及列出它们和签名的清单 `update-<平台>.json`。清单里的说明就是 `CHANGELOG.md` 里这个版本的一节，更新窗口显示的也是它；没有这一节 `mygo build` 会失败。没有这个 secret、没有清单、清单不是这个版本、这个发布的，或者清单里的说明和 `go run ./tools/release notes <版本>` 不一样，任务失败；否则把清单和它列出的文件跟安装包放在一起。
+   编译时有私钥 `MYGO_UPDATER_PRIVATE_KEY`（见[给更新签名](#给更新签名)），所以 `mygo build` 还会写出每个平台的更新：打成压缩包的应用（`xterm-<版本>-<平台>.tar.gz`）、从最近三个有更新的发布出发的增量更新（`…-<旧版本>-to-<版本>-….delta`），以及列出它们和签名的清单 `update-<平台>.json`。清单里的说明就是 `CHANGELOG.md` 里这个版本的一节，更新窗口显示的也是它；没有这一节 `mygo build` 会失败。没有这个 secret、没有清单、清单不是这个版本、这个发布的，或者清单里的说明和 `go run ./tools/release notes <版本>` 不一样，任务失败；否则把清单和它列出的文件跟安装包放在一起。
 
    `mygo build` 从 GitHub 下载每个目标平台的原生库（libghostty-vt），放进缓存目录的 `mygo/natives` 文件夹（macOS runner 上是 `~/Library/Caches/mygo/natives`，Linux runner 上是 `~/.cache/mygo/natives`），遇到超时就放弃。这个任务在两次运行之间保留这个文件夹，按 runner 的系统、目标平台和 `go.sum` 区分，编译成功后保存。编译由 `.github/scripts/build-with-retries.sh` 运行：下载失败时（输出以 `error: downloading …` 结尾）它会重新编译，最多试十分钟，两次之间依次等 15、30 秒，之后每次等 60 秒，时间到了就报最后一次的错误；失败之前下载好的文件留在缓存里，下一次只下载还缺的。其他错误立即让编译失败。`.github/scripts/build-with-retries-test.sh` 用一个假的 `mygo` 测试这个脚本。一个平台失败不会取消其他平台（`fail-fast: false`）；五个平台都编译成功才会发布。
 4. 检查五个平台的清单都在，然后打 tag `v<版本>`，发布 GitHub Release，附上安装包、更新文件、`SHA256SUMS`、`LICENSE.txt`、`THIRD_PARTY_LICENSES.txt`。说明是这个版本的一节（`go run ./tools/release notes <版本>`），后面接上 `.github/release-install.md`，即中英文的安装说明。发布是正式发布，不是草稿，因为已安装的应用读取的是最新发布的清单；`gh release create` 上传文件期间让它保持草稿，所以应用不会看到压缩包还没上传的清单。
@@ -131,14 +131,14 @@ sh site/build.sh && python3 -m http.server -d _site
 1. 版本号是上一个发布的版本号把修订号加一，再加上 `-preview.<N>`，N 是那个发布的 tag 之后的提交数（`go run ./tools/release preview-version`）：v0.4.0 之后是 `0.4.1-preview.1`、`0.4.1-preview.2`……下一个发布不管是修订版还是次版本，都比它们新。第一次发布之前会是 `0.0.1-preview.<N>`，N 数的是所有提交。提交本身就是一个发布，或者已经有预览版时，不编译。预览版的 tag 永远不算上一个发布：`tools/release` 只认 `vMAJOR.MINOR.PATCH` 形式的 tag，所以发布、`version` 和 `draft` 都不看它们。
 2. 跑和 PR 一样的检查（`.github/workflows/ci.yml`），没通过的提交没有预览版。
 3. 和发布一样用 `.github/workflows/build.yml` 编译五个平台，但没有私钥：`mygo build` 不写更新文件（它会提示 "Not signing an update"），也不需要 `CHANGELOG.md` 里有这个版本的一节，任务也不检查清单。私钥不进每次合并都运行的 workflow。
-4. 在这个提交上打 tag `v<版本>`，发布标题为 `<版本>` 的 GitHub 预发布（prerelease），附上安装包、`SHA256SUMS` 和许可证。Debian 安装包的文件名里有 `~`（`finallyshell_0.4.1~preview.3_amd64.deb`，即 Debian 的版本号），GitHub 会把附件名里的 `~` 换成点；任务先这样改好文件名，`SHA256SUMS` 里的文件名就和发布的一样。说明先用中英文写明是哪个提交、不是正式发布，再列出上一个发布之后的提交（`go run ./tools/release draft`），最后接上 `.github/release-install.md`。
+4. 在这个提交上打 tag `v<版本>`，发布标题为 `<版本>` 的 GitHub 预发布（prerelease），附上安装包、`SHA256SUMS` 和许可证。Debian 安装包的文件名里有 `~`（`xterm_0.4.1~preview.3_amd64.deb`，即 Debian 的版本号），GitHub 会把附件名里的 `~` 换成点；任务先这样改好文件名，`SHA256SUMS` 里的文件名就和发布的一样。说明先用中英文写明是哪个提交、不是正式发布，再列出上一个发布之后的提交（`go run ./tools/release draft`），最后接上 `.github/release-install.md`。
 5. 按版本号保留最新的 5 个预览版，删掉更早的和它们的 tag（`.github/scripts/prune-previews.sh`），也删掉被取消的运行留下的预览版草稿。它从不动正式发布和其他预发布；`.github/scripts/prune-previews-test.sh` 用一个假的 `gh` 测试它，`--dry-run` 只列出会删什么。
 
 预发布永远不是已安装的应用检查的最新发布，应用也不接收预发布（`Updater.SetPrereleases`），所以已安装的副本不会更新到预览版：预览版要手动下载。从预览版安装的应用会收到下一个正式发布的更新。
 
 ## 给更新签名
 
-已安装的应用只接受用项目的 Ed25519 密钥签名的更新（MyGo 的[自动更新](https://github.com/egoist/mygo/blob/main/docs/updates.md)）。这个密钥是所有者 2026-11-08 用 `mygo keygen` 生成的：
+已安装的应用只接受用项目的 Ed25519 密钥签名的更新（MyGo 的[自动更新](https://github.com/egoist/mygo/blob/main/docs/updates.md)）。这个密钥是所有者 2026-11-24 用 `mygo keygen` 生成的：
 
 - 私钥是仓库的 secret `MYGO_UPDATER_PRIVATE_KEY`，所有者另外保存一份。它从不提交，也不写进 `updates.privateKey`。丢了它，所有已安装的副本都停在当前版本；拿到它的人可以给用户推送代码。
 - 公钥是 `mygo.json` 里的 `updates.publicKey`；main 包的 `TestUpdatesConfig` 检查它还在。
@@ -148,9 +148,9 @@ sh site/build.sh && python3 -m http.server -d _site
 
 不发布也能试更新：用一次性的密钥编译两个版本，从本机提供下载：
 
-1. `go tool mygo keygen -o /tmp/keys`，在 `mygo.json` 的副本里把 `updates` 设成这个公钥和 `"url": "https://localhost:8443/u"`。有密钥的编译需要 `CHANGELOG.md` 里有这个版本的一节，所以在副本里加上 `## 0.2.0` 和 `## 0.3.0` 两节，或者让 `updates.changelog` 指向有这两节的文件。
-2. 设 `MYGO_UPDATER_PRIVATE_KEY="$(cat /tmp/keys/mygo-update.key)"`，编译 0.2.0（`go tool mygo build -o dist-old`），用给 `localhost` 的自签名证书通过 HTTPS 在 `u/` 下提供它的压缩包和清单；再编译 0.3.0，它会生成从这个 0.2.0 出发的增量更新。提供它的压缩包、增量更新和清单。
-3. 把 0.2.0 的压缩包解压到 `~/.local/finallyshell.app`（用单独的 `HOME`），启动时让 `SSL_CERT_FILE` 指向包含这个证书的证书包，并设 `NO_PROXY=localhost`。10 秒后出现更新窗口。在 `updater.json` 里写 `{"automaticDownloads": true}` 就不问直接安装。
+1. `go tool mygo keygen -o /tmp/keys`，在 `mygo.json` 的副本里把 `updates` 设成这个公钥和 `"url": "https://localhost:8443/u"`。有密钥的编译需要 `CHANGELOG.md` 里有这个版本的一节，所以在副本里加上 `## 0.0.1` 和 `## 0.0.2` 两节，或者让 `updates.changelog` 指向有这两节的文件。
+2. 设 `MYGO_UPDATER_PRIVATE_KEY="$(cat /tmp/keys/mygo-update.key)"`，编译 0.0.1（`go tool mygo build -o dist-old`），用给 `localhost` 的自签名证书通过 HTTPS 在 `u/` 下提供它的压缩包和清单；再编译 0.0.2，它会生成从这个 0.0.1 出发的增量更新。提供它的压缩包、增量更新和清单。
+3. 把 0.0.1 的压缩包解压到 `~/.local/xterm.app`（用单独的 `HOME`），启动时让 `SSL_CERT_FILE` 指向包含这个证书的证书包，并设 `NO_PROXY=localhost`。10 秒后出现更新窗口。在 `updater.json` 里写 `{"automaticDownloads": true}` 就不问直接安装。
 
 试完删掉一次性的密钥。
 

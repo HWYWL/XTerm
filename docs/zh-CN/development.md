@@ -1,6 +1,6 @@
 # 开发
 
-[English](../en/development.md) · 简体中文
+简体中文
 
 怎样编译、测试和发布 XTerm，以及代码是怎么组织的。仓库的规则（先开 issue、分支名、提交信息、pull request）见 [CONTRIBUTING.md](../../CONTRIBUTING.md) 和 [CLAUDE.md](../../CLAUDE.md)。
 
@@ -66,7 +66,7 @@ SHOT_DIR=/tmp/shots go test ./internal/app
 
 ## 截图
 
-`README.md` 和 `README.zh-CN.md` 里的截图在 `docs/screenshots/`，每种语言一份（`-en.png`、`-zh-CN.png`）。重新生成它们：
+`README.md` 里的截图在 `docs/screenshots/`，用的是 `-zh-CN.png` 那一份。重新生成它们：
 
 ```sh
 go run ./tools/screenshots

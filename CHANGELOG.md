@@ -7,7 +7,7 @@ start at 0.0.1; the upstream project's history stays in
 
 Each version's notes, newest first, in English and Simplified Chinese. A
 release's notes on GitHub and in the app's update window are its section
-here; see [Releasing](docs/en/development.md#releasing).
+here; see [发布](docs/zh-CN/development.md#发布).
 
 ## 0.0.1
 

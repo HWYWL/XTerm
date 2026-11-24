@@ -3,7 +3,7 @@
 An SSH client in Go laid out like FinalShell, with vertical session tabs,
 developed from [FinalShell](https://github.com/TooonyChen/finallyshell).
 UI: MyGo native UI (`github.com/egoist/mygo/ui`); terminal: MyGo's terminal
-plugin (libghostty-vt). See docs/en/development.md for the package layout.
+plugin (libghostty-vt). See docs/zh-CN/development.md for the package layout.
 
 ## Repository rules
 
@@ -68,9 +68,7 @@ Work is issue-driven; the `issue-workflow` skill
 - Run `go vet ./...` and `go tool mygo vet` before committing.
 - Goroutines change app state only through `App.post`.
 - Docs: behavior goes in `features.md`, files and settings keys in
-  `configuration.md`, building and the code in `development.md`, each in
-  `docs/en/` and `docs/zh-CN/`: change both languages together, keeping
-  the same headings in the same order. `README.md` and `README.zh-CN.md`
-  show the headline features and must say the same thing; when a scene
-  they show changes, run `go run ./tools/screenshots` and commit
-  `docs/screenshots/`.
+  `configuration.md`, building and the code in `development.md`, all in
+  `docs/zh-CN/` and in Chinese only. `README.md` shows the headline
+  features; when a scene it shows changes, run `go run ./tools/screenshots`
+  and commit `docs/screenshots/`.

@@ -10,7 +10,7 @@ import (
 // The import window's texts of each source (import.go). The sources, and
 // their order, are importer's (importer.Readers); a source is listed once
 // it has its texts here. Adding a source is in the importer package's
-// comment and in docs/en/development.md.
+// comment and in docs/zh-CN/development.md.
 
 // importText are a source's texts in the import window.
 type importText struct {

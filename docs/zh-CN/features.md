@@ -1,6 +1,6 @@
 # 功能详解
 
-[English](../en/features.md) · 简体中文
+简体中文
 
 XTerm 基于开源项目 [FinalShell](https://github.com/TooonyChen/finallyshell)
 二次开发，自己的版本号从 0.0.1 开始，上游项目的版本历史仍在

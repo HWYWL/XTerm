@@ -1,6 +1,6 @@
 # 配置文件
 
-[English](../en/configuration.md) · 简体中文
+简体中文
 
 XTerm 把主机和设置存在普通的 JSON 文件里。密码从不写进去，存在系统的凭据存储里。这一页说明这些文件，每项设置背后的选项见 [features.md](features.md)。
 

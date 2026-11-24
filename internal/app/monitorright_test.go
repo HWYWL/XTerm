@@ -47,10 +47,12 @@ func find(t *testing.T, tt *ui.Tester, text string) ui.Rect {
 func TestMonitorOnRight(t *testing.T) {
 	a, p, tt, web, _ := panelApp(t)
 	cols0, rows0 := web.term().Size()
+	// The monitor's page has it in the left column at the start.
+	a.setLeftPage(leftSystem)
+	tt.Frame()
 	if r := find(t, tt, webIP); r.X > a.sideWidth {
 		t.Fatalf("monitor at %+v at the start", r)
 	}
-	listY := find(t, tt, "db-1").Y
 	pct := a.monitorPct
 	moveMonitor(t, tt, locales.MoveMonitorRight(), locales.MoveMonitorLeft())
 	if !a.monitorOnRight() || config.LoadSettings().MonitorSide != config.PanelRight {
@@ -64,9 +66,10 @@ func TestMonitorOnRight(t *testing.T) {
 	if r := find(t, tt, locales.DiskPath()); r.X < left {
 		t.Errorf("disks at %+v", r)
 	}
-	// The session list takes the left column.
-	if r := find(t, tt, "db-1"); r.X > a.sideWidth || r.Y >= listY || r.Y > 120 {
-		t.Errorf("db-1 at %+v, was at y %v", r, listY)
+	// The session list takes the left column: its page is the one shown.
+	listY := find(t, tt, "db-1").Y
+	if r := find(t, tt, "db-1"); r.X > a.sideWidth || r.Y > 120 {
+		t.Errorf("db-1 at %+v", r)
 	}
 	// The terminal over the panel, left of the column.
 	if r := find(t, tt, locales.TabFiles()); r.X > left || r.Y < 300 {
@@ -116,9 +119,13 @@ func TestMonitorOnRight(t *testing.T) {
 	if a.monitorPct != pct {
 		t.Errorf("monitorPct %v, was %v", a.monitorPct, pct)
 	}
+	a.setLeftPage(leftSystem)
+	tt.Frame()
 	if r := find(t, tt, webIP); r.X > a.sideWidth {
 		t.Errorf("monitor back at %+v", r)
 	}
+	a.setLeftPage(leftSessions)
+	tt.Frame()
 	if r := find(t, tt, "db-1"); r.Y != listY {
 		t.Errorf("db-1 back at %+v, was at y %v", r, listY)
 	}

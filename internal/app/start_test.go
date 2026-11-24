@@ -168,7 +168,7 @@ func TestStartPageListsRecentAndClears(t *testing.T) {
 		t.Fatalf("not on a new tab: %d rows, active %d", len(a.sessions), a.active)
 	}
 	shownInOrder(t, tt, locales.RecentHosts(), "db-1", "web-1", "backup", locales.OtherHosts(), "new-app", "ci-runner", "staging", "legacy")
-	for _, s := range []string{locales.QuickConnect(), "10.0.0.12", "postgres", locales.NewTab(), "IP -", locales.ClearRecents()} {
+	for _, s := range []string{locales.QuickConnect(), "10.0.0.12", "postgres", locales.NewTab(), locales.ClearRecents()} {
 		if !tt.HasText(s) {
 			t.Errorf("missing %q", s)
 		}
@@ -432,8 +432,10 @@ func TestNewTabRows(t *testing.T) {
 		t.Errorf("new tabs counted as sessions; texts %q", tt.Texts())
 	}
 
-	// The next-tab shortcut goes through the new tabs and the session; the side panel
-	// shows the skeleton on a new tab.
+	// The next-tab shortcut goes through the new tabs and the session; the
+	// monitor's page shows the skeleton on a new tab.
+	a.setLeftPage(leftSystem)
+	tt.Frame()
 	nextTab := a.shortcut(scNextTab)
 	for _, want := range []*Session{a.sessions[0], s, a.sessions[2]} {
 		tt.Key(nextTab.Mods, nextTab.Key)
@@ -450,6 +452,8 @@ func TestNewTabRows(t *testing.T) {
 	}
 
 	// A new tab's menu has Close alone.
+	a.setLeftPage(leftSessions)
+	tt.Frame()
 	tt.RightClickAt(rowCenter(t, tt, locales.NotConnected())) // the + button is "New tab" too
 	if items := tt.Menu(); len(items) != 1 {
 		t.Errorf("menu %q", items)
@@ -476,7 +480,7 @@ func TestNewTabRows(t *testing.T) {
 	if len(a.sessions) != 0 {
 		t.Fatalf("%d rows left", len(a.sessions))
 	}
-	if !tt.HasText(locales.QuickConnect()) || !tt.HasText(locales.NoSessions()) || !tt.HasText("IP -") {
+	if !tt.HasText(locales.QuickConnect()) || !tt.HasText(locales.NoSessions()) {
 		t.Errorf("no start page with the list empty; texts %q", tt.Texts())
 	}
 	tt.ClickAt(rowCenter(t, tt, "db-1"))

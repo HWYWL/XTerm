@@ -163,6 +163,7 @@ func TestRightPanelWidth(t *testing.T) {
 // work the same.
 func TestPanelHiddenOnRight(t *testing.T) {
 	a, p, tt, web, _ := panelApp(t)
+	a.setLeftPage(leftSystem) // the monitor's page, for its process list
 	a.setPanelOnRight(true)
 	tt.Frame()
 	cols0, rows0 := web.term().Size()

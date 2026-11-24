@@ -58,12 +58,6 @@ func dividers(a *App, tt *ui.Tester) []divider {
 			room: func() float32 { return winW - 1 },
 		},
 		{
-			name: "monitor", size: &a.monitorPct, vertical: true, percent: true, limits: monitorLimits,
-			// In the sidebar's pane of glass, above and below its gap.
-			at:   func() (float32, float32) { return a.sideWidth / 2, cardGap + a.monitorPct/100*(h-2*cardGap-1) + 0.5 },
-			room: func() float32 { return h - 2*cardGap - 1 },
-		},
-		{
 			name: "terminal", size: &a.terminalPct, vertical: true, percent: true, limits: terminalLimits,
 			at: func() (float32, float32) {
 				return mainX() + mainW()/2, mainY() + a.terminalPct/100*(mainH()-1) + 0.5
@@ -124,7 +118,7 @@ func splitApp(t *testing.T) (*App, *fakePlatform, *ui.Tester) {
 }
 
 func TestDragSplitDividers(t *testing.T) {
-	for i, name := range []string{"sidebar", "monitor", "terminal", "tree"} {
+	for i, name := range []string{"sidebar", "terminal", "tree"} {
 		t.Run(name, func(t *testing.T) {
 			a, _, tt := splitApp(t)
 			d := dividers(a, tt)[i]
@@ -166,7 +160,7 @@ func TestDragSplitDividers(t *testing.T) {
 			x, y = d.at()
 			tt.ClickAt(x, y)
 			tt.ClickAt(x, y)
-			def := map[string]float32{"sidebar": defaultSideWidth, "monitor": defaultMonitorPct, "terminal": defaultTerminalPct, "tree": defaultTreeWidth}[name]
+			def := map[string]float32{"sidebar": defaultSideWidth, "terminal": defaultTerminalPct, "tree": defaultTreeWidth}[name]
 			if !near(*d.size, def) {
 				t.Errorf("double click: size %.2f, want %v", *d.size, def)
 			}
@@ -284,7 +278,7 @@ func TestDraggingDividersResizesTerminal(t *testing.T) {
 	}
 	saveShot(t, tt, "split-sidebar-wide.png")
 
-	ds[2].drag(tt, 150) // a taller terminal
+	ds[1].drag(tt, 150) // a taller terminal
 	cols2, rows2 := told("the taller size")
 	if rows2 <= rows1 || cols2 != cols1 {
 		t.Errorf("terminal 150 DIPs taller: %dx%d, was %dx%d", cols2, rows2, cols1, rows1)
@@ -292,25 +286,21 @@ func TestDraggingDividersResizesTerminal(t *testing.T) {
 
 	// The least sizes leave the terminal a few rows, and the other panes
 	// what they show.
-	for _, i := range []int{0, 1, 2, 3} {
+	for _, i := range []int{0, 1, 2} {
 		ds[i].drag(tt, -2000)
 	}
 	if _, rows := told("the shortest size"); rows < 4 {
 		t.Errorf("shortest terminal: %d rows", rows)
 	}
-	for _, want := range []string{"IP 45.56.78.90", "Sessions (1)", "web-1", "lib64", "libacl.so.1", locales.TabTransfers()} {
+	for _, want := range []string{"Sessions (1)", "web-1", "lib64", "libacl.so.1", locales.TabTransfers()} {
 		if w, _ := shownWidth(tt, want); w < 20 {
 			t.Errorf("least panes: %q hidden (%.1f DIPs wide)", want, w)
 		}
 	}
 	saveShot(t, tt, "split-least.png")
-	ds[1].drag(tt, 2000)
-	if w, _ := shownWidth(tt, "web-1"); w < 20 {
-		t.Error("the tallest monitor hides the sessions")
-	}
 	ds[0].drag(tt, 2000)
+	ds[1].drag(tt, 2000)
 	ds[2].drag(tt, 2000)
-	ds[3].drag(tt, 2000)
 	if cols, rows := told("the smallest size"); cols < 30 || rows < 10 {
 		t.Errorf("smallest terminal with the widest sidebar: %dx%d", cols, rows)
 	}

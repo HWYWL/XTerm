@@ -11,7 +11,7 @@ import (
 // The pane sizes when none are saved, and where a double click on a
 // divider puts it back.
 const (
-	defaultSideWidth   = 240 // DIPs
+	defaultSideWidth   = 280 // DIPs, for the row of three pages' labels
 	defaultMonitorPct  = 62
 	defaultTerminalPct = 64
 	defaultTreeWidth   = 200 // DIPs

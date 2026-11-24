@@ -34,11 +34,11 @@ type Messages struct{ locale string }
 // source language.
 func In(locale string) Messages { return Messages{locale} }
 
-// AppTitle says "Finallyshell"
+// AppTitle says "XTerm"
 // in the language the app shows.
 func AppTitle() string { return In(i18n.Locale()).AppTitle() }
 
-// AppTitle says "Finallyshell"
+// AppTitle says "XTerm"
 // in the language of msgs.
 func (msgs Messages) AppTitle() string {
 	return Catalog.Format(msgs.locale, "appTitle", nil)
@@ -62,6 +62,16 @@ func Copy() string { return In(i18n.Locale()).Copy() }
 // in the language of msgs.
 func (msgs Messages) Copy() string {
 	return Catalog.Format(msgs.locale, "copy", nil)
+}
+
+// Copied says "Copied"
+// in the language the app shows.
+func Copied() string { return In(i18n.Locale()).Copied() }
+
+// Copied says "Copied"
+// in the language of msgs.
+func (msgs Messages) Copied() string {
+	return Catalog.Format(msgs.locale, "copied", nil)
 }
 
 // ReadingServerInfo says "Reading server info…"
@@ -102,6 +112,16 @@ func MonitorOff() string { return In(i18n.Locale()).MonitorOff() }
 // in the language of msgs.
 func (msgs Messages) MonitorOff() string {
 	return Catalog.Format(msgs.locale, "monitorOff", nil)
+}
+
+// System says "System"
+// in the language the app shows.
+func System() string { return In(i18n.Locale()).System() }
+
+// System says "System"
+// in the language of msgs.
+func (msgs Messages) System() string {
+	return Catalog.Format(msgs.locale, "system", nil)
 }
 
 // SystemInfo says "System info"
@@ -552,11 +572,11 @@ func (msgs Messages) NoSessions() string {
 	return Catalog.Format(msgs.locale, "noSessions", nil)
 }
 
-// LeftPanelPages says "Sessions or connections"
+// LeftPanelPages says "System, sessions or connections"
 // in the language the app shows.
 func LeftPanelPages() string { return In(i18n.Locale()).LeftPanelPages() }
 
-// LeftPanelPages says "Sessions or connections"
+// LeftPanelPages says "System, sessions or connections"
 // in the language of msgs.
 func (msgs Messages) LeftPanelPages() string {
 	return Catalog.Format(msgs.locale, "leftPanelPages", nil)
@@ -3894,11 +3914,11 @@ func (msgs Messages) BackgroundOpacityHint() string {
 	return Catalog.Format(msgs.locale, "backgroundOpacityHint", nil)
 }
 
-// BackgroundCopyNote says "Finallyshell keeps a copy of the image in its settings folder, so moving or deleting the original changes nothing. Re…"
+// BackgroundCopyNote says "XTerm keeps a copy of the image in its settings folder, so moving or deleting the original changes nothing. Remove de…"
 // in the language the app shows.
 func BackgroundCopyNote() string { return In(i18n.Locale()).BackgroundCopyNote() }
 
-// BackgroundCopyNote says "Finallyshell keeps a copy of the image in its settings folder, so moving or deleting the original changes nothing. Re…"
+// BackgroundCopyNote says "XTerm keeps a copy of the image in its settings folder, so moving or deleting the original changes nothing. Remove de…"
 // in the language of msgs.
 func (msgs Messages) BackgroundCopyNote() string {
 	return Catalog.Format(msgs.locale, "backgroundCopyNote", nil)
@@ -3914,11 +3934,11 @@ func (msgs Messages) ErrImageRead(error string) string {
 	return Catalog.Format(msgs.locale, "errImageRead", map[string]any{"error": error})
 }
 
-// ErrImageFormat says "Finallyshell cannot show this file: choose a PNG, JPEG, GIF, WebP or BMP image."
+// ErrImageFormat says "XTerm cannot show this file: choose a PNG, JPEG, GIF, WebP or BMP image."
 // in the language the app shows.
 func ErrImageFormat() string { return In(i18n.Locale()).ErrImageFormat() }
 
-// ErrImageFormat says "Finallyshell cannot show this file: choose a PNG, JPEG, GIF, WebP or BMP image."
+// ErrImageFormat says "XTerm cannot show this file: choose a PNG, JPEG, GIF, WebP or BMP image."
 // in the language of msgs.
 func (msgs Messages) ErrImageFormat() string {
 	return Catalog.Format(msgs.locale, "errImageFormat", nil)
@@ -4786,11 +4806,11 @@ func (msgs Messages) OptionAgentIconsNote() string {
 	return Catalog.Format(msgs.locale, "optionAgentIconsNote", nil)
 }
 
-// ConfirmQuitTitle says "Quit Finallyshell?"
+// ConfirmQuitTitle says "Quit XTerm?"
 // in the language the app shows.
 func ConfirmQuitTitle() string { return In(i18n.Locale()).ConfirmQuitTitle() }
 
-// ConfirmQuitTitle says "Quit Finallyshell?"
+// ConfirmQuitTitle says "Quit XTerm?"
 // in the language of msgs.
 func (msgs Messages) ConfirmQuitTitle() string {
 	return Catalog.Format(msgs.locale, "confirmQuitTitle", nil)
@@ -5296,11 +5316,11 @@ func (msgs Messages) EditorConflictBody() string {
 	return Catalog.Format(msgs.locale, "editorConflictBody", nil)
 }
 
-// TrayShow says "Show Finallyshell"
+// TrayShow says "Show XTerm"
 // in the language the app shows.
 func TrayShow() string { return In(i18n.Locale()).TrayShow() }
 
-// TrayShow says "Show Finallyshell"
+// TrayShow says "Show XTerm"
 // in the language of msgs.
 func (msgs Messages) TrayShow() string {
 	return Catalog.Format(msgs.locale, "trayShow", nil)
@@ -7434,6 +7454,36 @@ func (msgs Messages) FileNameTaken(name string) string {
 	return Catalog.Format(msgs.locale, "fileNameTaken", map[string]any{"name": name})
 }
 
+// OptionsAbout says "About"
+// in the language the app shows.
+func OptionsAbout() string { return In(i18n.Locale()).OptionsAbout() }
+
+// OptionsAbout says "About"
+// in the language of msgs.
+func (msgs Messages) OptionsAbout() string {
+	return Catalog.Format(msgs.locale, "optionsAbout", nil)
+}
+
+// AboutIntro says "XTerm is a secondary development based on the open source project FinalShell: the layout, the code and the documentat…"
+// in the language the app shows.
+func AboutIntro() string { return In(i18n.Locale()).AboutIntro() }
+
+// AboutIntro says "XTerm is a secondary development based on the open source project FinalShell: the layout, the code and the documentat…"
+// in the language of msgs.
+func (msgs Messages) AboutIntro() string {
+	return Catalog.Format(msgs.locale, "aboutIntro", nil)
+}
+
+// AboutUpstream says "Upstream project"
+// in the language the app shows.
+func AboutUpstream() string { return In(i18n.Locale()).AboutUpstream() }
+
+// AboutUpstream says "Upstream project"
+// in the language of msgs.
+func (msgs Messages) AboutUpstream() string {
+	return Catalog.Format(msgs.locale, "aboutUpstream", nil)
+}
+
 // OptionsSync says "Sync"
 // in the language the app shows.
 func OptionsSync() string { return In(i18n.Locale()).OptionsSync() }
@@ -7894,21 +7944,21 @@ func (msgs Messages) SyncErrAuth() string {
 	return Catalog.Format(msgs.locale, "syncErrAuth", nil)
 }
 
-// SyncErrNotEnvelope says "The remote file is not a Finallyshell sync file."
+// SyncErrNotEnvelope says "The remote file is not a XTerm sync file."
 // in the language the app shows.
 func SyncErrNotEnvelope() string { return In(i18n.Locale()).SyncErrNotEnvelope() }
 
-// SyncErrNotEnvelope says "The remote file is not a Finallyshell sync file."
+// SyncErrNotEnvelope says "The remote file is not a XTerm sync file."
 // in the language of msgs.
 func (msgs Messages) SyncErrNotEnvelope() string {
 	return Catalog.Format(msgs.locale, "syncErrNotEnvelope", nil)
 }
 
-// SyncErrNewerFormat says "The remote file was written by a newer version of Finallyshell. Update to sync."
+// SyncErrNewerFormat says "The remote file was written by a newer version of XTerm. Update to sync."
 // in the language the app shows.
 func SyncErrNewerFormat() string { return In(i18n.Locale()).SyncErrNewerFormat() }
 
-// SyncErrNewerFormat says "The remote file was written by a newer version of Finallyshell. Update to sync."
+// SyncErrNewerFormat says "The remote file was written by a newer version of XTerm. Update to sync."
 // in the language of msgs.
 func (msgs Messages) SyncErrNewerFormat() string {
 	return Catalog.Format(msgs.locale, "syncErrNewerFormat", nil)

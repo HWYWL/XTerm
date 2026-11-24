@@ -164,6 +164,7 @@ func TestBottomPanelShortcutMenuAndTabs(t *testing.T) {
 // Processes tab; a panel row ignores the setting.
 func TestBottomPanelOpenedByTabs(t *testing.T) {
 	a, _, tt, web, _ := panelApp(t)
+	a.setLeftPage(leftSystem) // the monitor's page, for its process list
 	a.bottomTab = tabFiles
 	a.setBottomPanelHidden(true)
 	tt.Frame()

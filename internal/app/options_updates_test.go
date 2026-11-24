@@ -23,11 +23,12 @@ func (p *fakeUpdates) SetAutomaticUpdateChecks(on bool) {
 	p.status.Automatic = on
 }
 
-// generalPageUpdates opens Options › General, tall enough to show its
-// Updates row whole.
-func generalPageUpdates(t *testing.T, a *App, p *fakePlatform) *ui.Tester {
+// aboutPageUpdates opens Options › About, tall enough to show its updates
+// whole.
+func aboutPageUpdates(t *testing.T, a *App, p *fakePlatform) *ui.Tester {
 	t.Helper()
 	a.openOptions()
+	a.optionsNav.Page = pageAbout
 	tt := p.show(t, WindowOptions)
 	tt.SetSize(optionsWindow.Width, 1060)
 	tt.Frame()
@@ -39,9 +40,9 @@ func generalPageUpdates(t *testing.T, a *App, p *fakePlatform) *ui.Tester {
 // shows beside the button.
 func TestUpdatesRowEnabled(t *testing.T) {
 	a, p := testApp(t)
-	p.status = UpdateStatus{Version: "0.2.0", Automatic: true}
-	tt := generalPageUpdates(t, a, p)
-	for _, s := range []string{locales.OptionsUpdates(), "Current version: 0.2.0", locales.CheckForUpdates(), locales.OptionCheckUpdatesAutomatically()} {
+	p.status = UpdateStatus{Version: "0.0.1", Automatic: true}
+	tt := aboutPageUpdates(t, a, p)
+	for _, s := range []string{locales.OptionsAbout(), locales.AboutIntro(), locales.AboutUpstream(), "TooonyChen/finallyshell", locales.OptionsUpdates(), "Current version: 0.0.1", locales.CheckForUpdates(), locales.OptionCheckUpdatesAutomatically()} {
 		if !tt.HasText(s) {
 			t.Errorf("no %q; texts %q", s, tt.Texts())
 		}
@@ -67,9 +68,9 @@ func TestUpdatesRowEnabled(t *testing.T) {
 	}
 
 	// A check found a version: the platform redraws.
-	p.status.Available = "0.3.0"
+	p.status.Available = "0.0.2"
 	tt.Frame()
-	if !tt.HasText("Version 0.3.0 is available") {
+	if !tt.HasText("Version 0.0.2 is available") {
 		t.Errorf("no available version; texts %q", tt.Texts())
 	}
 	saveShot(t, tt, "options-updates-available-en.png")
@@ -80,7 +81,7 @@ func TestUpdatesRowEnabled(t *testing.T) {
 
 	p.SetLocale("zh-Hans")
 	tt.Frame()
-	for _, s := range []string{"更新", "当前版本：0.2.0", "检查更新…", "自动检查更新", "新版本 0.3.0 已推出"} {
+	for _, s := range []string{"更新", "当前版本：0.0.1", "检查更新…", "自动检查更新", "新版本 0.0.2 已推出"} {
 		if !tt.HasText(s) {
 			t.Errorf("no %q in Chinese; texts %q", s, tt.Texts())
 		}
@@ -95,9 +96,9 @@ func TestUpdatesRowEnabled(t *testing.T) {
 // to the releases page.
 func TestUpdatesRowDisabled(t *testing.T) {
 	a, p := testApp(t)
-	p.status = UpdateStatus{Version: "0.2.0", Blocked: UpdatesManaged}
-	tt := generalPageUpdates(t, a, p)
-	if !tt.HasText(locales.UpdatesManaged()) || !tt.HasText("Current version: 0.2.0") {
+	p.status = UpdateStatus{Version: "0.0.1", Blocked: UpdatesManaged}
+	tt := aboutPageUpdates(t, a, p)
+	if !tt.HasText(locales.UpdatesManaged()) || !tt.HasText("Current version: 0.0.1") {
 		t.Errorf("no reason; texts %q", tt.Texts())
 	}
 	if tt.HasText(locales.CheckForUpdates()) || tt.HasText(locales.OptionCheckUpdatesAutomatically()) {
@@ -126,7 +127,7 @@ func TestUpdatesRowDisabled(t *testing.T) {
 		}
 	}
 	saveShot(t, tt, "options-updates-dev-zh.png")
-	p.status = UpdateStatus{Version: "0.2.0", Blocked: UpdatesManaged}
+	p.status = UpdateStatus{Version: "0.0.1", Blocked: UpdatesManaged}
 	tt.Frame()
 	if !tt.HasText(locales.UpdatesManaged()) {
 		t.Errorf("no reason in Chinese; texts %q", tt.Texts())

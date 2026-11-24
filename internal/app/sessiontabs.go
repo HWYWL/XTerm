@@ -45,7 +45,7 @@ func (a *App) sessionTabs(c *ui.Context) {
 		a.sidebarButton(c)
 		ui.ScrollHorizontal(c).Grow(1).MinWidth(0).Scrollbars(false).
 			TrackScroll(&a.tabsScroll).HandleInput(a.sessionTabsWheel).Children(func() {
-			ui.Row(c).Gap(2).Shrink(0).AlignItems(ui.Center).Children(func() {
+			ui.Row(c).Gap(4).Shrink(0).AlignItems(ui.Center).Children(func() {
 				for i, s := range a.sessions {
 					if a.sessionTab(c, i, s, &after) {
 						closing = s
@@ -74,9 +74,11 @@ func (a *App) sessionTabs(c *ui.Context) {
 // chose, which runs once the row is built.
 func (a *App) sessionTab(c *ui.Context, i int, s *Session, after *func()) (closed bool) {
 	active := i == a.active
-	tab := ui.Row(c).Key(s.ID).Gap(6).Padding(0, 8).Height(24).Radius(6).
+	// Each tab in a pill of its own, its corners round as its height, so
+	// that the tabs show their bounds apart.
+	tab := ui.Row(c).Key(s.ID).Gap(6).Padding(0, 8).Height(24).Radius(12).
 		AlignItems(ui.Center).Shrink(0).Role(ui.RoleTab).Label(listLabel(s)).
-		AccessSelected(active).Cursor(ui.CursorPointer)
+		AccessSelected(active).Cursor(ui.CursorPointer).Border(1, theme.Border)
 	switch {
 	case active:
 		tab.Background(theme.Background)

@@ -27,7 +27,7 @@ var licenseChoices = map[string]struct{ note, file string }{
 	// FreeType License or GPL 2+; the GPL doesn't fit the app's license.
 	// The FreeType License asks for this credit in the documentation.
 	"github.com/golang/freetype": {
-		note: "Finallyshell uses Freetype-Go under the FreeType License. " +
+		note: "XTerm uses Freetype-Go under the FreeType License. " +
 			"Portions of this software are copyright (c) 2017 The FreeType Project (www.freetype.org). All rights reserved.",
 		file: "licenses/ftl.txt",
 	},
@@ -148,7 +148,7 @@ func ThirdPartyLicenses(dir string, w io.Writer) error {
 			fmt.Fprintf(w, "%s\n\n", strings.TrimSpace(t))
 		}
 	}
-	fmt.Fprint(w, "Finallyshell includes the following third-party software.\n\n")
+	fmt.Fprint(w, "XTerm includes the following third-party software.\n\n")
 
 	goroot, err := exec.Command("go", "env", "GOROOT").Output()
 	if err != nil {

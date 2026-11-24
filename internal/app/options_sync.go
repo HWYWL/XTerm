@@ -12,7 +12,7 @@ import (
 )
 
 // gistTokenURL opens GitHub's page for a new token with the gist scope.
-const gistTokenURL = "https://github.com/settings/tokens/new?scopes=gist&description=Finallyshell%20sync"
+const gistTokenURL = "https://github.com/settings/tokens/new?scopes=gist&description=XTerm%20sync"
 
 // syncProviders are the Sync page's choices of where to sync.
 var syncProviders = []choice[config.SyncProvider]{

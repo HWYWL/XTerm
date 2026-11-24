@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"time"
 
 	"finallyshell/internal/icons"
 	"finallyshell/internal/monitor"
@@ -35,7 +36,10 @@ func (a *App) monitorPanel(c *ui.Context) {
 // shows: dashes and empty bars.
 func (a *App) serverView(c *ui.Context, s *Session) {
 	ui.Column(c).FillWidth().Padding(10, 10, 8, 10).Gap(6).Children(func() {
-		ui.Row(c).Gap(6).Children(func() {
+		// The IP, with all the width it can have, and the copy of it tucked
+		// against the System info button at the end of the line, so the IP
+		// keeps the room before them.
+		ui.Row(c).Gap(6).AlignItems(ui.Center).Children(func() {
 			ip := "-"
 			if s != nil {
 				ip = s.ip
@@ -43,15 +47,26 @@ func (a *App) serverView(c *ui.Context, s *Session) {
 					ip = s.Host.Addr
 				}
 			}
-			ui.Text(c, "IP "+ip).SingleLine().Grow(1).MinWidth(0)
-			if s != nil {
-				cp := ui.Text(c, locales.Copy()).TextColor(theme.Accent).Cursor(ui.CursorPointer)
-				if cp.Clicked() {
-					c.WriteClipboard(ip)
+			ui.Text(c, "IP "+ip).SingleLine().MinWidth(0)
+			ui.Spacer(c)
+			ui.Row(c).Gap(0).AlignItems(ui.Center).Shrink(0).Children(func() {
+				if s != nil {
+					// The copy, a button the size of the text.
+					cp := ui.Box(c).Size(16, 16).Center().Radius(4).Shrink(0).
+						Label(locales.Copy()).Tooltip(locales.Copy()).Cursor(ui.CursorPointer)
+					if cp.Hovered() {
+						cp.Background(theme.Text.Alpha(0.07))
+					}
+					cp.Children(func() {
+						ui.Icon(c, icons.Get("copy")).FontSize(12).TextColor(theme.Accent)
+					})
+					if cp.Clicked() {
+						a.copyToClipboard(c, ip)
+					}
 				}
-			}
+				a.sysInfoButton(c, s)
+			})
 		})
-		a.sysInfoButton(c, s)
 		var st *monitor.Stats
 		switch {
 		case s == nil:
@@ -66,6 +81,13 @@ func (a *App) serverView(c *ui.Context, s *Session) {
 		}
 		serverStats(c, st, a.monitorHidden(), a.netPicker(s), a.openProcesses)
 	})
+}
+
+// copyToClipboard puts text in the clipboard, and says so in a toast at the
+// bottom of the window, which fades out two seconds later.
+func (a *App) copyToClipboard(c *ui.Context, text string) {
+	c.WriteClipboard(text)
+	c.AddToast(ui.Toast{ID: "copied", Title: locales.Copied(), Timeout: 2 * time.Second})
 }
 
 // serverStats shows st, or the skeleton for nil, without the parts in
@@ -205,15 +227,10 @@ func diskTable(c *ui.Context, disks []monitor.Disk) {
 	})
 }
 
-// sessionPanel is the list of open sessions: the vertical tabs, or the
-// saved connections on the other page of the panel (conntree.go).
-func (a *App) sessionPanel(c *ui.Context) {
-	ui.Column(c).Fill().BorderWidth(1, 0, 0, 0).BorderColor(colors.frame).Children(func() {
-		a.leftPanelHeader(c)
-		if a.left.page == leftConnections {
-			a.connectionPage(c)
-			return
-		}
+// sessionsPage is the list of open sessions, the page of the left column
+// it opens on (conntree.go).
+func (a *App) sessionsPage(c *ui.Context) {
+	ui.Column(c).Grow(1).MinHeight(0).Children(func() {
 		// No Key: with one, the list follows the chosen session by it, and
 		// chooses none once that session is gone, even though a.active
 		// already holds the neighbor closeSession picked, which is on the

@@ -40,6 +40,7 @@ func monitorPartsApp(t *testing.T, lang string) (*App, *ui.Tester, *Session) {
 	p.SetLocale(lang)
 	s := demoSession(a, "web-1", "45.56.78.90")
 	a.active = 0
+	a.setLeftPage(leftSystem) // the monitor's page
 	// Menus in the window, so that their check boxes can be read, and
 	// the screenshots show them.
 	tt := ui.NewTester(func(c *ui.Context) {

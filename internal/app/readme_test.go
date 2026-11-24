@@ -74,7 +74,7 @@ func TestReadmeScreenshots(t *testing.T) {
 		t.Run(lang, func(t *testing.T) {
 			t.Run("main", func(t *testing.T) {
 				_, _, tt, _ := readmeApp(t, lang)
-				for _, want := range []string{"web-1", "docker-compose.yml", "java", "staging"} {
+				for _, want := range []string{"web-1", "docker-compose.yml", "staging"} {
 					if !tt.HasText(want) {
 						t.Errorf("missing %q; texts %q", want, tt.Texts())
 					}
@@ -96,6 +96,8 @@ func TestReadmeScreenshots(t *testing.T) {
 
 			t.Run("sysinfo", func(t *testing.T) {
 				a, p, tt, _ := readmeApp(t, lang)
+				a.setLeftPage(leftSystem) // its button is on the monitor
+				tt.Frame()
 				f := newFakeSysInfo(a)
 				clickButton(t, tt, locales.SystemInfo())
 				f.next(t).reply <- sysInfoReply{info: debianSample(t)}

@@ -9,10 +9,10 @@ import (
 
 // releasesURL is where the releases are published, for installs that do
 // not update themselves.
-const releasesURL = "https://github.com/TooonyChen/finallyshell/releases"
+const releasesURL = "https://github.com/HWYWL/XTerm/releases"
 
 // UpdateStatus is what the app's updater knows, for the Updates row of
-// Options › General.
+// Options › About.
 type UpdateStatus struct {
 	// Version is the version running, "" for a development build.
 	Version string
@@ -38,7 +38,7 @@ const (
 	UpdatesManaged
 )
 
-// updatesSection is the Updates row of the General page: the version, and
+// updatesSection is the Updates row of Options › About: the version, and
 // checking for updates now or in the background, or why this copy cannot
 // update itself and where to get a new version. The update window itself
 // is MyGo's updater plugin's (main.go).

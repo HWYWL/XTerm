@@ -93,6 +93,9 @@ func testApp(t *testing.T) (*App, *fakePlatform) {
 	a := New(p)
 	a.saveHosts = func(*config.Store) error { return nil }
 	a.home = func() string { return "" } // no editors' extensions
+	// The list, where the tests of the panes look for the sessions; the app
+	// opens on the connections, which lefttabs_test.go covers.
+	a.left.page = leftSessions
 	return a, p
 }
 
@@ -175,9 +178,17 @@ func TestLayoutInBothLanguages(t *testing.T) {
 	tt := ui.NewTester(a.View, 1280, 820)
 	p.tt = tt
 	tt.Frame()
-	for _, want := range []string{"Sessions (3)", "web-1", "db-1", "IP 45.56.78.90", "Up 410 days", "java", "libacl.so.1", "Name", "Files", "Transfers"} {
+	for _, want := range []string{"Sessions (3)", "web-1", "db-1", "libacl.so.1", "Name", "Files", "Transfers"} {
 		if !tt.HasText(want) {
 			t.Errorf("English: missing %q", want)
+		}
+	}
+	// The server's stats are on the monitor's page.
+	a.setLeftPage(leftSystem)
+	tt.Frame()
+	for _, want := range []string{"IP 45.56.78.90", "Up 410 days", "java"} {
+		if !tt.HasText(want) {
+			t.Errorf("English monitor: missing %q", want)
 		}
 	}
 	saveShot(t, tt, "en.png")

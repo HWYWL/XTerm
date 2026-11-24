@@ -33,6 +33,7 @@ const (
 	pageFileIcons  = "files/icons"
 	pageNetwork    = "network"
 	pageSync       = "sync"
+	pageAbout      = "about"
 )
 
 // optionPage is a page of the options window.
@@ -101,6 +102,10 @@ var optionPages = []optionPage{
 	{
 		id: pageSync, title: locales.OptionsSync,
 		view: (*App).syncPage,
+	},
+	{
+		id: pageAbout, title: locales.OptionsAbout,
+		view: (*App).aboutPage,
 	},
 }
 
@@ -178,8 +183,6 @@ func (a *App) generalPage(c *ui.Context) {
 		widgets.Muted(c, locales.OptionKeepAliveNote()).FontSize(12)
 		a.agentOption(c)
 	})
-
-	a.updatesSection(c)
 }
 
 // changeSettings changes the settings with fn, saves them and shows the

@@ -1,8 +1,9 @@
 {
   "@@locale": "en",
-  "appTitle": "Finallyshell",
+  "appTitle": "XTerm",
   "notConnected": "Not connected",
   "copy": "Copy",
+  "copied": "Copied",
   "readingServerInfo": "Reading server info…",
   "uptimeDays": "{days, plural, one {Up # day} other {Up # days}}",
   "@uptimeDays": {
@@ -14,6 +15,7 @@
   },
   "uptimeUnknown": "Up -",
   "monitorOff": "Server monitor is off for this host",
+  "system": "System",
   "systemInfo": "System info",
   "sysHostname": "Hostname",
   "sysOS": "OS",
@@ -97,7 +99,7 @@
   },
   "newConnection": "New connection",
   "noSessions": "No open sessions",
-  "leftPanelPages": "Sessions or connections",
+  "leftPanelPages": "System, sessions or connections",
   "connectionsPage": "Connections",
   "searchConnections": "Search connections",
   "connTreeEmpty": "No connections yet. Click + to add one.",
@@ -525,9 +527,9 @@
   "backgroundTile": "Tile",
   "backgroundOpacity": "Opacity",
   "backgroundOpacityHint": "How much of the image shows through the color scheme's background, which keeps text readable.",
-  "backgroundCopyNote": "Finallyshell keeps a copy of the image in its settings folder, so moving or deleting the original changes nothing. Remove deletes the copy.",
+  "backgroundCopyNote": "XTerm keeps a copy of the image in its settings folder, so moving or deleting the original changes nothing. Remove deletes the copy.",
   "errImageRead": "Could not read the image: {error}",
-  "errImageFormat": "Finallyshell cannot show this file: choose a PNG, JPEG, GIF, WebP or BMP image.",
+  "errImageFormat": "XTerm cannot show this file: choose a PNG, JPEG, GIF, WebP or BMP image.",
   "errImageTooLarge": "The image is too large: the limit is {size} and {megapixels} million pixels.",
   "@errImageTooLarge": {
     "placeholders": {
@@ -628,7 +630,7 @@
   "terminalSessionTabs": "Session tabs",
   "optionAgentIcons": "Show the coding agent running in each tab",
   "optionAgentIconsNote": "While Claude Code, Codex, Gemini CLI or another coding agent runs in a session's shell, its logo shows next to the tab's name. The app reads the server's /proc over an exec channel to tell, so it needs a Linux server whose host has the exec channel on.",
-  "confirmQuitTitle": "Quit Finallyshell?",
+  "confirmQuitTitle": "Quit XTerm?",
   "confirmQuitBody": "{count, plural, one {# session is open. Quitting disconnects it.} other {# sessions are open. Quitting disconnects them.}}",
   "@confirmQuitBody": {
     "placeholders": {
@@ -716,7 +718,7 @@
   "editorConflict": "{name} changed on the server",
   "editorConflictGone": "{name} was removed from the server",
   "editorConflictBody": "It changed after you opened it. Overwrite it with your text, or reload it from the server? Undo brings your text back after a reload.",
-  "trayShow": "Show Finallyshell",
+  "trayShow": "Show XTerm",
   "trayQuit": "Quit",
   "optionsUpdates": "Updates",
   "updatesVersion": "Current version: {version}",
@@ -1229,8 +1231,11 @@
       }
     }
   },
+  "optionsAbout": "About",
+  "aboutIntro": "XTerm is a secondary development based on the open source project FinalShell: the layout, the code and the documentation come from it. This version starts at 0.0.1.",
+  "aboutUpstream": "Upstream project",
   "optionsSync": "Sync",
-  "syncIntro": "Keep connections and settings the same on your computers, through storage you already have. Everything is encrypted on this computer with your sync password before it leaves; Finallyshell runs no server and sees nothing.",
+  "syncIntro": "Keep connections and settings the same on your computers, through storage you already have. Everything is encrypted on this computer with your sync password before it leaves; XTerm runs no server and sees nothing.",
   "syncService": "Sync with",
   "syncOff": "Off",
   "syncGist": "GitHub Gist",
@@ -1297,8 +1302,8 @@
   "syncReplaceRemoteYes": "Replace",
   "syncErrWrongPassword": "The sync password does not match the one the remote file was encrypted with.",
   "syncErrAuth": "The service refused the credentials. Check the token, user, password or keys.",
-  "syncErrNotEnvelope": "The remote file is not a Finallyshell sync file.",
-  "syncErrNewerFormat": "The remote file was written by a newer version of Finallyshell. Update to sync.",
+  "syncErrNotEnvelope": "The remote file is not a XTerm sync file.",
+  "syncErrNewerFormat": "The remote file was written by a newer version of XTerm. Update to sync.",
   "syncErrTimeout": "The service did not answer in time.",
   "syncErrOther": "Could not sync: {error}",
   "tabNetwork": "Network",

@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"finallyshell/internal/monitor"
 	"finallyshell/locales"
@@ -75,6 +76,7 @@ func clickButton(t *testing.T, tt *ui.Tester, name string) {
 
 func TestSidePanelSkeleton(t *testing.T) {
 	a, p := testApp(t)
+	a.setLeftPage(leftSystem) // the monitor's page
 	tt := ui.NewTester(a.View, 1280, 820)
 	p.tt = tt
 	tt.Frame()
@@ -109,6 +111,7 @@ func TestSysInfoPopover(t *testing.T) {
 	a, p := testApp(t)
 	demoSession(a, "web-1", "45.56.78.90")
 	a.active = 0
+	a.setLeftPage(leftSystem) // the monitor's page
 	f := newFakeSysInfo(a)
 	tt := ui.NewTester(a.View, 1280, 820)
 	p.tt = tt
@@ -136,6 +139,11 @@ func TestSysInfoPopover(t *testing.T) {
 		if !strings.Contains(got, want) {
 			t.Errorf("summary lacks %q:\n%s", want, got)
 		}
+	}
+	// The copy says so in a toast, as the IP's does.
+	tt.Advance(300 * time.Millisecond)
+	if !tt.HasText(locales.Copied()) {
+		t.Errorf("no toast; texts %q", tt.Texts())
 	}
 
 	// Closed, then opened in Chinese: it reads again.
@@ -181,6 +189,7 @@ func TestSysInfoStaleReads(t *testing.T) {
 	web := demoSession(a, "web-1", "45.56.78.90")
 	demoSession(a, "db-1", "10.0.0.12")
 	a.active = 0
+	a.setLeftPage(leftSystem) // the monitor's page
 	f := newFakeSysInfo(a)
 	tt := ui.NewTester(a.View, 1280, 820)
 	p.tt = tt
@@ -240,12 +249,52 @@ func TestSysInfoStaleReads(t *testing.T) {
 
 // A host with the monitor off opens no exec channel: the side panel says
 // so over the skeleton, and the popover reads nothing.
+// The copy after the IP puts the address in the clipboard, and says so in
+// a toast that fades out two seconds later; the System info button ends
+// the line.
+func TestCopyServerAddress(t *testing.T) {
+	a, p := testApp(t)
+	demoSession(a, "web-1", "45.56.78.90")
+	a.active = 0
+	a.setLeftPage(leftSystem) // the monitor's page
+	tt := ui.NewTester(a.View, 1280, 820)
+	p.tt = tt
+	tt.Frame()
+
+	// The copy beside the System info button at the end of the line, the IP
+	// left the width before them.
+	ip, cp, info := find(t, tt, "IP 45.56.78.90"), find(t, tt, locales.Copy()), find(t, tt, locales.SystemInfo())
+	if cp.X < ip.X+ip.W || info.X < cp.X+cp.W {
+		t.Errorf("IP at %+v, copy at %+v, System info at %+v", ip, cp, info)
+	}
+	if gap := info.X - (cp.X + cp.W); gap > 16 {
+		t.Errorf("copy at %+v and System info at %+v, %v DIPs apart", cp, info, gap)
+	}
+
+	if err := tt.Click(locales.Copy()); err != nil {
+		t.Fatal(err)
+	}
+	tt.Advance(300 * time.Millisecond)
+	if got := tt.Clipboard(); got != "45.56.78.90" {
+		t.Errorf("clipboard %q", got)
+	}
+	if !tt.HasText(locales.Copied()) {
+		t.Errorf("no toast; texts %q", tt.Texts())
+	}
+	tt.Advance(2 * time.Second)
+	tt.Frame()
+	if tt.HasText(locales.Copied()) {
+		t.Error("the toast outlives its 2 seconds")
+	}
+}
+
 func TestSysInfoMonitorOff(t *testing.T) {
 	a, p := testApp(t)
 	s := demoSession(a, "web-1", "45.56.78.90")
 	s.Host.NoMonitor = true
 	s.stats = monitor.Stats{}
 	a.active = 0
+	a.setLeftPage(leftSystem) // the monitor's page
 	f := newFakeSysInfo(a)
 	tt := ui.NewTester(a.View, 1280, 820)
 	p.tt = tt

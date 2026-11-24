@@ -50,9 +50,9 @@ var (
 	// which is not the one it was encrypted with (or it was changed).
 	ErrWrongPassword = errors.New("cloudsync: wrong sync password")
 	// ErrNotEnvelope: the file is not one this app wrote.
-	ErrNotEnvelope = errors.New("cloudsync: the remote file is not a Finallyshell sync file")
+	ErrNotEnvelope = errors.New("cloudsync: the remote file is not an XTerm sync file")
 	// ErrNewerFormat: a newer build wrote the file.
-	ErrNewerFormat = errors.New("cloudsync: the remote file is from a newer version of Finallyshell")
+	ErrNewerFormat = errors.New("cloudsync: the remote file is from a newer version of XTerm")
 )
 
 // aad binds the ciphertext to the format, so that a file cannot pass for

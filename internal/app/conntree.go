@@ -13,14 +13,15 @@ import (
 	"github.com/egoist/mygo/ui"
 )
 
-// The panel under the server monitor has two pages, switched in its
-// header: the session tabs (sidebar.go), and Connections, the saved hosts
-// in their folders, as MobaXterm's session tree and Xshell's Sessions
-// pane keep them in the main window. Connections is the connection
-// manager's tree (manager.go), with its search, menus and dragging, in
-// one column: the names, a dot on the hosts with a session open, and the
-// rest in a tooltip. Opening a host there opens a session as the start
-// page does, and the page stays, to open the next.
+// The left column has three pages, switched by the row of tabs at its top
+// (leftTabs): the server monitor (sidebar.go), the session tabs
+// (sidebar.go), and Connections, the saved hosts in their folders, as
+// MobaXterm's session tree and Xshell's Sessions pane keep them in the
+// main window. Connections is the connection manager's tree (manager.go),
+// with its search, menus and dragging, in one column: the names, a dot on
+// the hosts with a session open, and the rest in a tooltip. Opening a host
+// there opens a session as the start page does, and the page stays, to
+// open the next.
 //
 // Both trees read a.hosts, so a change in one shows in the other at once.
 // Each has its own managerState: what is open, chosen and searched, and
@@ -32,9 +33,12 @@ import (
 // (leftPanelPage, connectionTreeExpanded), on this device only: the
 // folders by their IDs, which stay as they are renamed and moved.
 
-// The pages of the left panel, in its switch's order.
+// The pages of the left panel, in its tabs' order. The sessions page is the
+// one it opens on, and the system page the one a.hosts' monitor fills: the
+// tabs leave the monitor out while it is in the right column.
 const (
-	leftSessions = iota
+	leftSystem = iota
+	leftSessions
 	leftConnections
 )
 
@@ -55,8 +59,11 @@ const connIndent = 14
 // restoreLeftPanel shows the page and opens the folders the settings
 // keep: every folder before the user opened or closed any.
 func (a *App) restoreLeftPanel() {
-	if a.settings.LeftPanelPage == config.LeftPanelConnections {
+	switch a.settings.LeftPanelPage {
+	case config.LeftPanelConnections:
 		a.left.page = leftConnections
+	case config.LeftPanelSystem:
+		a.left.page = leftSystem
 	}
 	open := &a.connTree.tree.Open
 	if ids := a.settings.ConnectionTreeExpanded; ids != nil {
@@ -101,16 +108,45 @@ func (a *App) keepFoldersOpen() {
 
 // setLeftPage shows page in the left panel, and keeps the choice.
 func (a *App) setLeftPage(page int) {
+	if page == leftSystem && a.monitorOnRight() {
+		page = leftSessions // the monitor's page is the right column's
+	}
 	if page == a.left.page {
 		return
 	}
 	a.left.page = page
 	a.settings.LeftPanelPage = ""
-	if page == leftConnections {
+	switch page {
+	case leftConnections:
 		a.settings.LeftPanelPage = config.LeftPanelConnections
+	case leftSystem:
+		a.settings.LeftPanelPage = config.LeftPanelSystem
+	}
+	if page != leftSessions {
 		a.endRename(false) // its field is in a row no longer shown
 	}
 	a.saveSettings(a.settings)
+}
+
+// leftPage is the page the left column shows: the monitor's page is the
+// right column's while the monitor is there, so the session list shows.
+func (a *App) leftPage() int {
+	if a.left.page == leftSystem && a.monitorOnRight() {
+		return leftSessions
+	}
+	return a.left.page
+}
+
+// leftTabs are the pages the left column shows, in the tabs' order, and
+// their labels: the server monitor is left out while it is in the right
+// column.
+func (a *App) leftTabs() (pages []int, labels []string) {
+	pages = []int{leftSystem, leftSessions, leftConnections}
+	labels = []string{locales.System(), locales.SessionsTitle(a.sessionCount()), locales.ConnectionsPage()}
+	if a.monitorOnRight() {
+		return pages[1:], labels[1:]
+	}
+	return pages, labels
 }
 
 // switchLeftPanel is the shortcut's: the Connections page with the
@@ -131,63 +167,98 @@ func (a *App) switchLeftPanel() {
 	a.left.focusSearch = true
 }
 
-// leftPanelHeader is the switch between the pages, and the buttons: a local
-// terminal and a new tab, or a new connection on the Connections page. The
-// options are in the row of tabs (sessiontabs.go).
-func (a *App) leftPanelHeader(c *ui.Context) {
-	ui.Row(c).Padding(6, 6, 6, 8).Gap(2).AlignItems(ui.Center).Children(func() {
-		page := a.left.page
-		if leftPageSwitch(c, &page, locales.SessionsTitle(a.sessionCount()), locales.ConnectionsPage()).Changed() {
-			a.setLeftPage(page)
-		}
-		ui.Spacer(c)
-		if a.left.page == leftConnections {
-			if headerButton(c, "plus", locales.NewConnection()).Clicked() {
-				m := &a.connTree
-				a.newConnectionIn(m, a.treeTarget(m))
+// leftTabBar is the pane at the top of the left column: its pages, in the
+// order leftTabs gives them, as plain links, the one shown in the text's
+// color and the others muted. It is a pane of its own, as the row of
+// session tabs is, with the gap of the panes below it.
+func (a *App) leftTabBar(c *ui.Context) {
+	pages, labels := a.leftTabs()
+	page := a.leftPage()
+	if !slices.Contains(pages, page) {
+		page = pages[0]
+	}
+	top, bottom := glassTone()
+	bar := ui.Row(c).Height(sessionTabBarHeight).PaddingX(6).Gap(theme.Space(1.5)).
+		AlignItems(ui.Center).Radius(sessionTabRadius).Border(1, colors.frame).Clip().
+		Gradient(top, bottom, 180)
+	bar.Children(func() {
+		// Each page in a pill of its own, with its corners round as its
+		// height, so that the links show their bounds apart. The pills
+		// share the row alike, the labels centered, so that they fill it
+		// and shrink together when more pages come.
+		for i, p := range pages {
+			pill := ui.Row(c).Basis(0).Grow(1).Shrink(1).MinWidth(0).Height(22).
+				Padding(0, theme.Space(1)).Radius(11).Border(1, theme.Border).
+				AlignItems(ui.Center).Justify(ui.Center).Cursor(ui.CursorPointer)
+			switch {
+			case p == page:
+				pill.Background(theme.Background)
+			case pill.Hovered():
+				pill.Background(theme.SurfaceHover)
 			}
-			return
+			pill.Children(func() {
+				t := ui.Text(c, labels[i]).FontSize(11).SingleLine().MinWidth(0)
+				if p == page {
+					t.TextColor(theme.Text).FontWeight(600)
+				} else {
+					t.TextColor(theme.TextMuted)
+				}
+			})
+			if pill.Clicked() {
+				a.setLeftPage(p)
+			}
 		}
+	})
+}
+
+// showMonitorOfConnection shows the server monitor's page when a session
+// connects from the connections, the page the left column opens on: the
+// monitor is what one wants to see next.
+func (a *App) showMonitorOfConnection() {
+	if a.left.page == leftConnections {
+		a.setLeftPage(leftSystem)
+	}
+}
+
+// leftToolBar is the row under the tabs, with the page's own buttons: a
+// local terminal and a new tab over the session list, a new connection over
+// the tree. A page with none has no row.
+func (a *App) leftToolBar(c *ui.Context) {
+	page := a.leftPage()
+	if page != leftSessions && page != leftConnections {
+		return
+	}
+	ui.Row(c).Padding(0, theme.Space(2), theme.Space(0.5), theme.Space(2)).
+		Gap(2).AlignItems(ui.Center).Children(func() {
+		ui.Spacer(c)
+		a.leftPageButtons(c, page)
+	})
+}
+
+// leftPageButtons are the buttons of page, in its row under the tabs: the
+// local terminal and a new tab, or a new connection.
+func (a *App) leftPageButtons(c *ui.Context, page int) {
+	switch page {
+	case leftConnections:
+		if headerButton(c, "plus", locales.NewConnection()).Clicked() {
+			m := &a.connTree
+			a.newConnectionIn(m, a.treeTarget(m))
+		}
+	case leftSessions:
 		if headerButton(c, "square-terminal", locales.LocalTerminal()).Clicked() {
 			a.openLocal(nil)
 		}
 		if headerButton(c, "plus", locales.NewTab()).Clicked() {
 			a.NewTab()
 		}
-	})
+	}
 }
 
-// headerButton is a button of the left panel's header, and of the row of
-// tabs: an icon button a little narrower than the others, so that the page
-// switch keeps its labels beside them in a sidebar of the default width.
+// headerButton is a button of the left column's tool row, and of the row of
+// tabs: an icon button a little narrower than the others, so that the row
+// stays compact in a sidebar of the default width.
 func headerButton(c *ui.Context, icon, label string) ui.Element {
 	return widgets.IconButton(c, icon, label).Width(20)
-}
-
-// leftPageSwitch is the switch between the pages, a segmented control
-// with the theme's look in small text, whose segments shrink, cutting
-// their labels short, in a sidebar too narrow for them and the buttons.
-func leftPageSwitch(c *ui.Context, page *int, labels ...string) ui.Element {
-	parts := ui.SegmentedBase(c, page, len(labels))
-	track := parts.Track.Label(locales.LeftPanelPages()).MinWidth(0).Shrink(1).
-		AlignItems(ui.Stretch).Padding(theme.Space(0.5)).Gap(theme.Space(0.5)).
-		Radius(theme.Radius).Background(theme.Surface).Border(1, theme.Border)
-	track.Children(func() {
-		for i, label := range labels {
-			s := parts.Segment(i).MinWidth(0).Shrink(1).Padding(theme.Space(1), theme.Space(2)).
-				Radius(max(theme.Radius-theme.Space(0.5), 0)).TextColor(theme.Text)
-			switch {
-			case i == *page && theme.Dark:
-				s.Background(theme.SurfacePressed).Shadow(0, 1, 2, 0, ui.RGBA(0, 0, 0, 0.12))
-			case i == *page:
-				s.Background(theme.Background).Shadow(0, 1, 2, 0, ui.RGBA(0, 0, 0, 0.12))
-			case s.Hovered():
-				s.Background(theme.SurfaceHover)
-			}
-			s.Children(func() { ui.Text(c, label).FontSize(12).SingleLine().MinWidth(0) })
-		}
-	})
-	return track
 }
 
 // connectionPage is the Connections page: the search over the tree.

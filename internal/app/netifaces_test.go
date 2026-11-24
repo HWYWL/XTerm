@@ -36,6 +36,7 @@ func TestNetInterfaceMenu(t *testing.T) {
 	s := demoSession(a, "web-1", "45.56.78.90")
 	demoIfaces(s)
 	a.active = 0
+	a.setLeftPage(leftSystem) // the monitor's page
 	tt := ui.NewTester(a.View, 1280, 820)
 	p.tt = tt
 	tt.Frame()

@@ -1,4 +1,4 @@
-// Finallyshell is an SSH client laid out as FinalShell, with its session
+// XTerm is an SSH client laid out as FinalShell, with its session
 // tabs down the side.
 package main
 
@@ -260,7 +260,7 @@ func (p *platform) ShowTransfers(count int, progress float64) {
 func (p *platform) TempDir() string {
 	dir, err := mygo.App.Path(mygo.PathCache)
 	if err != nil || dir == "" {
-		dir = filepath.Join(os.TempDir(), "finallyshell")
+		dir = filepath.Join(os.TempDir(), "xterm")
 	}
 	return filepath.Join(dir, "opened")
 }
@@ -269,6 +269,27 @@ func (p *platform) TempDir() string {
 // screen, for the app's (internal/app/fullscreen.go).
 func (p *platform) SetFullScreen(on bool) { p.win.SetFullScreen(on) }
 func (p *platform) IsFullScreen() bool    { return p.win.IsFullScreen() }
+
+// migrateUserData renames the folder the app kept its settings and hosts in
+// before it was called XTerm, so the new name starts with what the user had.
+// It does nothing once the new folder exists, or when there is no old one.
+func migrateUserData() {
+	dir, err := os.UserConfigDir()
+	if err != nil {
+		return
+	}
+	oldDir := filepath.Join(dir, "Finallyshell")
+	newDir := filepath.Join(dir, "XTerm")
+	if _, err := os.Stat(newDir); err == nil {
+		return
+	}
+	if _, err := os.Stat(oldDir); err != nil {
+		return
+	}
+	if err := os.Rename(oldDir, newDir); err != nil {
+		log.Println("settings of the old name:", err)
+	}
+}
 
 func main() {
 	// Before the first window: MyGo reads MYGO_GPU when it makes one.
@@ -281,6 +302,7 @@ func main() {
 	if !mygo.App.RequestSingleInstanceLock() {
 		return
 	}
+	migrateUserData() // the settings saved under the app's old name
 	settings := config.LoadSettings()
 	if lang := settings.Language; lang != "" {
 		mygo.App.SetLocale(lang)
@@ -302,7 +324,11 @@ func main() {
 			Height:    820,
 			MinWidth:  900,
 			MinHeight: 560,
-			Content:   ui.View(a.View),
+			// The view draws the title bar under the window's buttons, so
+			// that the sky and the wallpaper show behind them too
+			// (internal/app/titlebar.go).
+			TitleBarStyle: mygo.TitleBarHidden,
+			Content:       ui.View(a.View),
 		})
 		plat.win.OnLeaveFullScreen(a.WindowLeftFullScreen)
 		// The close button may hide the window to the tray, or ask first;

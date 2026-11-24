@@ -111,7 +111,8 @@ func (a *App) hiddenRightMainArea(c *ui.Context) {
 func (a *App) monitorOnRight() bool { return a.monitorSide == config.PanelRight }
 
 // setMonitorOnRight moves the server monitor to the right column, or
-// back over the session list, and saves the choice.
+// back to the left column, and saves the choice. Its page leaves the left
+// column's tabs while it is in the right one.
 func (a *App) setMonitorOnRight(right bool) {
 	side := ""
 	if right {
@@ -121,6 +122,9 @@ func (a *App) setMonitorOnRight(right bool) {
 		return
 	}
 	a.monitorSide = side
+	if right && a.left.page == leftSystem {
+		a.setLeftPage(leftSessions)
+	}
 	a.saveLayout()
 }
 

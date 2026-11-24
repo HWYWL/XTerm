@@ -143,6 +143,8 @@ func TestFindBar(t *testing.T) {
 // key leaves it, and Escape too where no shell runs.
 func TestFullScreen(t *testing.T) {
 	a, p, s, conn, tt := findTerm(t)
+	a.setLeftPage(leftSystem) // the monitor's page, with the IP line
+	tt.Frame()
 	panes := []string{"Sessions (2)", locales.TabFiles(), "IP 45.56.78.90"}
 	for _, x := range panes {
 		if !tt.HasText(x) {

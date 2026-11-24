@@ -89,7 +89,7 @@ func TestPanelRow(t *testing.T) {
 	if tt.Image().RGBAAt(termSpotX, termSpotY) == termColor {
 		t.Error("the terminal shows in the panel row")
 	}
-	for _, want := range []string{"java", "7 processes", "IP web-1.example"} {
+	for _, want := range []string{"java", "7 processes"} {
 		if !tt.HasText(want) {
 			t.Errorf("missing %q; texts %q", want, tt.Texts())
 		}
@@ -113,14 +113,18 @@ func TestPanelRow(t *testing.T) {
 		t.Errorf("panel on %d, session on %d, label %q", panel.panelTab, a.bottomTab, listLabel(panel))
 	}
 	inList("Network")
-	// The side panel's process list shows the panel row's Processes tab.
+	// The monitor's process list shows the panel row's Processes tab.
+	a.setLeftPage(leftSystem)
+	tt.Frame()
 	if err := tt.Click("mysqld"); err != nil {
 		t.Fatal(err)
 	}
 	tt.Frame()
 	if panel.panelTab != tabProcesses || a.current() != panel {
-		t.Errorf("after the side panel's click: tab %d, active %d", panel.panelTab, a.active)
+		t.Errorf("after the monitor's click: tab %d, active %d", panel.panelTab, a.active)
 	}
+	a.setLeftPage(leftSessions)
+	tt.Frame()
 
 	// Terminal actions do nothing on it.
 	fs := a.shortcut(scFullScreen)

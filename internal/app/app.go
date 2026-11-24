@@ -296,6 +296,7 @@ func New(plat Platform) *App {
 		active:          -1,
 		manager:         managerState{row: -1, win: WindowManager},
 		connTree:        managerState{row: -1, win: WindowMain},
+		left:            leftPanel{page: leftConnections}, // to pick a host first
 		start:           startState{row: -1},
 		sideWidth:       defaultSideWidth,
 		monitorPct:      defaultMonitorPct,
@@ -340,23 +341,30 @@ func (a *App) View(c *ui.Context) {
 	a.saveLayoutAtRest(c)
 	a.saveCmdTextAtRest(c)
 	a.syncTick(c)
+	ui.Column(c).Fill().Children(func() {
+		a.titleBar(c)
+		ui.Column(c).Grow(1).MinHeight(0).Children(func() { a.workspace(c) })
+	})
+	a.dialogs(c)
+}
+
+// workspace is the window's panes: the left column beside the main area,
+// the terminal alone in full screen or with the left column hidden.
+func (a *App) workspace(c *ui.Context) {
 	if a.fullScreen.on {
 		if s := a.current(); s.isPanelTab() {
 			a.panelArea(c, s)
 		} else {
 			a.terminalArea(c)
 		}
-		a.dialogs(c)
 		return
 	}
 	if a.sideHidden {
 		a.mainArea(c)
-		a.dialogs(c)
 		return
 	}
 	split := ui.Split(c, &a.sideWidth, func() { a.sidebar(c) }, func() { a.mainArea(c) }).SplitReset(defaultSideWidth).Fill()
 	a.splitMoved(c, split, &a.sideWidth, sidebarLimits)
-	a.dialogs(c)
 }
 
 func (a *App) cycle(d int) {
@@ -365,17 +373,29 @@ func (a *App) cycle(d int) {
 	}
 }
 
-// sidebar is the monitor over the session panel, or the session panel
-// alone while the monitor is on the right (rightcolumn.go), monitorPct
-// kept for when it comes back.
+// sidebar is the left column: its row of tabs over the page they choose,
+// the server monitor, the session list, or the connections (conntree.go).
+// The row and the page are panes of their own, with the gap of the panes
+// between them, as the row of session tabs and the terminal are; the page
+// keeps the row of its buttons at its top.
 func (a *App) sidebar(c *ui.Context) {
-	card(c, ui.Color{}, func() {
-		if a.monitorOnRight() {
-			a.sessionPanel(c)
-			return
-		}
-		split := ui.SplitVerticalPercent(c, &a.monitorPct, func() { a.monitorPanel(c) }, func() { a.sessionPanel(c) }).SplitReset(defaultMonitorPct).Fill()
-		a.splitMoved(c, split, &a.monitorPct, monitorLimits)
+	ui.Column(c).Fill().Children(func() {
+		ui.Column(c).Padding(cardGap, cardGap, 0, cardGap).Children(func() { a.leftTabBar(c) })
+		ui.Column(c).Grow(1).MinHeight(0).Children(func() {
+			card(c, ui.Color{}, func() {
+				ui.Column(c).Fill().Children(func() {
+					a.leftToolBar(c)
+					switch a.leftPage() {
+					case leftSystem:
+						ui.Column(c).Grow(1).MinHeight(0).Children(func() { a.monitorPanel(c) })
+					case leftConnections:
+						a.connectionPage(c)
+					default:
+						a.sessionsPage(c)
+					}
+				})
+			})
+		})
 	})
 }
 

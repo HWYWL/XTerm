@@ -32,7 +32,7 @@ type Gist struct {
 }
 
 // gistDescription is the description of the gists Put creates.
-const gistDescription = "Finallyshell sync (encrypted, do not edit)"
+const gistDescription = "XTerm sync (encrypted, do not edit)"
 
 // gistMaxPages is how many pages of the user's gists Get looks through
 // for the file, 100 gists a page.

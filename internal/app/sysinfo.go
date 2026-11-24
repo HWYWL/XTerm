@@ -101,8 +101,8 @@ func (a *App) closeSysInfo() {
 	p.gen++
 }
 
-// sysInfoButton is the button under the IP, with its popover; it is
-// disabled while s is nil or not connected.
+// sysInfoButton is the button at the end of the IP's line, with its
+// popover; it is disabled while s is nil or not connected.
 func (a *App) sysInfoButton(c *ui.Context, s *Session) {
 	p := &a.sysInfo
 	// Another session shown, or this one closed: the popover was its.
@@ -110,7 +110,7 @@ func (a *App) sysInfoButton(c *ui.Context, s *Session) {
 		a.closeSysInfo()
 	}
 	enabled := s != nil && s.status == statusConnected
-	b := ui.Button(c, locales.SystemInfo()).FontSize(12).Padding(2, 10).AlignSelf(ui.Start).Disabled(!enabled)
+	b := ui.Button(c, locales.SystemInfo()).FontSize(12).Padding(2, 6).Disabled(!enabled)
 	if b.Clicked() && enabled {
 		if p.open {
 			a.closeSysInfo()
@@ -137,7 +137,7 @@ func (a *App) sysInfoBody(c *ui.Context) {
 				})
 			}).Label(locales.Copy())
 			if cp.Clicked() && ready {
-				c.WriteClipboard(sysInfoSummary(p.info))
+				a.copyToClipboard(c, sysInfoSummary(p.info))
 			}
 		})
 		switch {

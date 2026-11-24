@@ -25,7 +25,7 @@ func TestUpdatesConfig(t *testing.T) {
 		t.Fatal(err)
 	}
 	u := cfg.Updates
-	if u.PublicKey != "fwcqse2POLiSdWytl0BHeURrztxcDObwmos+4IlTqHQ=" || u.GitHub != "TooonyChen/finallyshell" {
+	if u.PublicKey != "J2NA8geL3A+YJWiwrnuDd9k2hX/SdpxAqJtS9BfD3OI=" || u.GitHub != "HWYWL/XTerm" {
 		t.Errorf("updates %+v", u)
 	}
 	if u.PrivateKey != "" {

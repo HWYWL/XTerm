@@ -1,12 +1,12 @@
 {
-  "name": "Finallyshell",
-  "identifier": "dev.finallyshell.app",
+  "name": "XTerm",
+  "identifier": "dev.xterm.app",
   "icon": "resources/icon.png",
-  "version": "0.2.0",
+  "version": "0.0.1",
   "out": "build",
   "i18n": { "dir": "locales", "source": "en" },
   "updates": {
-    "publicKey": "fwcqse2POLiSdWytl0BHeURrztxcDObwmos+4IlTqHQ=",
-    "github": "TooonyChen/finallyshell"
+    "publicKey": "J2NA8geL3A+YJWiwrnuDd9k2hX/SdpxAqJtS9BfD3OI=",
+    "github": "HWYWL/XTerm"
   }
 }

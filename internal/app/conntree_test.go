@@ -136,8 +136,8 @@ func TestConnectionPage(t *testing.T) {
 }
 
 // A double click or Enter on a host opens a session to it, in the new tab
-// selected, and the page stays; the host's row shows a dot while it is
-// open.
+// selected, and the page moves to the monitor once it is connected; the
+// host's row shows a dot while it is open.
 func TestConnectFromPage(t *testing.T) {
 	srv := startFakeSSH(t)
 	a, p, tt := connPageApp(t, "en")
@@ -169,6 +169,11 @@ func TestConnectFromPage(t *testing.T) {
 	if tab.status != statusConnected {
 		t.Fatal(describeError(tab.err))
 	}
+	// Connected, the left column shows the monitor.
+	tt.Frame()
+	if a.left.page != leftSystem || !tt.HasText("IP 127.0.0.1") {
+		t.Errorf("page %d after connecting; texts %q", a.left.page, tt.Texts())
+	}
 	if c, ok := a.sessionDot(a.hosts.Host("web-2")); !ok || c != theme.Success {
 		t.Errorf("dot %v %v", c, ok)
 	}
@@ -179,8 +184,10 @@ func TestConnectFromPage(t *testing.T) {
 		t.Errorf("the count; texts %q", tt.Texts())
 	}
 
-	// Enter on the next one opens it in a tab of its own, the page still
-	// there.
+	// Enter on the next one opens it in a tab of its own; back on the
+	// connections to pick it.
+	a.setLeftPage(leftConnections)
+	tt.Frame()
 	tt.ClickAt(connRow(t, tt, "pg-main"))
 	tt.Key(0, ui.KeyEnter)
 	if len(a.sessions) != 2 || a.sessions[1].Host != a.hosts.Host("pg") || a.left.page != leftConnections {

@@ -1,5 +1,5 @@
 // Command screenshots updates the screenshots in docs/screenshots, which
-// the READMEs show. Run it from the repository's root:
+// the README and the site show. Run it from the repository's root:
 //
 //	go run ./tools/screenshots
 //
@@ -39,8 +39,16 @@ type shot struct {
 	crop     image.Rectangle
 }
 
-// langs are the READMEs' languages: the suffix of a frame and of its copy.
+// langs are the languages of the copies: the README's, and the English
+// site's for the scenes it shows (siteEn).
 var langs = []struct{ test, out string }{{"en", "en"}, {"zh-Hans", "zh-CN"}}
+
+// siteEn are the frames the English site shows: it is the only copy of a
+// scene left in English, so only these get one.
+var siteEn = map[string]bool{
+	"readme-main-%s": true, "readme-sysinfo-%s": true, "readme-transfers-%s": true,
+	"readme-quick-commands-%s": true, "import-%s": true,
+}
 
 // shots are the frames, by name without the language and ".png". A from
 // with %s takes the language as the test spells it.
@@ -94,6 +102,9 @@ func main() {
 	i18n.SetLocaleFunc(func() string { return lang })
 	for _, s := range shots {
 		for _, l := range langs {
+			if l.out == "en" && !siteEn[s.from] {
+				continue
+			}
 			lang = l.test
 			name := l.test
 			if name == "zh-Hans" && shortZh[s.from] {

@@ -221,6 +221,12 @@ type Settings struct {
 	// replaced, never changed through.
 	ConnectionTreeExpanded *[]string `json:"connectionTreeExpanded,omitempty"`
 
+	// Plugins are the plugin center's overrides: "<id>:0" turns a plugin
+	// off, "<id>:p1" pins one to the row of session tabs, and a plugin that
+	// is not there is at its default (plugins.go). A pointer keeps
+	// Settings comparable; it is replaced, never changed through.
+	Plugins *[]string `json:"plugins,omitempty"`
+
 	// FileIconTheme is the file panel's icon theme, as package fileicons
 	// names it: "" for Material Icon Theme, "minimal" for the app's own
 	// file and folder icons, "bundled:seti" for Seti, or

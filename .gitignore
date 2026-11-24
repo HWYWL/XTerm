@@ -5,3 +5,8 @@ dist/
 /resources/LICENSE.txt
 /resources/THIRD_PARTY_LICENSES.txt
 _site/
+
+# What a local build leaves at the root, as build/ does.
+/XTerm.exe
+/ghostty-vt.dll
+/icon.png

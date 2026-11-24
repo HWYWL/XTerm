@@ -168,7 +168,7 @@ tools/natives/       CI 跑测试前先下载 libghostty-vt，最多重试五分
 tools/release/       发布用的工具：从 CHANGELOG.md 读出下一个版本号和更新说明，按提交列出草稿，算出预览版的版本号，收集第三方许可证（notices/ 是以二进制打包的库的许可证）
 tools/screenshots/   从 internal/app 的测试重新生成 docs/screenshots/ 里的 README 截图
 internal/
-  config/            主机和文件夹（hosts.json）、设置的读写，背景图片的副本，配置目录；proxy.go 是代理设置和跳板机链（找循环）；tunnels.go 是隧道设置；keys.go 是退格键和删除键发送什么；sync.go 是“同步”页的设置、哪些设置要同步、sync-state.json 和同步前 hosts.json 的副本；history.go 是命令输入框的历史文件，以及读取 bash 和 zsh 的历史文件；quickcommands.go 是“命令”页的 quickcommands.json；cmdeditor.go 是命令编辑器的 commandeditor.txt；assetstats.go 是资产窗口按天保存的 asset_stats.json；localshell.go 把本地终端程序（localShell）分成参数
+  config/            主机和文件夹（hosts.json）、设置的读写，背景图片的副本，配置目录；proxy.go 是代理设置和跳板机链（找循环）；tunnels.go 是隧道设置；keys.go 是退格键和删除键发送什么；sync.go 是“同步”页的设置、哪些设置要同步、sync-state.json 和同步前 hosts.json 的副本；history.go 是命令输入框的历史文件，以及读取 bash 和 zsh 的历史文件；quickcommands.go 是“命令”页的 quickcommands.json；cmdeditor.go 是命令编辑器的 commandeditor.txt；assetstats.go 是资产窗口按天保存的 asset_stats.json；dangerrules.go 是危险规则 danger_rules.json 的读写（每条的正则、名称、高危或提示、开关；旧文件只留正则时按正则补回 ID）；knownhosts.go 读 known_hosts 并删掉其中的行；localshell.go 把本地终端程序（localShell）分成参数
   cloudsync/         通过用户自己的存储同步：crypto.go 加密文件（Argon2id、AES-256-GCM），merge.go 做三方合并，sync.go 读取、合并、写回（冲突时重试）；gist.go、webdav.go、s3.go 是各个服务（s3.go 手写 SigV4 签名），remotehttp.go 是它们共用的 HTTP 代码
   importer/          读其他客户端的连接：importer.go 是来源列表（readers）、读出的连接和问题、文本解码（UTF-8、UTF-16、GB18030）、判重、按文件夹导入；finalshell.go 找 FinalShell 的目录、读 conn 里的连接和文件夹；xshell.go 找 Xshell 的 Sessions 文件夹、读 .xsh 会话文件和 .xts 导出文件；securecrt.go 找 SecureCRT 的配置目录、读它 Sessions 文件夹里的 .ini 文件；mobaxterm.go 找 MobaXterm.ini、读里面的书签段，以及 .mxtsessions 和 .moba 导出文件；sshconfig.go 读 OpenSSH 的 ~/.ssh/config（Host 块和通配模式、Include、ProxyJump）；table.go 读 CSV 文件或 .xlsx 第一个工作表里的服务器列表，.xlsx 由自己写的 xlsx.go 读（archive/zip 和 encoding/xml，有防 zip 炸弹的限制）；testdata 是编造的样例
   sshx/              SSH 连接、认证、known_hosts、给终端用的 Conn；proxy.go 是经过 SOCKS5、HTTP CONNECT 和跳板机连接；forward.go 是端口转发（-L/-R/-D）和 SOCKS5 服务端
@@ -183,6 +183,15 @@ internal/
   app/               界面和状态
     app.go           App 状态、整体布局、打开/关闭会话
     assets.go        资产窗口：连接和会话的计数、按天保存的登录和命令、圆环和条形卡片、活跃度格子
+    plugins.go       插件中心：插件注册表、每个插件的开关和固定、窗口、工具栏上的固定图标
+    hostkeys.go      主机密钥窗口：known_hosts 的读取、指纹、删除（先问一次）
+    danger.go        危险规则窗口：自带规则的名称和说明、高危/提示标签、逐条开关与一键全关、增删与恢复默认；判定由 dangerHit 做，资产计数和防护都用它
+    dangerguard.go   危险命令防护：按住匹配规则的回车，高危要逐字打规则名、提示确认一次，取消时用 Ctrl+U 清掉远端那一行
+    ops.go           每日运维战报：今天的四个数、近 7 天命令与危险命令的条形
+    perf.go          性能面板：协程、堆、GC、CPU 时间，每秒采样，两条 60 秒趋势
+    storage.go       存储清理：配置目录的大小、历史与统计的清理、背景副本的清理
+    runcmd.go        远程命令窗口：选主机、写脚本、运行，输出带回界面
+    remotecmd.go     一次性的远程执行：复用会话的通道，或按保存的密码连一次，超时与 stderr 的合并
     session.go       一个会话：连接、终端、监控、SFTP；错误信息的翻译
     sidebar.go       左侧：监控面板、竖向会话列表
     sessiontabs.go   终端上方的横向会话标签行：每个会话一个标签、关闭按钮、最右边新开标签页的“+”，放不下时横向滚动

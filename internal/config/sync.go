@@ -120,6 +120,9 @@ var (
 		// The left panel's page and the folders open in its tree are
 		// where this device's window was left, as the pane sizes.
 		"leftPanelPage", "connectionTreeExpanded",
+		// Which plugins are on, and pinned to the row of tabs, is where
+		// this device's window was left too (plugins.go).
+		"plugins",
 	}
 )
 

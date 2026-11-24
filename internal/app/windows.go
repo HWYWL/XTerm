@@ -18,6 +18,25 @@ const (
 	// WindowAssets is the assets window, opened from the icon at the right
 	// end of the row of session tabs (assets.go).
 	WindowAssets WindowKind = "assets"
+	// WindowPlugins is the plugin center, opened from the icon before the
+	// settings' (plugins.go).
+	WindowPlugins WindowKind = "plugins"
+	// WindowHostKeys is the host keys window of the plugin center
+	// (hostkeys.go).
+	WindowHostKeys WindowKind = "hostkeys"
+	// WindowDangerRules is the danger rules window of the plugin center
+	// (danger.go), and WindowDangerGuard the window that holds an Enter for
+	// one of those rules (dangerguard.go).
+	WindowDangerRules WindowKind = "danger"
+	WindowDangerGuard WindowKind = "dangerguard"
+	// WindowOpsReport, WindowPerf and WindowStorage are the report, the
+	// performance panel and the storage window of the plugin center
+	// (ops.go, perf.go, storage.go), and WindowRunCmd the one-off command
+	// window (runcmd.go).
+	WindowOpsReport WindowKind = "report"
+	WindowPerf      WindowKind = "perf"
+	WindowStorage   WindowKind = "storage"
+	WindowRunCmd    WindowKind = "runcmd"
 )
 
 // WindowMain is the main window, as a Parent and for FocusWindow.

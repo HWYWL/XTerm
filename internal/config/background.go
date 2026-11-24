@@ -49,6 +49,22 @@ func SaveBackground(data []byte, src string) (string, error) {
 	return name, nil
 }
 
+// BackgroundCopies are the copies of background pictures kept in Dir(), for
+// the storage window to count and clean (storage.go in internal/app).
+func BackgroundCopies() []string {
+	entries, err := os.ReadDir(Dir())
+	if err != nil {
+		return nil
+	}
+	var out []string
+	for _, e := range entries {
+		if !e.IsDir() && isBackgroundName(e.Name()) {
+			out = append(out, e.Name())
+		}
+	}
+	return out
+}
+
 // RemoveBackground deletes the copy name; a copy already gone is no
 // error.
 func RemoveBackground(name string) error {

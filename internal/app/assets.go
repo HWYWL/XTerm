@@ -2,7 +2,6 @@ package app
 
 import (
 	"math"
-	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -14,9 +13,9 @@ import (
 )
 
 // The assets window: the saved connections and the sessions counted, as
-// QuickTerm's dashboard does on the tablet. It opens from the icon at the
-// right end of the row of session tabs (sessiontabs.go), and counts afresh
-// on every frame.
+// QuickTerm's dashboard does on the tablet. It is a plugin of the plugin
+// center, pinned to the row of session tabs by default (plugins.go), and
+// counts afresh on every frame.
 //
 // The counts of logins and commands are kept a day at a time in
 // asset_stats.json (config.AssetStatsFile): the logins that worked and
@@ -78,10 +77,6 @@ type assetWindow struct {
 	heat    [assetsWeeks][7]int
 	heatMax int
 }
-
-// riskyCommand matches the commands the window counts as risky: those that
-// remove trees, format disks, write over devices, or shut the machine down.
-var riskyCommand = regexp.MustCompile(`(?i)(^|\s)rm\s+-[a-z]*r[a-z]*f|\bmkfs|\bdd\b.*\bof=/dev/|\bshutdown\b|\breboot\b|\bchmod\s+777\b`)
 
 // assetWindowAt counts the connections, the sessions and the ranges at now.
 func (a *App) assetWindowAt(now time.Time) assetWindow {
@@ -237,7 +232,7 @@ func (a *App) assetCommand(line string) {
 		return
 	}
 	risk := 0
-	if riskyCommand.MatchString(line) {
+	if a.risky(line) { // the danger rules decide it (danger.go)
 		risk = 1
 	}
 	a.assetAdd(0, 0, 1, risk)
@@ -249,16 +244,20 @@ func (a *App) assetKey(s *Session, mods ui.Modifiers, key ui.Key) {
 	switch {
 	case mods == 0 && key == ui.KeyEnter:
 		line := strings.TrimSpace(s.cmdLine)
-		s.cmdLine = ""
+		s.cmdLine, s.cmdEdited = "", false
 		if line != "" {
 			a.assetCommand(line)
 		}
 	case mods == ui.Ctrl && (key == ui.KeyC || key == ui.KeyU):
-		s.cmdLine = ""
+		s.cmdLine, s.cmdEdited = "", false
 	case mods == 0 && key == ui.KeyBackspace:
 		if n := len(s.cmdLine); n > 0 {
 			s.cmdLine = s.cmdLine[:n-1]
 		}
+	case movingKey(key):
+		// The line went through the arrows: what is tracked from here on is
+		// no longer what the shell has (dangerguard.go).
+		s.cmdEdited = true
 	default:
 		if mods == 0 {
 			if ch, ok := keyChar(key); ok && len(s.cmdLine) < 512 {
@@ -296,6 +295,16 @@ func keyChar(key ui.Key) (string, bool) {
 		return "'", true
 	}
 	return "", false
+}
+
+// movingKey tells whether a key moves about the line instead of typing into
+// it, which leaves the tracked line unlike the shell's.
+func movingKey(key ui.Key) bool {
+	switch key {
+	case ui.KeyLeft, ui.KeyRight, ui.KeyUp, ui.KeyDown, ui.KeyHome, ui.KeyEnd, ui.KeyDelete:
+		return true
+	}
+	return false
 }
 
 // resetAssetStats empties the counts, the days kept and this run's.

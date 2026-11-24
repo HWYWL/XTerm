@@ -1,9 +1,10 @@
 // Package sshtest is an SSH server for tests, in the test's process: it
 // logs in with a password, or with the public keys AcceptKey gives it,
 // opens shells that read and print nothing, keeping what they read,
-// forwards ports as OpenSSH does with AllowTcpForwarding on and
-// GatewayPorts off, answers keepalives, and, started with StartSFTP,
-// serves the local file system over SFTP.
+// refuses exec unless ServeExec says what it writes, forwards ports as
+// OpenSSH does with AllowTcpForwarding on and GatewayPorts off, answers
+// keepalives, and, started with StartSFTP, serves the local file system
+// over SFTP.
 package sshtest
 
 import (
@@ -57,6 +58,17 @@ type Server struct {
 	shells      []*shell    // the shells opened, in order, under mu
 	silent      atomic.Bool // keepalives go unanswered
 	hangExec    atomic.Bool // exec requests are accepted and never run
+	// exec is what ServeExec made the exec requests write, and whether it
+	// did, under mu.
+	exec    execOutput
+	execSet bool
+}
+
+// execOutput is what an exec request of a server writes on its two streams,
+// and the status it exits with.
+type execOutput struct {
+	stdout, stderr string
+	status         uint32
 }
 
 // Start starts a server, which stops as the test ends, with every
@@ -168,6 +180,16 @@ func (s *Server) StopAnswering() { s.silent.Store(true) }
 // nothing: the command never prints, ends or exits, as a script stuck on
 // a stale mount. By default exec is refused.
 func (s *Server) HangExec() { s.hangExec.Store(true) }
+
+// ServeExec makes the exec requests that come from now on write stdout and
+// stderr and exit with status, as a server running the script they carry:
+// this one runs no shell, so the output is what the test set. By default
+// exec is refused.
+func (s *Server) ServeExec(stdout, stderr string, status uint32) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.exec, s.execSet = execOutput{stdout: stdout, stderr: stderr, status: status}, true
+}
 
 // AcceptKey lets any user log in with the private key of key.
 func (s *Server) AcceptKey(key ssh.PublicKey) {
@@ -363,14 +385,33 @@ func (s *Server) session(nc ssh.NewChannel, closed func()) {
 					start(func() { s.serveSFTP(ch) })
 				}
 			case "exec":
-				hang := s.hangExec.Load() && !started
-				r.Reply(hang, nil)
-				started = started || hang
+				if s.hangExec.Load() && !started { // accepted, and never run
+					r.Reply(true, nil)
+					started = true
+					continue
+				}
+				s.mu.Lock()
+				out, ok := s.exec, s.execSet
+				s.mu.Unlock()
+				r.Reply(ok && !started, nil)
+				if ok && !started {
+					start(func() { s.serveExec(ch, out) })
+				}
 			default: // env
 				r.Reply(false, nil)
 			}
 		}
 	}()
+}
+
+// serveExec answers an exec request: it reads the script, which it does not
+// run, then writes what ServeExec set, the status, and closes the channel.
+func (s *Server) serveExec(ch ssh.Channel, out execOutput) {
+	defer ch.Close()
+	io.Copy(io.Discard, ch) // the script, read until the client closes its side
+	io.WriteString(ch, out.stdout)
+	io.WriteString(ch.Stderr(), out.stderr)
+	ch.SendRequest("exit-status", false, ssh.Marshal(struct{ Status uint32 }{out.status}))
 }
 
 // serveSFTP serves the local file system on ch until the client is done.

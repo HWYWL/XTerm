@@ -56,9 +56,17 @@ func (a *App) sessionTabs(c *ui.Context) {
 				}
 			})
 		})
-		// The assets, then the options, at the right end of the row of tabs.
-		if headerButton(c, "asset", locales.AssetsTitle()).Clicked() {
-			a.openAssets()
+		// The plugin center, then the plugins pinned to the row, then the
+		// options: the plugins not on the row have no icon but its entry
+		// (plugins.go).
+		if headerButton(c, "puzzle", locales.PluginsTitle()).Clicked() {
+			a.openPlugins()
+		}
+		for _, p := range a.plugins.pinned() {
+			id := p.id
+			if headerButton(c, p.icon, p.name()).Clicked() {
+				a.openPlugin(id)
+			}
 		}
 		if headerButton(c, "settings", locales.Options()).Clicked() {
 			a.openOptions()

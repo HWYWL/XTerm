@@ -36,6 +36,7 @@ XTerm 把主机和设置存在普通的 JSON 文件里。密码从不写进去�
 | `hosts.before-sync.json` | 上次改动了它的同步之前的 `hosts.json`。 |
 | `history/<主机 ID>.txt` | 命令输入框按主机保存的历史，本地终端的历史是 `history/local.txt`（见[命令历史](#命令历史)）。 |
 | `asset_stats.json` | 资产窗口按天保存的计数：登录成功、登录失败、命令、高风险命令，最多 180 天（见[资产](features.md#资产)）。 |
+| `danger_rules.json` | 资产窗口判断危险命令的规则：正则，以及每条的名称、高危或提示、开关；和默认一样时没有这个文件（见[插件中心](features.md#插件中心)）。 |
 | `quickcommands.json` | 命令页的快捷命令（见 [quickcommands.json](#quickcommandsjson)）。 |
 | `quickcommands.json.broken-<日期-时间>` | 读不出来的 `quickcommands.json` 的副本。 |
 | `commandeditor.txt` | 命令页里命令编辑器的文本（见 [commandeditor.txt](#commandeditortxt)）。 |
@@ -202,7 +203,7 @@ XTerm 把主机和设置存在普通的 JSON 文件里。密码从不写进去�
 | `auto` | `true` 时自动同步。 | 关闭。 |
 | `interval` | 自动同步的间隔分钟数：5、15、30 或 60。 | 15 |
 
-`settings.json` 的每个键要么同步，要么留在各自的电脑上，两个列表是 `internal/config/sync.go` 里的 `syncedSettings` 和 `localSettings`。留在本机的有：`sidebarWidth`、`monitorPercent`、`terminalPercent`、`treeWidth`、`procListPercent`、`procFieldsPercent`、`netListPercent`、`monitorHidden`、`sidebarHidden`、`bottomPanelHidden`、`bottomPanelSide`、`rightPanelWidth`、`monitorSide`、`rightMonitorPercent`、`commandEditorShown`、`commandEditorWidth`、`commandEditorPercent`、`commandEditorNoEnter`、`commandEditorClear`、`termBackground`、`localShell`、`sshAgent`、`downloadDir`、`askDownloadDir`、`sync`、`geoLocations`、`geoLocationsV6`、`geoOnline`、`leftPanelPage` 和 `connectionTreeExpanded`（左侧面板显示哪一页、展开了哪些文件夹，是这台电脑上窗口留下的样子，和窗格大小一样），以及从 VSIX 安装或在编辑器扩展里找到的 `fileIconTheme`。
+`settings.json` 的每个键要么同步，要么留在各自的电脑上，两个列表是 `internal/config/sync.go` 里的 `syncedSettings` 和 `localSettings`。留在本机的有：`sidebarWidth`、`monitorPercent`、`terminalPercent`、`treeWidth`、`procListPercent`、`procFieldsPercent`、`netListPercent`、`monitorHidden`、`sidebarHidden`、`bottomPanelHidden`、`bottomPanelSide`、`rightPanelWidth`、`monitorSide`、`rightMonitorPercent`、`commandEditorShown`、`commandEditorWidth`、`commandEditorPercent`、`commandEditorNoEnter`、`commandEditorClear`、`termBackground`、`localShell`、`sshAgent`、`downloadDir`、`askDownloadDir`、`sync`、`geoLocations`、`geoLocationsV6`、`geoOnline`、`leftPanelPage`、`connectionTreeExpanded` 和 `plugins`（左侧面板显示哪一页、展开了哪些文件夹、哪些插件停用或固定在工具栏上，都是这台电脑上窗口留下的样子，和窗格大小一样），以及从 VSIX 安装或在编辑器扩展里找到的 `fileIconTheme`。
 
 另有两个文件属于同步，和 `hosts.json` 放在一起：
 

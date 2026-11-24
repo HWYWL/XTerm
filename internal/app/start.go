@@ -190,7 +190,7 @@ func (a *App) startEmpty(c *ui.Context, tab *Session) {
 			if ui.PrimaryButton(c, locales.NewConnection()).AutoFocus().Clicked() {
 				a.startNewConnection()
 			}
-			if ui.Button(c, locales.ConnectionManager()).Clicked() {
+			if a.pluginOn(pluginManager) && ui.Button(c, locales.ConnectionManager()).Clicked() {
 				a.showManager(false)
 			}
 			if localButton(c).Clicked() {
@@ -314,7 +314,7 @@ func (a *App) quickConnect(c *ui.Context, tab *Session, st *startState) {
 		}
 		widgets.Muted(c, locales.WelcomeHint(a.shortcutLabel(scManager))).FontSize(12).Grow(1).TextAlign(ui.End)
 		local = localButton(c).Clicked()
-		if ui.Button(c, locales.ConnectionManager()).Clicked() {
+		if a.pluginOn(pluginManager) && ui.Button(c, locales.ConnectionManager()).Clicked() {
 			a.openManager()
 		}
 	})

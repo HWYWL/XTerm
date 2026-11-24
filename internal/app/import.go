@@ -103,16 +103,22 @@ func (st *importState) statuses(hosts *config.Store) []importStatus {
 }
 
 // openImport opens the import window, or brings it to the front, and
-// starts looking for the source chosen last.
+// starts looking for the source chosen last once the window is shown: the
+// chooser it may open comes up over a window that is there, not behind one
+// the system has yet to show.
 func (a *App) openImport() {
 	if a.windowOpen(WindowImport) {
 		a.plat.FocusWindow(WindowImport)
 		return
 	}
-	st := &importState{row: -1, source: a.importSource(a.importKind)}
+	st := &importState{row: -1, busy: true, source: a.importSource(a.importKind)}
 	a.imp = st
 	a.openWindow(importSpec, a.importView)
-	a.readImport(st, false)
+	a.post(func() {
+		if a.imp == st && a.windowOpen(WindowImport) && st.reads == 0 {
+			a.readImport(st, false)
+		}
+	})
 }
 
 // importSource is the source of kind k, or the first when none is.

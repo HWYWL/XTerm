@@ -88,14 +88,15 @@ func TestAssetStats(t *testing.T) {
 // keeps the day: a reset empties the counts and the file.
 func TestAssetCommands(t *testing.T) {
 	a, _ := testApp(t)
-	a.assetCommand("rm -rf /tmp/x")
+	a.assetCommand("rm -rf /")
 	a.assetCommand("ls")
 	if a.assetRun.cmd != 2 || a.assetRun.risk != 1 {
 		t.Errorf("counts %+v", a.assetRun)
 	}
 	// A line typed in the terminal counts on Enter, as it runs.
 	s := &Session{}
-	for _, k := range []ui.Key{ui.KeyR, ui.KeyM, ui.KeySpace, ui.KeyMinus, ui.KeyR, ui.KeyF} {
+	for _, k := range []ui.Key{ui.KeyR, ui.KeyM, ui.KeySpace, ui.KeyMinus, ui.KeyR, ui.KeyF,
+		ui.KeySpace, ui.KeySlash} {
 		a.assetKey(s, 0, k)
 	}
 	a.assetKey(s, 0, ui.KeyEnter)
@@ -129,8 +130,8 @@ func TestAssetsWindow(t *testing.T) {
 	tt := ui.NewTester(a.View, 1280, 820)
 	p.tt = tt
 	tt.Frame()
-	if err := tt.Click(locales.AssetsTitle()); err != nil {
-		t.Fatalf("no icon before the tabs: %v; texts %q", err, tt.Texts())
+	if err := tt.Click(locales.PluginAssetsName()); err != nil {
+		t.Fatalf("no assets icon on the row: %v; texts %q", err, tt.Texts())
 	}
 	tt.Frame()
 	if !a.windowOpen(WindowAssets) {

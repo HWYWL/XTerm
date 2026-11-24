@@ -68,8 +68,11 @@ type Session struct {
 	name string
 
 	// cmdLine is the line typed in this session's shell so far, for the
-	// assets window's command count (assets.go).
-	cmdLine string
+	// assets window's command count (assets.go) and for the danger guard,
+	// and cmdEdited says the arrows went through it, so that it may not be
+	// what the shell has (dangerguard.go).
+	cmdLine   string
+	cmdEdited bool
 
 	// A panel row's session, whose bottom panel it shows, and the tab of
 	// the panel it has chosen (paneltab.go): panelOf is nil on every
@@ -289,6 +292,9 @@ func (a *App) openPaneShell(s *Session, p *pane, client *ssh.Client, spec shellS
 	topts.Conn = termenc.Wrap(shell, spec.enc)
 	keys := keySequences(spec.bs, spec.del, func() *terminal.Terminal { return p.term })
 	topts.OnKey = func(mods ui.Modifiers, key ui.Key) bool {
+		if a.dangerKey(s, p, mods, key) {
+			return true // the Enter waits for the guard's answer
+		}
 		a.assetKey(s, mods, key) // the line typed, for the assets window
 		p.shellKey(mods, key)    // for the file panel to follow a cd, and the tab its agent
 		return keys != nil && keys(mods, key)

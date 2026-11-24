@@ -434,6 +434,1356 @@ func (msgs Messages) AssetsSsh() string {
 	return Catalog.Format(msgs.locale, "assetsSsh", nil)
 }
 
+// PluginsTitle says "Plugin center"
+// in the language the app shows.
+func PluginsTitle() string { return In(i18n.Locale()).PluginsTitle() }
+
+// PluginsTitle says "Plugin center"
+// in the language of msgs.
+func (msgs Messages) PluginsTitle() string {
+	return Catalog.Format(msgs.locale, "pluginsTitle", nil)
+}
+
+// PluginsNote says "Plugins are built in and can be turned off anytime. Turning one off hides its entries, the icons on this row too; tur…"
+// in the language the app shows.
+func PluginsNote() string { return In(i18n.Locale()).PluginsNote() }
+
+// PluginsNote says "Plugins are built in and can be turned off anytime. Turning one off hides its entries, the icons on this row too; tur…"
+// in the language of msgs.
+func (msgs Messages) PluginsNote() string {
+	return Catalog.Format(msgs.locale, "pluginsNote", nil)
+}
+
+// PluginsAll says "All"
+// in the language the app shows.
+func PluginsAll() string { return In(i18n.Locale()).PluginsAll() }
+
+// PluginsAll says "All"
+// in the language of msgs.
+func (msgs Messages) PluginsAll() string {
+	return Catalog.Format(msgs.locale, "pluginsAll", nil)
+}
+
+// PluginsCatOverview says "Overview"
+// in the language the app shows.
+func PluginsCatOverview() string { return In(i18n.Locale()).PluginsCatOverview() }
+
+// PluginsCatOverview says "Overview"
+// in the language of msgs.
+func (msgs Messages) PluginsCatOverview() string {
+	return Catalog.Format(msgs.locale, "pluginsCatOverview", nil)
+}
+
+// PluginsCatOps says "Efficiency"
+// in the language the app shows.
+func PluginsCatOps() string { return In(i18n.Locale()).PluginsCatOps() }
+
+// PluginsCatOps says "Efficiency"
+// in the language of msgs.
+func (msgs Messages) PluginsCatOps() string {
+	return Catalog.Format(msgs.locale, "pluginsCatOps", nil)
+}
+
+// PluginsCatSecurity says "Credentials"
+// in the language the app shows.
+func PluginsCatSecurity() string { return In(i18n.Locale()).PluginsCatSecurity() }
+
+// PluginsCatSecurity says "Credentials"
+// in the language of msgs.
+func (msgs Messages) PluginsCatSecurity() string {
+	return Catalog.Format(msgs.locale, "pluginsCatSecurity", nil)
+}
+
+// PluginsCatUi says "Interface"
+// in the language the app shows.
+func PluginsCatUi() string { return In(i18n.Locale()).PluginsCatUi() }
+
+// PluginsCatUi says "Interface"
+// in the language of msgs.
+func (msgs Messages) PluginsCatUi() string {
+	return Catalog.Format(msgs.locale, "pluginsCatUi", nil)
+}
+
+// PluginsOpen says "Open ›"
+// in the language the app shows.
+func PluginsOpen() string { return In(i18n.Locale()).PluginsOpen() }
+
+// PluginsOpen says "Open ›"
+// in the language of msgs.
+func (msgs Messages) PluginsOpen() string {
+	return Catalog.Format(msgs.locale, "pluginsOpen", nil)
+}
+
+// PluginsEnabled says "On"
+// in the language the app shows.
+func PluginsEnabled() string { return In(i18n.Locale()).PluginsEnabled() }
+
+// PluginsEnabled says "On"
+// in the language of msgs.
+func (msgs Messages) PluginsEnabled() string {
+	return Catalog.Format(msgs.locale, "pluginsEnabled", nil)
+}
+
+// PluginsDisabled says "Off"
+// in the language the app shows.
+func PluginsDisabled() string { return In(i18n.Locale()).PluginsDisabled() }
+
+// PluginsDisabled says "Off"
+// in the language of msgs.
+func (msgs Messages) PluginsDisabled() string {
+	return Catalog.Format(msgs.locale, "pluginsDisabled", nil)
+}
+
+// PluginsPin says "Pin"
+// in the language the app shows.
+func PluginsPin() string { return In(i18n.Locale()).PluginsPin() }
+
+// PluginsPin says "Pin"
+// in the language of msgs.
+func (msgs Messages) PluginsPin() string {
+	return Catalog.Format(msgs.locale, "pluginsPin", nil)
+}
+
+// PluginsPinned says "Pinned"
+// in the language the app shows.
+func PluginsPinned() string { return In(i18n.Locale()).PluginsPinned() }
+
+// PluginsPinned says "Pinned"
+// in the language of msgs.
+func (msgs Messages) PluginsPinned() string {
+	return Catalog.Format(msgs.locale, "pluginsPinned", nil)
+}
+
+// PluginAssetsName says "Assets"
+// in the language the app shows.
+func PluginAssetsName() string { return In(i18n.Locale()).PluginAssetsName() }
+
+// PluginAssetsName says "Assets"
+// in the language of msgs.
+func (msgs Messages) PluginAssetsName() string {
+	return Catalog.Format(msgs.locale, "pluginAssetsName", nil)
+}
+
+// PluginAssetsDesc says "The connections and the sessions, their health and the commands of the last weeks."
+// in the language the app shows.
+func PluginAssetsDesc() string { return In(i18n.Locale()).PluginAssetsDesc() }
+
+// PluginAssetsDesc says "The connections and the sessions, their health and the commands of the last weeks."
+// in the language of msgs.
+func (msgs Messages) PluginAssetsDesc() string {
+	return Catalog.Format(msgs.locale, "pluginAssetsDesc", nil)
+}
+
+// PluginManagerName says "Connection manager"
+// in the language the app shows.
+func PluginManagerName() string { return In(i18n.Locale()).PluginManagerName() }
+
+// PluginManagerName says "Connection manager"
+// in the language of msgs.
+func (msgs Messages) PluginManagerName() string {
+	return Catalog.Format(msgs.locale, "pluginManagerName", nil)
+}
+
+// PluginManagerDesc says "The saved connections by folder, to connect, import and edit."
+// in the language the app shows.
+func PluginManagerDesc() string { return In(i18n.Locale()).PluginManagerDesc() }
+
+// PluginManagerDesc says "The saved connections by folder, to connect, import and edit."
+// in the language of msgs.
+func (msgs Messages) PluginManagerDesc() string {
+	return Catalog.Format(msgs.locale, "pluginManagerDesc", nil)
+}
+
+// PluginImportName says "Import connections"
+// in the language the app shows.
+func PluginImportName() string { return In(i18n.Locale()).PluginImportName() }
+
+// PluginImportName says "Import connections"
+// in the language of msgs.
+func (msgs Messages) PluginImportName() string {
+	return Catalog.Format(msgs.locale, "pluginImportName", nil)
+}
+
+// PluginImportDesc says "From FinalShell, Xshell, SecureCRT, MobaXterm, an SSH config or a table."
+// in the language the app shows.
+func PluginImportDesc() string { return In(i18n.Locale()).PluginImportDesc() }
+
+// PluginImportDesc says "From FinalShell, Xshell, SecureCRT, MobaXterm, an SSH config or a table."
+// in the language of msgs.
+func (msgs Messages) PluginImportDesc() string {
+	return Catalog.Format(msgs.locale, "pluginImportDesc", nil)
+}
+
+// PluginHostKeysName says "Host keys"
+// in the language the app shows.
+func PluginHostKeysName() string { return In(i18n.Locale()).PluginHostKeysName() }
+
+// PluginHostKeysName says "Host keys"
+// in the language of msgs.
+func (msgs Messages) PluginHostKeysName() string {
+	return Catalog.Format(msgs.locale, "pluginHostKeysName", nil)
+}
+
+// PluginHostKeysDesc says "The keys ssh trusts for your servers; forget one when a reinstalled host no longer connects."
+// in the language the app shows.
+func PluginHostKeysDesc() string { return In(i18n.Locale()).PluginHostKeysDesc() }
+
+// PluginHostKeysDesc says "The keys ssh trusts for your servers; forget one when a reinstalled host no longer connects."
+// in the language of msgs.
+func (msgs Messages) PluginHostKeysDesc() string {
+	return Catalog.Format(msgs.locale, "pluginHostKeysDesc", nil)
+}
+
+// PluginDangerName says "Danger rules"
+// in the language the app shows.
+func PluginDangerName() string { return In(i18n.Locale()).PluginDangerName() }
+
+// PluginDangerName says "Danger rules"
+// in the language of msgs.
+func (msgs Messages) PluginDangerName() string {
+	return Catalog.Format(msgs.locale, "pluginDangerName", nil)
+}
+
+// PluginDangerDesc says "Holds a dangerous command at Enter: one to confirm, high risk to type out. Turning it off turns the guard off."
+// in the language the app shows.
+func PluginDangerDesc() string { return In(i18n.Locale()).PluginDangerDesc() }
+
+// PluginDangerDesc says "Holds a dangerous command at Enter: one to confirm, high risk to type out. Turning it off turns the guard off."
+// in the language of msgs.
+func (msgs Messages) PluginDangerDesc() string {
+	return Catalog.Format(msgs.locale, "pluginDangerDesc", nil)
+}
+
+// HostKeysTitle says "Host keys"
+// in the language the app shows.
+func HostKeysTitle() string { return In(i18n.Locale()).HostKeysTitle() }
+
+// HostKeysTitle says "Host keys"
+// in the language of msgs.
+func (msgs Messages) HostKeysTitle() string {
+	return Catalog.Format(msgs.locale, "hostKeysTitle", nil)
+}
+
+// HostKeysNote says "The keys ssh trusts, as known_hosts keeps them. Forget one and the next connection to that server asks for its key ag…"
+// in the language the app shows.
+func HostKeysNote() string { return In(i18n.Locale()).HostKeysNote() }
+
+// HostKeysNote says "The keys ssh trusts, as known_hosts keeps them. Forget one and the next connection to that server asks for its key ag…"
+// in the language of msgs.
+func (msgs Messages) HostKeysNote() string {
+	return Catalog.Format(msgs.locale, "hostKeysNote", nil)
+}
+
+// HostKeysEmpty says "No host keys yet: the first connection writes one."
+// in the language the app shows.
+func HostKeysEmpty() string { return In(i18n.Locale()).HostKeysEmpty() }
+
+// HostKeysEmpty says "No host keys yet: the first connection writes one."
+// in the language of msgs.
+func (msgs Messages) HostKeysEmpty() string {
+	return Catalog.Format(msgs.locale, "hostKeysEmpty", nil)
+}
+
+// HostKeysHashed says "Hashed host"
+// in the language the app shows.
+func HostKeysHashed() string { return In(i18n.Locale()).HostKeysHashed() }
+
+// HostKeysHashed says "Hashed host"
+// in the language of msgs.
+func (msgs Messages) HostKeysHashed() string {
+	return Catalog.Format(msgs.locale, "hostKeysHashed", nil)
+}
+
+// HostKeysDelete says "Forget"
+// in the language the app shows.
+func HostKeysDelete() string { return In(i18n.Locale()).HostKeysDelete() }
+
+// HostKeysDelete says "Forget"
+// in the language of msgs.
+func (msgs Messages) HostKeysDelete() string {
+	return Catalog.Format(msgs.locale, "hostKeysDelete", nil)
+}
+
+// HostKeysConfirm says "Forget it"
+// in the language the app shows.
+func HostKeysConfirm() string { return In(i18n.Locale()).HostKeysConfirm() }
+
+// HostKeysConfirm says "Forget it"
+// in the language of msgs.
+func (msgs Messages) HostKeysConfirm() string {
+	return Catalog.Format(msgs.locale, "hostKeysConfirm", nil)
+}
+
+// DangerTitle says "Danger rules"
+// in the language the app shows.
+func DangerTitle() string { return In(i18n.Locale()).DangerTitle() }
+
+// DangerTitle says "Danger rules"
+// in the language of msgs.
+func (msgs Messages) DangerTitle() string {
+	return Catalog.Format(msgs.locale, "dangerTitle", nil)
+}
+
+// DangerNote says "A command that matches one of these is held at Enter, before it runs, and the list is judged in order: the first that…"
+// in the language the app shows.
+func DangerNote() string { return In(i18n.Locale()).DangerNote() }
+
+// DangerNote says "A command that matches one of these is held at Enter, before it runs, and the list is judged in order: the first that…"
+// in the language of msgs.
+func (msgs Messages) DangerNote() string {
+	return Catalog.Format(msgs.locale, "dangerNote", nil)
+}
+
+// DangerOn says "On: {n} of {m}"
+// in the language the app shows.
+func DangerOn(n int, m int) string { return In(i18n.Locale()).DangerOn(n, m) }
+
+// DangerOn says "On: {n} of {m}"
+// in the language of msgs.
+func (msgs Messages) DangerOn(n int, m int) string {
+	return Catalog.Format(msgs.locale, "dangerOn", map[string]any{"n": n, "m": m})
+}
+
+// DangerAllOff says "Turn all off"
+// in the language the app shows.
+func DangerAllOff() string { return In(i18n.Locale()).DangerAllOff() }
+
+// DangerAllOff says "Turn all off"
+// in the language of msgs.
+func (msgs Messages) DangerAllOff() string {
+	return Catalog.Format(msgs.locale, "dangerAllOff", nil)
+}
+
+// DangerAllOn says "Turn all on"
+// in the language the app shows.
+func DangerAllOn() string { return In(i18n.Locale()).DangerAllOn() }
+
+// DangerAllOn says "Turn all on"
+// in the language of msgs.
+func (msgs Messages) DangerAllOn() string {
+	return Catalog.Format(msgs.locale, "dangerAllOn", nil)
+}
+
+// DangerHigh says "High risk"
+// in the language the app shows.
+func DangerHigh() string { return In(i18n.Locale()).DangerHigh() }
+
+// DangerHigh says "High risk"
+// in the language of msgs.
+func (msgs Messages) DangerHigh() string {
+	return Catalog.Format(msgs.locale, "dangerHigh", nil)
+}
+
+// DangerHint says "Hint"
+// in the language the app shows.
+func DangerHint() string { return In(i18n.Locale()).DangerHint() }
+
+// DangerHint says "Hint"
+// in the language of msgs.
+func (msgs Messages) DangerHint() string {
+	return Catalog.Format(msgs.locale, "dangerHint", nil)
+}
+
+// DangerPattern says "A regular expression"
+// in the language the app shows.
+func DangerPattern() string { return In(i18n.Locale()).DangerPattern() }
+
+// DangerPattern says "A regular expression"
+// in the language of msgs.
+func (msgs Messages) DangerPattern() string {
+	return Catalog.Format(msgs.locale, "dangerPattern", nil)
+}
+
+// DangerAdd says "Add"
+// in the language the app shows.
+func DangerAdd() string { return In(i18n.Locale()).DangerAdd() }
+
+// DangerAdd says "Add"
+// in the language of msgs.
+func (msgs Messages) DangerAdd() string {
+	return Catalog.Format(msgs.locale, "dangerAdd", nil)
+}
+
+// DangerEmpty says "No rules: nothing counts as risky."
+// in the language the app shows.
+func DangerEmpty() string { return In(i18n.Locale()).DangerEmpty() }
+
+// DangerEmpty says "No rules: nothing counts as risky."
+// in the language of msgs.
+func (msgs Messages) DangerEmpty() string {
+	return Catalog.Format(msgs.locale, "dangerEmpty", nil)
+}
+
+// DangerInvalid says "Not a regular expression"
+// in the language the app shows.
+func DangerInvalid() string { return In(i18n.Locale()).DangerInvalid() }
+
+// DangerInvalid says "Not a regular expression"
+// in the language of msgs.
+func (msgs Messages) DangerInvalid() string {
+	return Catalog.Format(msgs.locale, "dangerInvalid", nil)
+}
+
+// DangerRestore says "Restore the defaults"
+// in the language the app shows.
+func DangerRestore() string { return In(i18n.Locale()).DangerRestore() }
+
+// DangerRestore says "Restore the defaults"
+// in the language of msgs.
+func (msgs Messages) DangerRestore() string {
+	return Catalog.Format(msgs.locale, "dangerRestore", nil)
+}
+
+// DangerRuleRmRoot says "Delete the root directory"
+// in the language the app shows.
+func DangerRuleRmRoot() string { return In(i18n.Locale()).DangerRuleRmRoot() }
+
+// DangerRuleRmRoot says "Delete the root directory"
+// in the language of msgs.
+func (msgs Messages) DangerRuleRmRoot() string {
+	return Catalog.Format(msgs.locale, "dangerRuleRmRoot", nil)
+}
+
+// DangerRuleRmRootNote says "Recursive: the system files go with it, and nothing brings them back"
+// in the language the app shows.
+func DangerRuleRmRootNote() string { return In(i18n.Locale()).DangerRuleRmRootNote() }
+
+// DangerRuleRmRootNote says "Recursive: the system files go with it, and nothing brings them back"
+// in the language of msgs.
+func (msgs Messages) DangerRuleRmRootNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleRmRootNote", nil)
+}
+
+// DangerRuleRmHome says "Delete the home directory"
+// in the language the app shows.
+func DangerRuleRmHome() string { return In(i18n.Locale()).DangerRuleRmHome() }
+
+// DangerRuleRmHome says "Delete the home directory"
+// in the language of msgs.
+func (msgs Messages) DangerRuleRmHome() string {
+	return Catalog.Format(msgs.locale, "dangerRuleRmHome", nil)
+}
+
+// DangerRuleRmHomeNote says "Recursive: the keys and the settings go with it"
+// in the language the app shows.
+func DangerRuleRmHomeNote() string { return In(i18n.Locale()).DangerRuleRmHomeNote() }
+
+// DangerRuleRmHomeNote says "Recursive: the keys and the settings go with it"
+// in the language of msgs.
+func (msgs Messages) DangerRuleRmHomeNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleRmHomeNote", nil)
+}
+
+// DangerRuleRmCwd says "Delete everything here"
+// in the language the app shows.
+func DangerRuleRmCwd() string { return In(i18n.Locale()).DangerRuleRmCwd() }
+
+// DangerRuleRmCwd says "Delete everything here"
+// in the language of msgs.
+func (msgs Messages) DangerRuleRmCwd() string {
+	return Catalog.Format(msgs.locale, "dangerRuleRmCwd", nil)
+}
+
+// DangerRuleRmCwdNote says "rm -rf . * takes the hidden files too: .git, keys"
+// in the language the app shows.
+func DangerRuleRmCwdNote() string { return In(i18n.Locale()).DangerRuleRmCwdNote() }
+
+// DangerRuleRmCwdNote says "rm -rf . * takes the hidden files too: .git, keys"
+// in the language of msgs.
+func (msgs Messages) DangerRuleRmCwdNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleRmCwdNote", nil)
+}
+
+// DangerRuleDiskWipe says "Wipe a block device"
+// in the language the app shows.
+func DangerRuleDiskWipe() string { return In(i18n.Locale()).DangerRuleDiskWipe() }
+
+// DangerRuleDiskWipe says "Wipe a block device"
+// in the language of msgs.
+func (msgs Messages) DangerRuleDiskWipe() string {
+	return Catalog.Format(msgs.locale, "dangerRuleDiskWipe", nil)
+}
+
+// DangerRuleDiskWipeNote says "Writes a filesystem over a bare disk: what was on it is gone"
+// in the language the app shows.
+func DangerRuleDiskWipeNote() string { return In(i18n.Locale()).DangerRuleDiskWipeNote() }
+
+// DangerRuleDiskWipeNote says "Writes a filesystem over a bare disk: what was on it is gone"
+// in the language of msgs.
+func (msgs Messages) DangerRuleDiskWipeNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleDiskWipeNote", nil)
+}
+
+// DangerRuleFork says "Fork bomb"
+// in the language the app shows.
+func DangerRuleFork() string { return In(i18n.Locale()).DangerRuleFork() }
+
+// DangerRuleFork says "Fork bomb"
+// in the language of msgs.
+func (msgs Messages) DangerRuleFork() string {
+	return Catalog.Format(msgs.locale, "dangerRuleFork", nil)
+}
+
+// DangerRuleForkNote says "Copies itself until the process table is full: only a hard reboot"
+// in the language the app shows.
+func DangerRuleForkNote() string { return In(i18n.Locale()).DangerRuleForkNote() }
+
+// DangerRuleForkNote says "Copies itself until the process table is full: only a hard reboot"
+// in the language of msgs.
+func (msgs Messages) DangerRuleForkNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleForkNote", nil)
+}
+
+// DangerRuleOverwrite says "Overwrite a system file"
+// in the language the app shows.
+func DangerRuleOverwrite() string { return In(i18n.Locale()).DangerRuleOverwrite() }
+
+// DangerRuleOverwrite says "Overwrite a system file"
+// in the language of msgs.
+func (msgs Messages) DangerRuleOverwrite() string {
+	return Catalog.Format(msgs.locale, "dangerRuleOverwrite", nil)
+}
+
+// DangerRuleOverwriteNote says "Empties the accounts, the mounts or the boot files: no login, no boot"
+// in the language the app shows.
+func DangerRuleOverwriteNote() string { return In(i18n.Locale()).DangerRuleOverwriteNote() }
+
+// DangerRuleOverwriteNote says "Empties the accounts, the mounts or the boot files: no login, no boot"
+// in the language of msgs.
+func (msgs Messages) DangerRuleOverwriteNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleOverwriteNote", nil)
+}
+
+// DangerRuleShutdown says "Shut down or reboot"
+// in the language the app shows.
+func DangerRuleShutdown() string { return In(i18n.Locale()).DangerRuleShutdown() }
+
+// DangerRuleShutdown says "Shut down or reboot"
+// in the language of msgs.
+func (msgs Messages) DangerRuleShutdown() string {
+	return Catalog.Format(msgs.locale, "dangerRuleShutdown", nil)
+}
+
+// DangerRuleShutdownNote says "Stops every service on the host: check it is the one you mean"
+// in the language the app shows.
+func DangerRuleShutdownNote() string { return In(i18n.Locale()).DangerRuleShutdownNote() }
+
+// DangerRuleShutdownNote says "Stops every service on the host: check it is the one you mean"
+// in the language of msgs.
+func (msgs Messages) DangerRuleShutdownNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleShutdownNote", nil)
+}
+
+// DangerRuleChmod says "Change the root's permissions"
+// in the language the app shows.
+func DangerRuleChmod() string { return In(i18n.Locale()).DangerRuleChmod() }
+
+// DangerRuleChmod says "Change the root's permissions"
+// in the language of msgs.
+func (msgs Messages) DangerRuleChmod() string {
+	return Catalog.Format(msgs.locale, "dangerRuleChmod", nil)
+}
+
+// DangerRuleChmodNote says "chmod -R on /, or a new owner for it, takes the system's guards away"
+// in the language the app shows.
+func DangerRuleChmodNote() string { return In(i18n.Locale()).DangerRuleChmodNote() }
+
+// DangerRuleChmodNote says "chmod -R on /, or a new owner for it, takes the system's guards away"
+// in the language of msgs.
+func (msgs Messages) DangerRuleChmodNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleChmodNote", nil)
+}
+
+// DangerRuleDropDb says "Drop a database"
+// in the language the app shows.
+func DangerRuleDropDb() string { return In(i18n.Locale()).DangerRuleDropDb() }
+
+// DangerRuleDropDb says "Drop a database"
+// in the language of msgs.
+func (msgs Messages) DangerRuleDropDb() string {
+	return Catalog.Format(msgs.locale, "dangerRuleDropDb", nil)
+}
+
+// DangerRuleDropDbNote says "A dropped database, a truncated table or a bare DELETE cannot be undone: check it is not production"
+// in the language the app shows.
+func DangerRuleDropDbNote() string { return In(i18n.Locale()).DangerRuleDropDbNote() }
+
+// DangerRuleDropDbNote says "A dropped database, a truncated table or a bare DELETE cannot be undone: check it is not production"
+// in the language of msgs.
+func (msgs Messages) DangerRuleDropDbNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleDropDbNote", nil)
+}
+
+// DangerRuleRedisFlush says "Flush Redis"
+// in the language the app shows.
+func DangerRuleRedisFlush() string { return In(i18n.Locale()).DangerRuleRedisFlush() }
+
+// DangerRuleRedisFlush says "Flush Redis"
+// in the language of msgs.
+func (msgs Messages) DangerRuleRedisFlush() string {
+	return Catalog.Format(msgs.locale, "dangerRuleRedisFlush", nil)
+}
+
+// DangerRuleRedisFlushNote says "FLUSHALL and FLUSHDB empty every key in the database"
+// in the language the app shows.
+func DangerRuleRedisFlushNote() string { return In(i18n.Locale()).DangerRuleRedisFlushNote() }
+
+// DangerRuleRedisFlushNote says "FLUSHALL and FLUSHDB empty every key in the database"
+// in the language of msgs.
+func (msgs Messages) DangerRuleRedisFlushNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleRedisFlushNote", nil)
+}
+
+// DangerRuleContainerPrune says "Prune containers or K8s resources"
+// in the language the app shows.
+func DangerRuleContainerPrune() string { return In(i18n.Locale()).DangerRuleContainerPrune() }
+
+// DangerRuleContainerPrune says "Prune containers or K8s resources"
+// in the language of msgs.
+func (msgs Messages) DangerRuleContainerPrune() string {
+	return Catalog.Format(msgs.locale, "dangerRuleContainerPrune", nil)
+}
+
+// DangerRuleContainerPruneNote says "prune and delete take containers, volumes or cluster resources in one go"
+// in the language the app shows.
+func DangerRuleContainerPruneNote() string { return In(i18n.Locale()).DangerRuleContainerPruneNote() }
+
+// DangerRuleContainerPruneNote says "prune and delete take containers, volumes or cluster resources in one go"
+// in the language of msgs.
+func (msgs Messages) DangerRuleContainerPruneNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleContainerPruneNote", nil)
+}
+
+// DangerRuleGitForce says "Force push or throw work away"
+// in the language the app shows.
+func DangerRuleGitForce() string { return In(i18n.Locale()).DangerRuleGitForce() }
+
+// DangerRuleGitForce says "Force push or throw work away"
+// in the language of msgs.
+func (msgs Messages) DangerRuleGitForce() string {
+	return Catalog.Format(msgs.locale, "dangerRuleGitForce", nil)
+}
+
+// DangerRuleGitForceNote says "A force push rewrites the remote's history; reset --hard and clean -fd drop uncommitted work"
+// in the language the app shows.
+func DangerRuleGitForceNote() string { return In(i18n.Locale()).DangerRuleGitForceNote() }
+
+// DangerRuleGitForceNote says "A force push rewrites the remote's history; reset --hard and clean -fd drop uncommitted work"
+// in the language of msgs.
+func (msgs Messages) DangerRuleGitForceNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleGitForceNote", nil)
+}
+
+// DangerRuleCurlPipeSh says "Pipe a script from the net into a shell"
+// in the language the app shows.
+func DangerRuleCurlPipeSh() string { return In(i18n.Locale()).DangerRuleCurlPipeSh() }
+
+// DangerRuleCurlPipeSh says "Pipe a script from the net into a shell"
+// in the language of msgs.
+func (msgs Messages) DangerRuleCurlPipeSh() string {
+	return Catalog.Format(msgs.locale, "dangerRuleCurlPipeSh", nil)
+}
+
+// DangerRuleCurlPipeShNote says "The script runs with this host's rights, unread"
+// in the language the app shows.
+func DangerRuleCurlPipeShNote() string { return In(i18n.Locale()).DangerRuleCurlPipeShNote() }
+
+// DangerRuleCurlPipeShNote says "The script runs with this host's rights, unread"
+// in the language of msgs.
+func (msgs Messages) DangerRuleCurlPipeShNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleCurlPipeShNote", nil)
+}
+
+// DangerRuleFirewallOff says "Turn the firewall off"
+// in the language the app shows.
+func DangerRuleFirewallOff() string { return In(i18n.Locale()).DangerRuleFirewallOff() }
+
+// DangerRuleFirewallOff says "Turn the firewall off"
+// in the language of msgs.
+func (msgs Messages) DangerRuleFirewallOff() string {
+	return Catalog.Format(msgs.locale, "dangerRuleFirewallOff", nil)
+}
+
+// DangerRuleFirewallOffNote says "Flushing the rules or disabling SELinux weakens the host at once"
+// in the language the app shows.
+func DangerRuleFirewallOffNote() string { return In(i18n.Locale()).DangerRuleFirewallOffNote() }
+
+// DangerRuleFirewallOffNote says "Flushing the rules or disabling SELinux weakens the host at once"
+// in the language of msgs.
+func (msgs Messages) DangerRuleFirewallOffNote() string {
+	return Catalog.Format(msgs.locale, "dangerRuleFirewallOffNote", nil)
+}
+
+// DangerGuardTitle says "Dangerous command"
+// in the language the app shows.
+func DangerGuardTitle() string { return In(i18n.Locale()).DangerGuardTitle() }
+
+// DangerGuardTitle says "Dangerous command"
+// in the language of msgs.
+func (msgs Messages) DangerGuardTitle() string {
+	return Catalog.Format(msgs.locale, "dangerGuardTitle", nil)
+}
+
+// DangerGuardBlocked says "Held {n} so far"
+// in the language the app shows.
+func DangerGuardBlocked(n int) string { return In(i18n.Locale()).DangerGuardBlocked(n) }
+
+// DangerGuardBlocked says "Held {n} so far"
+// in the language of msgs.
+func (msgs Messages) DangerGuardBlocked(n int) string {
+	return Catalog.Format(msgs.locale, "dangerGuardBlocked", map[string]any{"n": n})
+}
+
+// DangerGuardType says "Type “{rule}” to run it"
+// in the language the app shows.
+func DangerGuardType(rule string) string { return In(i18n.Locale()).DangerGuardType(rule) }
+
+// DangerGuardType says "Type “{rule}” to run it"
+// in the language of msgs.
+func (msgs Messages) DangerGuardType(rule string) string {
+	return Catalog.Format(msgs.locale, "dangerGuardType", map[string]any{"rule": rule})
+}
+
+// DangerGuardCancel says "Cancel and clear the line"
+// in the language the app shows.
+func DangerGuardCancel() string { return In(i18n.Locale()).DangerGuardCancel() }
+
+// DangerGuardCancel says "Cancel and clear the line"
+// in the language of msgs.
+func (msgs Messages) DangerGuardCancel() string {
+	return Catalog.Format(msgs.locale, "dangerGuardCancel", nil)
+}
+
+// DangerGuardRun says "Run it"
+// in the language the app shows.
+func DangerGuardRun() string { return In(i18n.Locale()).DangerGuardRun() }
+
+// DangerGuardRun says "Run it"
+// in the language of msgs.
+func (msgs Messages) DangerGuardRun() string {
+	return Catalog.Format(msgs.locale, "dangerGuardRun", nil)
+}
+
+// DangerGuardRunAnyway says "Run it anyway"
+// in the language the app shows.
+func DangerGuardRunAnyway() string { return In(i18n.Locale()).DangerGuardRunAnyway() }
+
+// DangerGuardRunAnyway says "Run it anyway"
+// in the language of msgs.
+func (msgs Messages) DangerGuardRunAnyway() string {
+	return Catalog.Format(msgs.locale, "dangerGuardRunAnyway", nil)
+}
+
+// DangerGuardInexact says "Looks dangerous, as far as the line tells"
+// in the language the app shows.
+func DangerGuardInexact() string { return In(i18n.Locale()).DangerGuardInexact() }
+
+// DangerGuardInexact says "Looks dangerous, as far as the line tells"
+// in the language of msgs.
+func (msgs Messages) DangerGuardInexact() string {
+	return Catalog.Format(msgs.locale, "dangerGuardInexact", nil)
+}
+
+// DangerGuardInexactNote says "The arrows went through this line, so the app cannot tell what the shell holds: check that the prompt's line is the o…"
+// in the language the app shows.
+func DangerGuardInexactNote() string { return In(i18n.Locale()).DangerGuardInexactNote() }
+
+// DangerGuardInexactNote says "The arrows went through this line, so the app cannot tell what the shell holds: check that the prompt's line is the o…"
+// in the language of msgs.
+func (msgs Messages) DangerGuardInexactNote() string {
+	return Catalog.Format(msgs.locale, "dangerGuardInexactNote", nil)
+}
+
+// DangerGuardOff says "The guard is off: this plugin's switch in the center is off, and the rules with it."
+// in the language the app shows.
+func DangerGuardOff() string { return In(i18n.Locale()).DangerGuardOff() }
+
+// DangerGuardOff says "The guard is off: this plugin's switch in the center is off, and the rules with it."
+// in the language of msgs.
+func (msgs Messages) DangerGuardOff() string {
+	return Catalog.Format(msgs.locale, "dangerGuardOff", nil)
+}
+
+// PluginOpsName says "Daily report"
+// in the language the app shows.
+func PluginOpsName() string { return In(i18n.Locale()).PluginOpsName() }
+
+// PluginOpsName says "Daily report"
+// in the language of msgs.
+func (msgs Messages) PluginOpsName() string {
+	return Catalog.Format(msgs.locale, "pluginOpsName", nil)
+}
+
+// PluginOpsDesc says "Today's logins, failures, commands and risky ones, with the week's trend."
+// in the language the app shows.
+func PluginOpsDesc() string { return In(i18n.Locale()).PluginOpsDesc() }
+
+// PluginOpsDesc says "Today's logins, failures, commands and risky ones, with the week's trend."
+// in the language of msgs.
+func (msgs Messages) PluginOpsDesc() string {
+	return Catalog.Format(msgs.locale, "pluginOpsDesc", nil)
+}
+
+// PluginPerfName says "Performance"
+// in the language the app shows.
+func PluginPerfName() string { return In(i18n.Locale()).PluginPerfName() }
+
+// PluginPerfName says "Performance"
+// in the language of msgs.
+func (msgs Messages) PluginPerfName() string {
+	return Catalog.Format(msgs.locale, "pluginPerfName", nil)
+}
+
+// PluginPerfDesc says "The goroutines, heap, garbage collections and CPU time of the app itself."
+// in the language the app shows.
+func PluginPerfDesc() string { return In(i18n.Locale()).PluginPerfDesc() }
+
+// PluginPerfDesc says "The goroutines, heap, garbage collections and CPU time of the app itself."
+// in the language of msgs.
+func (msgs Messages) PluginPerfDesc() string {
+	return Catalog.Format(msgs.locale, "pluginPerfDesc", nil)
+}
+
+// PluginStorageName says "Storage"
+// in the language the app shows.
+func PluginStorageName() string { return In(i18n.Locale()).PluginStorageName() }
+
+// PluginStorageName says "Storage"
+// in the language of msgs.
+func (msgs Messages) PluginStorageName() string {
+	return Catalog.Format(msgs.locale, "pluginStorageName", nil)
+}
+
+// PluginStorageDesc says "What the config directory takes, and the cleaning of what the app can make again."
+// in the language the app shows.
+func PluginStorageDesc() string { return In(i18n.Locale()).PluginStorageDesc() }
+
+// PluginStorageDesc says "What the config directory takes, and the cleaning of what the app can make again."
+// in the language of msgs.
+func (msgs Messages) PluginStorageDesc() string {
+	return Catalog.Format(msgs.locale, "pluginStorageDesc", nil)
+}
+
+// OpsTitle says "Daily report"
+// in the language the app shows.
+func OpsTitle() string { return In(i18n.Locale()).OpsTitle() }
+
+// OpsTitle says "Daily report"
+// in the language of msgs.
+func (msgs Messages) OpsTitle() string {
+	return Catalog.Format(msgs.locale, "opsTitle", nil)
+}
+
+// OpsNote says "Today's logins, failures, commands and risky commands, and the trend of the last seven days. The numbers are the ones…"
+// in the language the app shows.
+func OpsNote() string { return In(i18n.Locale()).OpsNote() }
+
+// OpsNote says "Today's logins, failures, commands and risky commands, and the trend of the last seven days. The numbers are the ones…"
+// in the language of msgs.
+func (msgs Messages) OpsNote() string {
+	return Catalog.Format(msgs.locale, "opsNote", nil)
+}
+
+// OpsLogin says "Logins"
+// in the language the app shows.
+func OpsLogin() string { return In(i18n.Locale()).OpsLogin() }
+
+// OpsLogin says "Logins"
+// in the language of msgs.
+func (msgs Messages) OpsLogin() string {
+	return Catalog.Format(msgs.locale, "opsLogin", nil)
+}
+
+// OpsFail says "Failed logins"
+// in the language the app shows.
+func OpsFail() string { return In(i18n.Locale()).OpsFail() }
+
+// OpsFail says "Failed logins"
+// in the language of msgs.
+func (msgs Messages) OpsFail() string {
+	return Catalog.Format(msgs.locale, "opsFail", nil)
+}
+
+// OpsCmd says "Commands"
+// in the language the app shows.
+func OpsCmd() string { return In(i18n.Locale()).OpsCmd() }
+
+// OpsCmd says "Commands"
+// in the language of msgs.
+func (msgs Messages) OpsCmd() string {
+	return Catalog.Format(msgs.locale, "opsCmd", nil)
+}
+
+// OpsRisk says "Risky commands"
+// in the language the app shows.
+func OpsRisk() string { return In(i18n.Locale()).OpsRisk() }
+
+// OpsRisk says "Risky commands"
+// in the language of msgs.
+func (msgs Messages) OpsRisk() string {
+	return Catalog.Format(msgs.locale, "opsRisk", nil)
+}
+
+// OpsWeekCmd says "Commands, 7 days"
+// in the language the app shows.
+func OpsWeekCmd() string { return In(i18n.Locale()).OpsWeekCmd() }
+
+// OpsWeekCmd says "Commands, 7 days"
+// in the language of msgs.
+func (msgs Messages) OpsWeekCmd() string {
+	return Catalog.Format(msgs.locale, "opsWeekCmd", nil)
+}
+
+// OpsWeekRisk says "Risky commands, 7 days"
+// in the language the app shows.
+func OpsWeekRisk() string { return In(i18n.Locale()).OpsWeekRisk() }
+
+// OpsWeekRisk says "Risky commands, 7 days"
+// in the language of msgs.
+func (msgs Messages) OpsWeekRisk() string {
+	return Catalog.Format(msgs.locale, "opsWeekRisk", nil)
+}
+
+// PerfTitle says "Performance"
+// in the language the app shows.
+func PerfTitle() string { return In(i18n.Locale()).PerfTitle() }
+
+// PerfTitle says "Performance"
+// in the language of msgs.
+func (msgs Messages) PerfTitle() string {
+	return Catalog.Format(msgs.locale, "perfTitle", nil)
+}
+
+// PerfNote says "What the app itself costs, sampled a second at a time while this window is open."
+// in the language the app shows.
+func PerfNote() string { return In(i18n.Locale()).PerfNote() }
+
+// PerfNote says "What the app itself costs, sampled a second at a time while this window is open."
+// in the language of msgs.
+func (msgs Messages) PerfNote() string {
+	return Catalog.Format(msgs.locale, "perfNote", nil)
+}
+
+// PerfGoroutines says "Goroutines"
+// in the language the app shows.
+func PerfGoroutines() string { return In(i18n.Locale()).PerfGoroutines() }
+
+// PerfGoroutines says "Goroutines"
+// in the language of msgs.
+func (msgs Messages) PerfGoroutines() string {
+	return Catalog.Format(msgs.locale, "perfGoroutines", nil)
+}
+
+// PerfHeap says "Heap in use"
+// in the language the app shows.
+func PerfHeap() string { return In(i18n.Locale()).PerfHeap() }
+
+// PerfHeap says "Heap in use"
+// in the language of msgs.
+func (msgs Messages) PerfHeap() string {
+	return Catalog.Format(msgs.locale, "perfHeap", nil)
+}
+
+// PerfHeapHint says "Alive on the Go heap"
+// in the language the app shows.
+func PerfHeapHint() string { return In(i18n.Locale()).PerfHeapHint() }
+
+// PerfHeapHint says "Alive on the Go heap"
+// in the language of msgs.
+func (msgs Messages) PerfHeapHint() string {
+	return Catalog.Format(msgs.locale, "perfHeapHint", nil)
+}
+
+// PerfSys says "Memory from the OS"
+// in the language the app shows.
+func PerfSys() string { return In(i18n.Locale()).PerfSys() }
+
+// PerfSys says "Memory from the OS"
+// in the language of msgs.
+func (msgs Messages) PerfSys() string {
+	return Catalog.Format(msgs.locale, "perfSys", nil)
+}
+
+// PerfCPU says "CPU time"
+// in the language the app shows.
+func PerfCPU() string { return In(i18n.Locale()).PerfCPU() }
+
+// PerfCPU says "CPU time"
+// in the language of msgs.
+func (msgs Messages) PerfCPU() string {
+	return Catalog.Format(msgs.locale, "perfCPU", nil)
+}
+
+// PerfGC says "Collections"
+// in the language the app shows.
+func PerfGC() string { return In(i18n.Locale()).PerfGC() }
+
+// PerfGC says "Collections"
+// in the language of msgs.
+func (msgs Messages) PerfGC() string {
+	return Catalog.Format(msgs.locale, "perfGC", nil)
+}
+
+// PerfPause says "Last pause"
+// in the language the app shows.
+func PerfPause() string { return In(i18n.Locale()).PerfPause() }
+
+// PerfPause says "Last pause"
+// in the language of msgs.
+func (msgs Messages) PerfPause() string {
+	return Catalog.Format(msgs.locale, "perfPause", nil)
+}
+
+// PerfPauseHint says "Of the last garbage collection"
+// in the language the app shows.
+func PerfPauseHint() string { return In(i18n.Locale()).PerfPauseHint() }
+
+// PerfPauseHint says "Of the last garbage collection"
+// in the language of msgs.
+func (msgs Messages) PerfPauseHint() string {
+	return Catalog.Format(msgs.locale, "perfPauseHint", nil)
+}
+
+// PerfGoroutinesHint says "Running right now"
+// in the language the app shows.
+func PerfGoroutinesHint() string { return In(i18n.Locale()).PerfGoroutinesHint() }
+
+// PerfGoroutinesHint says "Running right now"
+// in the language of msgs.
+func (msgs Messages) PerfGoroutinesHint() string {
+	return Catalog.Format(msgs.locale, "perfGoroutinesHint", nil)
+}
+
+// PerfSysHint says "Asked of the system"
+// in the language the app shows.
+func PerfSysHint() string { return In(i18n.Locale()).PerfSysHint() }
+
+// PerfSysHint says "Asked of the system"
+// in the language of msgs.
+func (msgs Messages) PerfSysHint() string {
+	return Catalog.Format(msgs.locale, "perfSysHint", nil)
+}
+
+// PerfCPUHint says "All threads together"
+// in the language the app shows.
+func PerfCPUHint() string { return In(i18n.Locale()).PerfCPUHint() }
+
+// PerfCPUHint says "All threads together"
+// in the language of msgs.
+func (msgs Messages) PerfCPUHint() string {
+	return Catalog.Format(msgs.locale, "perfCPUHint", nil)
+}
+
+// PerfGCHint says "Since the app started"
+// in the language the app shows.
+func PerfGCHint() string { return In(i18n.Locale()).PerfGCHint() }
+
+// PerfGCHint says "Since the app started"
+// in the language of msgs.
+func (msgs Messages) PerfGCHint() string {
+	return Catalog.Format(msgs.locale, "perfGCHint", nil)
+}
+
+// PerfNextGC says "Next GC"
+// in the language the app shows.
+func PerfNextGC() string { return In(i18n.Locale()).PerfNextGC() }
+
+// PerfNextGC says "Next GC"
+// in the language of msgs.
+func (msgs Messages) PerfNextGC() string {
+	return Catalog.Format(msgs.locale, "perfNextGC", nil)
+}
+
+// PerfNextGCHint says "The heap size that starts it"
+// in the language the app shows.
+func PerfNextGCHint() string { return In(i18n.Locale()).PerfNextGCHint() }
+
+// PerfNextGCHint says "The heap size that starts it"
+// in the language of msgs.
+func (msgs Messages) PerfNextGCHint() string {
+	return Catalog.Format(msgs.locale, "perfNextGCHint", nil)
+}
+
+// PerfUptimeHint says "Since it started"
+// in the language the app shows.
+func PerfUptimeHint() string { return In(i18n.Locale()).PerfUptimeHint() }
+
+// PerfUptimeHint says "Since it started"
+// in the language of msgs.
+func (msgs Messages) PerfUptimeHint() string {
+	return Catalog.Format(msgs.locale, "perfUptimeHint", nil)
+}
+
+// PerfUptime says "Running for"
+// in the language the app shows.
+func PerfUptime() string { return In(i18n.Locale()).PerfUptime() }
+
+// PerfUptime says "Running for"
+// in the language of msgs.
+func (msgs Messages) PerfUptime() string {
+	return Catalog.Format(msgs.locale, "perfUptime", nil)
+}
+
+// PerfHeapTrend says "Heap in use, last 60 seconds"
+// in the language the app shows.
+func PerfHeapTrend() string { return In(i18n.Locale()).PerfHeapTrend() }
+
+// PerfHeapTrend says "Heap in use, last 60 seconds"
+// in the language of msgs.
+func (msgs Messages) PerfHeapTrend() string {
+	return Catalog.Format(msgs.locale, "perfHeapTrend", nil)
+}
+
+// PerfGoroutineTrend says "Goroutines, last 60 seconds"
+// in the language the app shows.
+func PerfGoroutineTrend() string { return In(i18n.Locale()).PerfGoroutineTrend() }
+
+// PerfGoroutineTrend says "Goroutines, last 60 seconds"
+// in the language of msgs.
+func (msgs Messages) PerfGoroutineTrend() string {
+	return Catalog.Format(msgs.locale, "perfGoroutineTrend", nil)
+}
+
+// StorageTitle says "Storage"
+// in the language the app shows.
+func StorageTitle() string { return In(i18n.Locale()).StorageTitle() }
+
+// StorageTitle says "Storage"
+// in the language of msgs.
+func (msgs Messages) StorageTitle() string {
+	return Catalog.Format(msgs.locale, "storageTitle", nil)
+}
+
+// StorageNote says "What each kind of data in the config directory takes, and the cleaning of what the app can make again; the connection…"
+// in the language the app shows.
+func StorageNote() string { return In(i18n.Locale()).StorageNote() }
+
+// StorageNote says "What each kind of data in the config directory takes, and the cleaning of what the app can make again; the connection…"
+// in the language of msgs.
+func (msgs Messages) StorageNote() string {
+	return Catalog.Format(msgs.locale, "storageNote", nil)
+}
+
+// StorageTotal says "The config directory: {size}"
+// in the language the app shows.
+func StorageTotal(size string) string { return In(i18n.Locale()).StorageTotal(size) }
+
+// StorageTotal says "The config directory: {size}"
+// in the language of msgs.
+func (msgs Messages) StorageTotal(size string) string {
+	return Catalog.Format(msgs.locale, "storageTotal", map[string]any{"size": size})
+}
+
+// StorageHistory says "Command history"
+// in the language the app shows.
+func StorageHistory() string { return In(i18n.Locale()).StorageHistory() }
+
+// StorageHistory says "Command history"
+// in the language of msgs.
+func (msgs Messages) StorageHistory() string {
+	return Catalog.Format(msgs.locale, "storageHistory", nil)
+}
+
+// StorageHistoryNote says "{n} files"
+// in the language the app shows.
+func StorageHistoryNote(n string) string { return In(i18n.Locale()).StorageHistoryNote(n) }
+
+// StorageHistoryNote says "{n} files"
+// in the language of msgs.
+func (msgs Messages) StorageHistoryNote(n string) string {
+	return Catalog.Format(msgs.locale, "storageHistoryNote", map[string]any{"n": n})
+}
+
+// StorageStats says "Assets statistics"
+// in the language the app shows.
+func StorageStats() string { return In(i18n.Locale()).StorageStats() }
+
+// StorageStats says "Assets statistics"
+// in the language of msgs.
+func (msgs Messages) StorageStats() string {
+	return Catalog.Format(msgs.locale, "storageStats", nil)
+}
+
+// StorageStatsNote says "A day a line, 180 days at most"
+// in the language the app shows.
+func StorageStatsNote() string { return In(i18n.Locale()).StorageStatsNote() }
+
+// StorageStatsNote says "A day a line, 180 days at most"
+// in the language of msgs.
+func (msgs Messages) StorageStatsNote() string {
+	return Catalog.Format(msgs.locale, "storageStatsNote", nil)
+}
+
+// StorageBackgrounds says "Background copies"
+// in the language the app shows.
+func StorageBackgrounds() string { return In(i18n.Locale()).StorageBackgrounds() }
+
+// StorageBackgrounds says "Background copies"
+// in the language of msgs.
+func (msgs Messages) StorageBackgrounds() string {
+	return Catalog.Format(msgs.locale, "storageBackgrounds", nil)
+}
+
+// StorageBackgroundsNote says "{n} copies"
+// in the language the app shows.
+func StorageBackgroundsNote(n string) string { return In(i18n.Locale()).StorageBackgroundsNote(n) }
+
+// StorageBackgroundsNote says "{n} copies"
+// in the language of msgs.
+func (msgs Messages) StorageBackgroundsNote(n string) string {
+	return Catalog.Format(msgs.locale, "storageBackgroundsNote", map[string]any{"n": n})
+}
+
+// StorageClean says "Clean"
+// in the language the app shows.
+func StorageClean() string { return In(i18n.Locale()).StorageClean() }
+
+// StorageClean says "Clean"
+// in the language of msgs.
+func (msgs Messages) StorageClean() string {
+	return Catalog.Format(msgs.locale, "storageClean", nil)
+}
+
+// StorageConfirm says "Clean {what}?"
+// in the language the app shows.
+func StorageConfirm(what string) string { return In(i18n.Locale()).StorageConfirm(what) }
+
+// StorageConfirm says "Clean {what}?"
+// in the language of msgs.
+func (msgs Messages) StorageConfirm(what string) string {
+	return Catalog.Format(msgs.locale, "storageConfirm", map[string]any{"what": what})
+}
+
+// StorageNone says "Nothing to clean"
+// in the language the app shows.
+func StorageNone() string { return In(i18n.Locale()).StorageNone() }
+
+// StorageNone says "Nothing to clean"
+// in the language of msgs.
+func (msgs Messages) StorageNone() string {
+	return Catalog.Format(msgs.locale, "storageNone", nil)
+}
+
+// PluginRunCmdName says "One-off command"
+// in the language the app shows.
+func PluginRunCmdName() string { return In(i18n.Locale()).PluginRunCmdName() }
+
+// PluginRunCmdName says "One-off command"
+// in the language of msgs.
+func (msgs Messages) PluginRunCmdName() string {
+	return Catalog.Format(msgs.locale, "pluginRunCmdName", nil)
+}
+
+// PluginRunCmdDesc says "A script on a host without opening a terminal: a connected session runs it at once, the others are dialed with the sa…"
+// in the language the app shows.
+func PluginRunCmdDesc() string { return In(i18n.Locale()).PluginRunCmdDesc() }
+
+// PluginRunCmdDesc says "A script on a host without opening a terminal: a connected session runs it at once, the others are dialed with the sa…"
+// in the language of msgs.
+func (msgs Messages) PluginRunCmdDesc() string {
+	return Catalog.Format(msgs.locale, "pluginRunCmdDesc", nil)
+}
+
+// RunCmdTitle says "One-off command"
+// in the language the app shows.
+func RunCmdTitle() string { return In(i18n.Locale()).RunCmdTitle() }
+
+// RunCmdTitle says "One-off command"
+// in the language of msgs.
+func (msgs Messages) RunCmdTitle() string {
+	return Catalog.Format(msgs.locale, "runCmdTitle", nil)
+}
+
+// RunCmdNote says "A POSIX sh script, on a new channel of the host's connection; a host with no session is dialed for the run and closed…"
+// in the language the app shows.
+func RunCmdNote() string { return In(i18n.Locale()).RunCmdNote() }
+
+// RunCmdNote says "A POSIX sh script, on a new channel of the host's connection; a host with no session is dialed for the run and closed…"
+// in the language of msgs.
+func (msgs Messages) RunCmdNote() string {
+	return Catalog.Format(msgs.locale, "runCmdNote", nil)
+}
+
+// RunCmdHost says "Host"
+// in the language the app shows.
+func RunCmdHost() string { return In(i18n.Locale()).RunCmdHost() }
+
+// RunCmdHost says "Host"
+// in the language of msgs.
+func (msgs Messages) RunCmdHost() string {
+	return Catalog.Format(msgs.locale, "runCmdHost", nil)
+}
+
+// RunCmdScript says "Script"
+// in the language the app shows.
+func RunCmdScript() string { return In(i18n.Locale()).RunCmdScript() }
+
+// RunCmdScript says "Script"
+// in the language of msgs.
+func (msgs Messages) RunCmdScript() string {
+	return Catalog.Format(msgs.locale, "runCmdScript", nil)
+}
+
+// RunCmdRun says "Run"
+// in the language the app shows.
+func RunCmdRun() string { return In(i18n.Locale()).RunCmdRun() }
+
+// RunCmdRun says "Run"
+// in the language of msgs.
+func (msgs Messages) RunCmdRun() string {
+	return Catalog.Format(msgs.locale, "runCmdRun", nil)
+}
+
+// RunCmdRunning says "Running…"
+// in the language the app shows.
+func RunCmdRunning() string { return In(i18n.Locale()).RunCmdRunning() }
+
+// RunCmdRunning says "Running…"
+// in the language of msgs.
+func (msgs Messages) RunCmdRunning() string {
+	return Catalog.Format(msgs.locale, "runCmdRunning", nil)
+}
+
+// RunCmdOutput says "Output"
+// in the language the app shows.
+func RunCmdOutput() string { return In(i18n.Locale()).RunCmdOutput() }
+
+// RunCmdOutput says "Output"
+// in the language of msgs.
+func (msgs Messages) RunCmdOutput() string {
+	return Catalog.Format(msgs.locale, "runCmdOutput", nil)
+}
+
+// RunCmdIdle says "Nothing run yet: pick a host, write a script and run it."
+// in the language the app shows.
+func RunCmdIdle() string { return In(i18n.Locale()).RunCmdIdle() }
+
+// RunCmdIdle says "Nothing run yet: pick a host, write a script and run it."
+// in the language of msgs.
+func (msgs Messages) RunCmdIdle() string {
+	return Catalog.Format(msgs.locale, "runCmdIdle", nil)
+}
+
+// RunCmdNoHosts says "No saved connections: add one in the connection manager first."
+// in the language the app shows.
+func RunCmdNoHosts() string { return In(i18n.Locale()).RunCmdNoHosts() }
+
+// RunCmdNoHosts says "No saved connections: add one in the connection manager first."
+// in the language of msgs.
+func (msgs Messages) RunCmdNoHosts() string {
+	return Catalog.Format(msgs.locale, "runCmdNoHosts", nil)
+}
+
+// RunCmdClipped says "The output was long: the last {size} is shown"
+// in the language the app shows.
+func RunCmdClipped(size string) string { return In(i18n.Locale()).RunCmdClipped(size) }
+
+// RunCmdClipped says "The output was long: the last {size} is shown"
+// in the language of msgs.
+func (msgs Messages) RunCmdClipped(size string) string {
+	return Catalog.Format(msgs.locale, "runCmdClipped", map[string]any{"size": size})
+}
+
 // NotConnected says "Not connected"
 // in the language the app shows.
 func NotConnected() string { return In(i18n.Locale()).NotConnected() }

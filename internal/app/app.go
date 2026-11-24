@@ -211,6 +211,18 @@ type App struct {
 	assetDays  []config.AssetDay
 	assetRange string
 
+	// The plugin center (plugins.go): which plugins are on or pinned, and
+	// the category its window shows; the host keys and danger rules windows'
+	// state (hostkeys.go, danger.go).
+	plugins   pluginStore
+	pluginCat string
+	hostKeys  hostKeysState
+	danger    dangerState
+	perf      perfState
+	storage   storageState
+	runCmd    runCmdState
+	guard     dangerGuardState
+
 	// The connection editor's fields, while its window is open.
 	editor *connEditor
 
@@ -323,6 +335,8 @@ func New(plat Platform) *App {
 	a.settings = config.LoadSettings()
 	a.assetDays = config.LoadAssetStats()
 	a.assetRange = assetRange7d // the window's first range, a week
+	a.plugins.load(a.settings.Plugins)
+	a.danger.load()
 	a.loadAppearance()
 	a.restoreLayout()
 	a.restoreLeftPanel()

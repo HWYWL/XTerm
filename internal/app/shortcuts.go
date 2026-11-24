@@ -521,7 +521,9 @@ func (a *App) shortcuts(c *ui.Context) {
 	split := cur != nil && cur.split() && !cur.isPanelTab()
 	switch {
 	case pressed(scManager):
-		a.openManager()
+		if a.pluginOn(pluginManager) { // no entry while the plugin is off
+			a.openManager()
+		}
 	case pressed(scNewTab):
 		a.NewTab()
 	case pressed(scNextTab):

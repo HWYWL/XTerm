@@ -208,11 +208,9 @@ func TestPanelHiddenOnRight(t *testing.T) {
 		t.Fatal("the shortcut did not hide the panel on the right")
 	}
 
-	// Opening a tab, as the monitor's process list does, shows it.
+	// Opening a tab shows it.
 	a.bottomTab = tabFiles
-	if err := tt.Click("mysqld"); err != nil {
-		t.Fatal(err)
-	}
+	a.openProcesses()
 	tt.Frame()
 	if a.bottomHidden || a.bottomTab != tabProcesses || !a.panelOnRight() {
 		t.Errorf("after the monitor's click: hidden %v, tab %d, side %q", a.bottomHidden, a.bottomTab, a.bottomSide)

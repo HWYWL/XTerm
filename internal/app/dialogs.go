@@ -44,6 +44,7 @@ func (a *App) dialogs(c *ui.Context) {
 		}
 	}
 	a.signalDialogs(c)
+	a.procDetailDialogs(c)
 	a.sendAskDialog(c)
 	a.traceDialogs(c)
 	// The Connections page's names and questions (conntree.go).

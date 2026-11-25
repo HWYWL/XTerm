@@ -81,6 +81,7 @@ func (serverProcesses) running(ctx context.Context, client *ssh.Client, pid int,
 type processesUI struct {
 	listPct, fieldsPct float32
 	dlg                *signalDialog
+	detail             *procDetailDialog
 	api                processAPI // serverProcesses when nil
 }
 
@@ -332,7 +333,7 @@ func (a *App) procList(c *ui.Context, s *Session) {
 		ps.pid = view[ps.row].PID
 	}
 	if t.Submitted() && ps.row >= 0 && ps.row < len(view) {
-		a.openProcTab(s, view[ps.row])
+		a.openProcDialog(s, view[ps.row])
 	}
 }
 
@@ -354,12 +355,13 @@ func (a *App) procMenu(c *ui.Context, m *ui.Menu, s *Session, p monitor.Process)
 	}
 	m.Separator()
 	if m.Item(locales.ProcOpenDetails()).Disabled(!connected).Chosen() && connected {
-		a.openProcTab(s, p)
+		a.openProcDialog(s, p)
 	}
 	m.Separator()
 	m.Submenu(locales.ProcSendSignal(), func(m *ui.Menu) {
 		for _, sig := range monitor.Signals {
-			if m.Item("SIG"+sig).ID(sig).Subtitle(signalText(sig)).Disabled(!connected).Chosen() && connected {
+			if m.Item("SIG"+sig).ID(sig).Trailing(signalShort(sig)).Subtitle(signalText(sig)).
+				Disabled(!connected).Chosen() && connected {
 				a.askSignal(s, p, sig, false)
 			}
 		}
@@ -390,6 +392,27 @@ func signalText(sig string) string {
 		return locales.SigCONT()
 	}
 	return sig
+}
+
+// signalShort says what sig does in a word, for the menu's trailing text:
+// the menu is too narrow for the whole sentence, and the signal's name
+// alone is no help.
+func signalShort(sig string) string {
+	switch sig {
+	case "TERM":
+		return locales.SigTERMShort()
+	case "KILL":
+		return locales.SigKILLShort()
+	case "HUP":
+		return locales.SigHUPShort()
+	case "INT":
+		return locales.SigINTShort()
+	case "STOP":
+		return locales.SigSTOPShort()
+	case "CONT":
+		return locales.SigCONTShort()
+	}
+	return ""
 }
 
 // describeProcError says why the list or the details could not be read.

@@ -228,7 +228,7 @@ func (a *App) connect(s *Session, secret string) {
 		// The monitor polls with an exec channel; hosts that drop extra
 		// channels turn it off.
 		if spec.exec {
-			go monitor.Run(ctx, client, 2*time.Second, func(st monitor.Stats) {
+			go monitor.Run(ctx, client, monitor.Interval, func(st monitor.Stats) {
 				a.post(func() {
 					if ctx.Err() == nil {
 						s.stats = st

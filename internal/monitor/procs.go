@@ -44,16 +44,28 @@ const procMark = "---FINALLYSHELL:"
 // come from /proc/<pid>/stat, which every process may read, and the
 // executables from one ls of the /proc/<pid>/exe links rather than a
 // readlink for each: those of other users' processes fail without root,
-// and their errors are dropped. The script's own processes (the shell,
-// ps, cat and ls) are those whose parent is $$, left out of the list.
+// and their errors are dropped. The command lines, owners and page size
+// are the fallback for a ps whose options none of the above are, as
+// OpenWrt's BusyBox ps can be: the list then comes from /proc alone. The
+// script's own processes (the shell, ps, cat and ls) are those whose
+// parent is $$, left out of the list.
 const procsScript = `export LC_ALL=C
 m() { echo "` + procMark + `$1---"; }
+sys=$(uname -s)
 m self; echo $$
-m uname; uname -s
+m uname; echo "$sys"
+if [ "$sys" = Darwin ]; then
+m ps; ps -axo pid=,ppid=,user=,rss=,pcpu=,args=
+m comm; ps -axo pid=,comm=
+else
 m cpu; grep '^cpu' /proc/stat 2>/dev/null
-m ps; ps -eo pid=,ppid=,user:32=,rss=,pcpu=,args= 2>/dev/null || ps -o pid=,ppid=,user=,rss=,args= 2>/dev/null
+m ps; ps -eo pid=,ppid=,user:32=,rss=,pcpu=,args= 2>/dev/null || ps -o pid=,ppid=,user=,rss=,pcpu=,args= 2>/dev/null || ps -o pid=,ppid=,user=,rss=,args= 2>/dev/null
 m stat; cat /proc/[0-9]*/stat 2>/dev/null
 m exe; ls -l /proc/[0-9]*/exe 2>/dev/null
+m cmdline; for d in /proc/[0-9]*; do printf '%s ' "${d#/proc/}"; tr '\000' ' ' < "$d/cmdline" 2>/dev/null; echo; done
+m owner; ls -ld /proc/[0-9]* 2>/dev/null
+m pagesize; getconf PAGESIZE 2>/dev/null || echo 4096
+fi
 m end
 `
 
@@ -158,11 +170,20 @@ func (l *ProcessLister) List(ctx context.Context, client *ssh.Client) ([]Process
 // the last parse.
 func (l *ProcessLister) parse(out string) ([]Process, error) {
 	sec := procSections(out)
-	if sys := strings.TrimSpace(sec["uname"]); sys != "" && sys != "Linux" {
+	sys := strings.TrimSpace(sec["uname"])
+	if sys == "Darwin" {
+		return parseDarwinProcs(sec), nil
+	}
+	if sys != "" && sys != "Linux" {
 		return nil, ErrNotLinux
 	}
 	self, _ := strconv.Atoi(strings.TrimSpace(sec["self"]))
 	procs := parsePS(sec["ps"])
+	if len(procs) == 0 {
+		// No ps that lists every process, as OpenWrt's BusyBox may have:
+		// /proc alone tells enough to fill the list.
+		procs = procsFromStat(sec["stat"], sec["cmdline"], sec["owner"], parsePageSize(sec["pagesize"]))
+	}
 	stats := parseProcStats(sec["stat"])
 	exes := parseExeLinks(sec["exe"])
 	total, ncpu := parseCPUTotal(sec["cpu"])
@@ -194,6 +215,47 @@ func (l *ProcessLister) parse(out string) ([]Process, error) {
 	}
 	l.total, l.ticks = total, ticks
 	return kept, nil
+}
+
+// parseDarwinProcs reads a Mac's ps, which has ps's %cpu as the process's
+// average over its life, no /proc to improve it with, and the
+// executables from its comm column.
+func parseDarwinProcs(sec map[string]string) []Process {
+	self, _ := strconv.Atoi(strings.TrimSpace(sec["self"]))
+	comm := parseComm(sec["comm"])
+	procs := parsePS(sec["ps"])
+	kept := procs[:0]
+	for _, p := range procs {
+		if self != 0 && (p.PID == self || p.PPID == self) {
+			continue
+		}
+		if path, ok := comm[p.PID]; ok {
+			p.Path = path
+		}
+		if p.Name == "" {
+			p.Name = nameFromArgs(p.Path)
+		}
+		kept = append(kept, p)
+	}
+	return kept
+}
+
+// parseComm reads ps's "pid comm" lines: the executable's path, or the
+// kernel's name of a process.
+func parseComm(s string) map[int]string {
+	out := map[int]string{}
+	for _, line := range strings.Split(s, "\n") {
+		f, rest := fieldsN(line, 1)
+		if len(f) < 1 {
+			continue
+		}
+		pid, err := strconv.Atoi(f[0])
+		if err != nil || pid <= 0 {
+			continue
+		}
+		out[pid] = rest
+	}
+	return out
 }
 
 // procSections splits a script's output by its marks: the text between a
@@ -320,6 +382,7 @@ type procStat struct {
 	ppid  int
 	ticks uint64 // utime + stime
 	start uint64
+	rss   uint64 // pages
 }
 
 // parseProcStat reads one /proc/<pid>/stat line. The name is between the
@@ -337,8 +400,9 @@ func parseProcStat(line string) (pid int, st procStat, ok bool) {
 	st.name = line[open+1 : closing]
 	f := strings.Fields(line[closing+1:])
 	// After the name: state(3) ppid(4) … utime(14) stime(15) …
-	// starttime(22), counted from 1 with the pid and the name.
-	if len(f) < 20 {
+	// starttime(22) vsize(23) rss(24), counted from 1 with the pid and the
+	// name.
+	if len(f) < 22 {
 		return 0, st, false
 	}
 	if len(f[0]) > 0 {
@@ -349,7 +413,87 @@ func parseProcStat(line string) (pid int, st procStat, ok bool) {
 	stime, _ := strconv.ParseUint(f[12], 10, 64)
 	st.ticks = utime + stime
 	st.start, _ = strconv.ParseUint(f[19], 10, 64)
+	st.rss, _ = strconv.ParseUint(f[21], 10, 64)
 	return pid, st, true
+}
+
+// procsFromStat lists the processes from /proc alone, for a ps that
+// lists none of them: the stat lines tell the name, the parent, the
+// state and the resident size in pages, the command lines the arguments,
+// and the owners of the /proc entries the users.
+func procsFromStat(stat, cmdlines, owners string, page uint64) []Process {
+	if page == 0 {
+		page = 4096
+	}
+	args := parseCmdlines(cmdlines)
+	users := parseOwners(owners)
+	var procs []Process
+	sc := bufio.NewScanner(strings.NewReader(stat))
+	sc.Buffer(make([]byte, 64<<10), 4<<20)
+	for sc.Scan() {
+		pid, st, ok := parseProcStat(sc.Text())
+		if !ok || pid <= 0 {
+			continue
+		}
+		procs = append(procs, Process{
+			PID: pid, PPID: st.ppid, User: users[pid], RSS: st.rss * page,
+			Name: st.name, Args: args[pid], State: st.state, Start: st.start,
+		})
+	}
+	return procs
+}
+
+// parseCmdlines reads the "pid args" lines the script writes from the
+// command lines: each NUL of the command line became a space.
+func parseCmdlines(s string) map[int]string {
+	out := map[int]string{}
+	sc := bufio.NewScanner(strings.NewReader(s))
+	sc.Buffer(make([]byte, 64<<10), 4<<20)
+	for sc.Scan() {
+		f, rest := fieldsN(sc.Text(), 1)
+		if len(f) < 1 {
+			continue
+		}
+		pid, err := strconv.Atoi(f[0])
+		if err != nil || pid <= 0 {
+			continue
+		}
+		out[pid] = strings.TrimRight(rest, " ")
+	}
+	return out
+}
+
+// parseOwners reads ls -ld's lines of the /proc entries: their user is
+// the process's.
+func parseOwners(s string) map[int]string {
+	out := map[int]string{}
+	sc := bufio.NewScanner(strings.NewReader(s))
+	for sc.Scan() {
+		f := strings.Fields(sc.Text())
+		if len(f) < 4 {
+			continue
+		}
+		pidStr, ok := strings.CutPrefix(f[len(f)-1], "/proc/")
+		if !ok {
+			continue
+		}
+		pid, err := strconv.Atoi(pidStr)
+		if err != nil || pid <= 0 {
+			continue
+		}
+		out[pid] = f[2]
+	}
+	return out
+}
+
+// parsePageSize reads the size of a page in bytes, 4096 when the server
+// does not tell.
+func parsePageSize(s string) uint64 {
+	n, err := strconv.ParseUint(strings.TrimSpace(s), 10, 64)
+	if err != nil || n == 0 {
+		return 4096
+	}
+	return n
 }
 
 func parseProcStats(s string) map[int]procStat {
@@ -441,7 +585,15 @@ func detailsScript(pid int) string {
 	return `export LC_ALL=C
 m() { echo "` + procMark + `$1---"; }
 x() { n=$1; shift; m "$n"; if "$@" 2>/dev/null; then echo; m "$n:ok"; else echo; m "$n:fail"; fi; }
-m uname; uname -s
+sys=$(uname -s)
+m uname; echo "$sys"
+if [ "$sys" = Darwin ]; then
+ps -p ` + p + ` -o pid= >/dev/null 2>&1 || { m gone; m end; exit 0; }
+m ps; ps -p ` + p + ` -o pid=,ppid=,user=,rss=,pcpu=,state=,comm=,args=
+m cwd; lsof -a -p ` + p + ` -d cwd -Fn 2>/dev/null | sed -n 's/^n//p'
+m end
+exit 0
+fi
 [ -d /proc/` + p + ` ] || { m gone; m end; exit 0; }
 x stat cat /proc/` + p + `/stat
 x owner ls -ld /proc/` + p + `
@@ -471,7 +623,11 @@ func ReadProcessDetails(ctx context.Context, client *ssh.Client, pid int) (Proce
 
 func parseDetails(pid int, out string) (ProcessDetails, error) {
 	sec := procSections(out)
-	if sys := strings.TrimSpace(sec["uname"]); sys != "" && sys != "Linux" {
+	sys := strings.TrimSpace(sec["uname"])
+	if sys == "Darwin" {
+		return parseDetailsDarwin(pid, sec)
+	}
+	if sys != "" && sys != "Linux" {
 		return ProcessDetails{}, ErrNotLinux
 	}
 	if _, gone := sec["gone"]; gone {
@@ -511,6 +667,35 @@ func parseDetails(pid int, out string) (ProcessDetails, error) {
 	for _, kv := range splitNUL(env) {
 		name, value, _ := strings.Cut(kv, "=")
 		d.Env = append(d.Env, EnvVar{Name: name, Value: value})
+	}
+	return d, nil
+}
+
+// parseDetailsDarwin reads what a Mac's ps and lsof tell of a process:
+// there is no /proc for the environment.
+func parseDetailsDarwin(pid int, sec map[string]string) (ProcessDetails, error) {
+	if _, gone := sec["gone"]; gone {
+		return ProcessDetails{}, ErrNoProcess
+	}
+	line := strings.TrimSpace(sec["ps"])
+	if line == "" {
+		return ProcessDetails{}, ErrNoProcess
+	}
+	// pid ppid user rss pcpu state comm args
+	f, rest := fieldsN(line, 7)
+	if len(f) < 7 {
+		return ProcessDetails{}, ErrNoProcess
+	}
+	d := ProcessDetails{PID: pid, User: f[2], Path: f[6]}
+	if f[5] != "" {
+		d.State = f[5][0]
+	}
+	d.Name = nameFromArgs(d.Path)
+	if rest != "" {
+		d.Args = strings.Fields(rest)
+	}
+	if cwd := strings.TrimSpace(sec["cwd"]); cwd != "" {
+		d.Cwd = cwd
 	}
 	return d, nil
 }
@@ -622,8 +807,36 @@ func cleanKillMessage(msg string) string {
 
 // ProcessRunning tells whether the process pid that started at start (0
 // for any) is still there, and not a zombie waiting for its parent.
+// SetNice raises pid's nice value by 10 with renice, so it gives the CPU
+// to other processes; another user's process needs root.
+func SetNice(ctx context.Context, client *ssh.Client, pid int) error {
+	script := "renice 10 -p " + strconv.Itoa(pid) + " 2>&1; echo " + procMark + "end---\n"
+	out, _, err := RunScript(ctx, client, script)
+	if ctx.Err() != nil {
+		return ctx.Err()
+	}
+	if !strings.Contains(out, procMark+"end---") {
+		if err != nil {
+			return err
+		}
+		return ErrScriptOutput
+	}
+	msg := strings.TrimSpace(strings.Split(out, procMark+"end---")[0])
+	// renice says "123: old priority 0, new priority 10" when it works.
+	if msg != "" && !strings.Contains(msg, "new priority") {
+		return &SignalError{Msg: msg}
+	}
+	return nil
+}
+
 func ProcessRunning(ctx context.Context, client *ssh.Client, pid int, start uint64) (bool, error) {
-	out, _, err := RunScript(ctx, client, "cat /proc/"+strconv.Itoa(pid)+"/stat 2>/dev/null; echo "+procMark+"end---\n")
+	script := "cat /proc/" + strconv.Itoa(pid) + "/stat 2>/dev/null; echo " + procMark + "end---\n"
+	// No start time to tell the process by, as on a Mac, which has no
+	// /proc: kill -0 asks whether the PID is there at all.
+	if start == 0 {
+		script = "kill -0 " + strconv.Itoa(pid) + " 2>/dev/null && echo " + procMark + "alive---\n; echo " + procMark + "end---\n"
+	}
+	out, _, err := RunScript(ctx, client, script)
 	if ctx.Err() != nil {
 		return false, ctx.Err()
 	}
@@ -632,6 +845,9 @@ func ProcessRunning(ctx context.Context, client *ssh.Client, pid int, start uint
 			return false, err
 		}
 		return false, ErrScriptOutput
+	}
+	if start == 0 {
+		return strings.Contains(out, procMark+"alive---"), nil
 	}
 	return statRunning(out, pid, start), nil
 }

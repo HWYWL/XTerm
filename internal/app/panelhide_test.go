@@ -160,17 +160,15 @@ func TestBottomPanelShortcutMenuAndTabs(t *testing.T) {
 	}
 }
 
-// The process list of the server monitor opens a collapsed panel on the
-// Processes tab; a panel row ignores the setting.
+// The Processes tab opens a collapsed panel; a panel row ignores the
+// setting.
 func TestBottomPanelOpenedByTabs(t *testing.T) {
 	a, _, tt, web, _ := panelApp(t)
-	a.setLeftPage(leftSystem) // the monitor's page, for its process list
+	a.setLeftPage(leftSystem)
 	a.bottomTab = tabFiles
 	a.setBottomPanelHidden(true)
 	tt.Frame()
-	if err := tt.Click("mysqld"); err != nil {
-		t.Fatal(err)
-	}
+	a.openProcesses()
 	tt.Frame()
 	if a.bottomHidden || a.bottomTab != tabProcesses {
 		t.Errorf("after the monitor's click: hidden %v, tab %d", a.bottomHidden, a.bottomTab)
@@ -193,7 +191,7 @@ func TestBottomPanelOpenedByTabs(t *testing.T) {
 	if err := tt.Click(locales.TabFiles()); err != nil {
 		t.Fatal(err)
 	}
-	tt.Click("mysqld")
+	a.openProcesses()
 	tt.Frame()
 	if !a.bottomHidden || a.current().panelTab != tabProcesses {
 		t.Errorf("on the panel row: hidden %v, panel tab %d", a.bottomHidden, a.current().panelTab)

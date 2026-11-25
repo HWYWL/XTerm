@@ -130,13 +130,13 @@ var lightColors = palette{
 	rowLine:       ui.RGBA(13, 23, 40, 0.04),
 	frame:         ui.RGBA(13, 23, 40, 0.10),
 	procHeadText:  ui.Hex("#0d1728"),
-	cpu:           ui.RGBA(18, 168, 120, 0.45),
-	mem:           ui.RGBA(184, 121, 10, 0.35),
-	swap:          ui.RGBA(10, 124, 255, 0.35),
-	cpuRing:       ui.Hex("#12a878"),
-	memRing:       ui.Hex("#b8790a"),
-	diskRing:      ui.Hex("#0a7cff"),
-	disk:          ui.RGBA(139, 92, 246, 0.35),
+	cpu:           ui.Hex("#2F6BFF").Alpha(0.38),
+	mem:           ui.Hex("#8250DF").Alpha(0.34),
+	swap:          ui.Hex("#93A3B8").Alpha(0.45),
+	cpuRing:       ui.Hex("#2F6BFF"),
+	memRing:       ui.Hex("#8250DF"),
+	diskRing:      ui.Hex("#128A3E"),
+	disk:          ui.Hex("#128A3E").Alpha(0.34),
 	tx:            ui.Hex("#c2580a"),
 	rx:            ui.Hex("#0b8256"),
 	tableHead:     ui.RGBA(255, 255, 255, 0.60),
@@ -158,13 +158,13 @@ var darkColors = palette{
 	rowLine:       ui.RGBA(255, 255, 255, 0.035),
 	frame:         ui.RGBA(255, 255, 255, 0.115),
 	procHeadText:  ui.Hex("#e9eefb"),
-	cpu:           ui.RGBA(61, 220, 151, 0.55),
-	mem:           ui.RGBA(255, 200, 97, 0.55),
-	swap:          ui.RGBA(99, 200, 255, 0.55),
-	cpuRing:       ui.Hex("#3ddc97"),
-	memRing:       ui.Hex("#ffc861"),
-	diskRing:      ui.Hex("#63c8ff"),
-	disk:          ui.RGBA(167, 139, 250, 0.55),
+	cpu:           ui.Hex("#2F6BFF").Alpha(0.60),
+	mem:           ui.Hex("#8250DF").Alpha(0.60),
+	swap:          ui.Hex("#93A3B8").Alpha(0.60),
+	cpuRing:       ui.Hex("#2F6BFF"),
+	memRing:       ui.Hex("#8250DF"),
+	diskRing:      ui.Hex("#128A3E"),
+	disk:          ui.Hex("#128A3E").Alpha(0.60),
 	tx:            ui.Hex("#ffb37a"),
 	rx:            ui.Hex("#7ee0c0"),
 	tableHead:     ui.RGBA(255, 255, 255, 0.045),
@@ -181,8 +181,8 @@ var darkColors = palette{
 var (
 	// folderColor is the app's own folder icon.
 	folderColor = ui.Hex("#eab308")
-	// The side panel's charts: upload and download, and latency.
-	txChart, rxChart, latencyChart = ui.Hex("#fb923c"), ui.Hex("#4ade80"), ui.Hex("#60a5fa")
+	// The side panel's charts: upload, download and latency.
+	txChart, rxChart, latencyChart = ui.Hex("#fb923c"), ui.Hex("#60a5fa"), ui.Hex("#4ade80")
 )
 
 // codeThemes are the file editor's colors on each theme: the editor's

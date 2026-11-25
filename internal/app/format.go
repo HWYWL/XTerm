@@ -35,10 +35,23 @@ func formatBytes(n float64) string {
 	return fmt.Sprintf("%.1f%s", n, units[i])
 }
 
+// formatRate is a speed, as the network card shows it: 2.8 K/s, 43.9 K/s.
+func formatRate(n float64) string {
+	s := formatBytes(n)
+	i := 0
+	for i < len(s) && (s[i] >= '0' && s[i] <= '9' || s[i] == '.') {
+		i++
+	}
+	if i == len(s) {
+		return s + "/s"
+	}
+	return s[:i] + " " + s[i:] + "/s"
+}
+
 func formatLatency(d time.Duration) string {
 	ms := float64(d.Microseconds()) / 1000
 	if ms < 10 {
-		return fmt.Sprintf("%.1fms", ms)
+		return fmt.Sprintf("%.1f ms", ms)
 	}
-	return fmt.Sprintf("%.0fms", ms)
+	return fmt.Sprintf("%.0f ms", ms)
 }

@@ -14,22 +14,20 @@ import (
 // live, for the stats of demoSession, and in the skeleton.
 func monitorMarks(s *Session) (live, skeleton map[string]string) {
 	live = map[string]string{
-		partUptime:    locales.UptimeDays(410),
-		partCPU:       locales.Swap(),
-		partProcesses: "mysqld",
-		partNetwork:   "↑" + formatBytes(s.stats.TxRate),
-		partLocalNet:  locales.LocalNet(),
-		partLatency:   formatLatency(s.stats.Latency),
-		partDisks:     locales.DiskPath(),
+		partUptime:   locales.UptimeDays(410),
+		partCPU:      locales.Swap(),
+		partNetwork:  "↑ " + formatRate(s.stats.TxRate),
+		partLocalNet: locales.LocalNet(),
+		partLatency:  formatLatency(s.stats.Latency),
+		partDisks:    locales.DiskPath(),
 	}
 	skeleton = map[string]string{
-		partUptime:    locales.UptimeUnknown(),
-		partCPU:       locales.Swap(),
-		partProcesses: locales.Command(),
-		partNetwork:   "↑" + formatBytes(0),
-		partLocalNet:  locales.LocalNet(),
-		partLatency:   locales.Latency(),
-		partDisks:     locales.DiskPath(),
+		partUptime:   locales.UptimeUnknown(),
+		partCPU:      locales.Swap(),
+		partNetwork:  "↑ " + formatRate(0),
+		partLocalNet: locales.LocalNet(),
+		partLatency:  locales.Latency(),
+		partDisks:    locales.DiskPath(),
 	}
 	return live, skeleton
 }
@@ -200,8 +198,8 @@ func TestMonitorPartsSkeleton(t *testing.T) {
 		}
 		for _, hidden := range [][]string{
 			{partCPU, partNetwork, partDisks},
-			{partUptime, partProcesses, partLatency},
-			{partUptime, partCPU, partProcesses, partNetwork, partLocalNet, partLatency, partDisks},
+			{partUptime, partLatency},
+			{partUptime, partCPU, partNetwork, partLocalNet, partLatency, partDisks},
 		} {
 			a.settings.MonitorHidden = config.NewNames(hidden...)
 			tt.Frame()
@@ -252,7 +250,7 @@ func TestMonitorPartsShots(t *testing.T) {
 			openMonitorMenu(t, tt, s.ip)
 			saveShot(t, tt, "monitor-parts-menu"+suffix)
 			tt.CloseMenu()
-			a.settings.MonitorHidden = config.NewNames(partProcesses, partDisks)
+			a.settings.MonitorHidden = config.NewNames(partLatency, partDisks)
 			tt.Frame()
 			saveShot(t, tt, "monitor-parts-trimmed"+suffix)
 			var all []string

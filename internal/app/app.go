@@ -233,6 +233,14 @@ type App struct {
 	// (localtraffic.go).
 	localNet      localTraffic
 	localWatching bool
+	// The day's traffic bases of the servers' interfaces (netday.go).
+	netDay netDay
+	// The terminal's text highlighting rules, the one the editor is on and
+	// whether it is open, and whether it is a new one (options_highlight.go).
+	highlight []config.HighlightRule
+	hlDraft   config.HighlightRule
+	hlOpen    bool
+	hlNew     bool
 	runCmd    runCmdState
 	guard     dangerGuardState
 
@@ -353,6 +361,8 @@ func New(plat Platform) *App {
 	a.settings = config.LoadSettings()
 	a.assetDays = config.LoadAssetStats()
 	a.assetRange = assetRange7d // the window's first range, a week
+	a.highlight = config.LoadHighlightRules()
+	a.netDay = loadNetDay()
 	a.plugins.load(a.settings.Plugins)
 	a.danger.load()
 	a.loadAppearance()

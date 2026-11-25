@@ -116,7 +116,6 @@ func demoSession(a *App, name, addr string) *Session {
 	s.stats = monitor.Stats{
 		OK: true, Uptime: 410 * 24 * time.Hour, Load: [3]float64{0.28, 0.31, 0.27}, CPU: 7,
 		MemUsed: 2_900_000_000, MemTotal: 4_080_000_000, SwapUsed: 34_000_000, SwapTotal: 2_360_000_000,
-		Procs: []monitor.Proc{{RSS: 1_930_000_000, CPU: 3.3, Name: "java"}, {RSS: 118_000_000, CPU: 1.7, Name: "mysqld"}, {RSS: 467_000_000, CPU: 0.3, Name: "syncthing"}},
 		Iface: "eth0", RxRate: 126_000, TxRate: 66_000, RxHist: hist(90_000), TxHist: hist(40_000),
 		Latency: 254 * time.Millisecond, LatHist: hist(250),
 		Disks:     []monitor.Disk{{Mount: "/", Avail: 4_700_000_000, Size: 25_000_000_000}},

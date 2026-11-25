@@ -43,7 +43,7 @@ func TestNetUpdate(t *testing.T) {
 	)
 	// lo is the busiest by far, and still never the automatic one; veth
 	// pairs come after the others, lo last.
-	n.update(&st, procNetDev("lo", 900000, 900000, "veth1a", 0, 0, "eth0", 5000, 3000, "docker0", 100, 100), t0)
+	n.update(&st, procNetDev("lo", 900000, 900000, "veth1a", 0, 0, "eth0", 5000, 3000, "docker0", 100, 100), nil, t0)
 	if got := names(st.Ifaces); !slices.Equal(got, []string{"eth0", "docker0", "veth1a", "lo"}) {
 		t.Errorf("order %v", got)
 	}
@@ -51,7 +51,7 @@ func TestNetUpdate(t *testing.T) {
 		t.Errorf("first sample: %q %v %v", st.Iface, st.RxRate, st.RxHist)
 	}
 
-	n.update(&st, procNetDev("lo", 900000, 900000, "veth1a", 0, 0, "eth0", 7000, 4000, "docker0", 300, 100), t0.Add(2*time.Second))
+	n.update(&st, procNetDev("lo", 900000, 900000, "veth1a", 0, 0, "eth0", 7000, 4000, "docker0", 300, 100), nil, t0.Add(2*time.Second))
 	if st.Iface != "eth0" || st.RxRate != 1000 || st.TxRate != 500 || !slices.Equal(st.RxHist, []float64{1000}) {
 		t.Errorf("eth0: %q %v %v %v", st.Iface, st.RxRate, st.TxRate, st.RxHist)
 	}
@@ -61,7 +61,7 @@ func TestNetUpdate(t *testing.T) {
 
 	// wg0 comes up: listed at once, with history from its second sample.
 	// docker0 is made again, its counters back at 0: a zero sample.
-	n.update(&st, procNetDev("lo", 900000, 900000, "eth0", 9000, 4000, "docker0", 0, 0, "wg0", 50, 50), t0.Add(4*time.Second))
+	n.update(&st, procNetDev("lo", 900000, 900000, "eth0", 9000, 4000, "docker0", 0, 0, "wg0", 50, 50), nil, t0.Add(4*time.Second))
 	if got := names(st.Ifaces); !slices.Equal(got, []string{"eth0", "docker0", "wg0", "lo"}) {
 		t.Errorf("order with wg0 %v", got)
 	}
@@ -71,7 +71,7 @@ func TestNetUpdate(t *testing.T) {
 	if d := st.Ifaces[1]; d.RxRate != 0 || !slices.Equal(d.RxHist, []float64{100, 0}) {
 		t.Errorf("docker0 reset: %+v", d)
 	}
-	n.update(&st, procNetDev("eth0", 9000, 4000, "docker0", 0, 0, "wg0", 250, 450), t0.Add(6*time.Second))
+	n.update(&st, procNetDev("eth0", 9000, 4000, "docker0", 0, 0, "wg0", 250, 450), nil, t0.Add(6*time.Second))
 	if w := st.Ifaces[2]; w.RxRate != 100 || w.TxRate != 200 || !slices.Equal(w.TxHist, []float64{200}) {
 		t.Errorf("wg0: %+v", w)
 	}
@@ -80,7 +80,7 @@ func TestNetUpdate(t *testing.T) {
 	}
 
 	// Only lo left: no automatic interface.
-	n.update(&st, procNetDev("lo", 1, 1), t0.Add(8*time.Second))
+	n.update(&st, procNetDev("lo", 1, 1), nil, t0.Add(8*time.Second))
 	if st.Iface != "" || st.RxHist != nil || len(st.Ifaces) != 1 {
 		t.Errorf("only lo: %+v", st)
 	}
@@ -92,7 +92,7 @@ func TestNetHistoryKeepsLength(t *testing.T) {
 		st Stats
 	)
 	for i := range HistoryLen + 10 {
-		n.update(&st, procNetDev("eth0", i*100, i*10), time.Unix(int64(i), 0))
+		n.update(&st, procNetDev("eth0", i*100, i*10), nil, time.Unix(int64(i), 0))
 	}
 	if len(st.RxHist) != HistoryLen || st.RxHist[0] != 100 {
 		t.Errorf("history %d %v", len(st.RxHist), st.RxHist[:2])

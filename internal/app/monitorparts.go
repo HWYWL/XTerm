@@ -14,13 +14,12 @@ import (
 // the monitorHidden setting. The IP line and the System info button
 // always show.
 const (
-	partUptime    = "uptime"    // the uptime and load lines
-	partCPU       = "cpu"       // the CPU, memory and swap bars
-	partProcesses = "processes" // the top-processes table
-	partNetwork   = "network"   // the speeds row and its graph
-	partLocalNet  = "localnet"  // this computer's speeds and graph
-	partLatency   = "latency"   // the latency row and its graph
-	partDisks     = "disks"     // the disk table
+	partUptime   = "uptime"   // the uptime and load lines
+	partCPU      = "cpu"      // the CPU, memory and swap bars
+	partNetwork  = "network"  // the speeds row and its graph
+	partLocalNet = "localnet" // this computer's speeds and graph
+	partLatency  = "latency"  // the latency row and its graph
+	partDisks    = "disks"    // the disk table
 )
 
 // monitorParts are the parts in the order the panel and its menu show
@@ -28,7 +27,6 @@ const (
 var monitorParts = []monitorPart{
 	{partUptime, locales.MonitorPartUptime},
 	{partCPU, locales.MonitorPartCpu},
-	{partProcesses, locales.MonitorPartProcesses},
 	{partNetwork, locales.MonitorPartNetwork},
 	{partLocalNet, locales.LocalNet},
 	{partLatency, locales.MonitorPartLatency},

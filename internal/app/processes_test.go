@@ -291,9 +291,10 @@ func TestProcessesDetails(t *testing.T) {
 		t.Fatalf("%v; menu %q", err, tt.Menu())
 	}
 	tt.Frame()
-	if len(s.procs.tabs) != 1 || s.procs.tabs[0].pid != 812 {
-		t.Errorf("menu opened %d tabs", len(s.procs.tabs))
+	if d := a.processes.detail; d == nil || d.p.PID != 812 {
+		t.Errorf("the menu opened no dialog")
 	}
+	a.closeProcDialog()
 }
 
 func TestProcessesSignals(t *testing.T) {
@@ -424,24 +425,4 @@ func TestProcessesNotLinux(t *testing.T) {
 	}
 }
 
-// A click on the side panel's process list opens the Processes tab.
-func TestSidebarOpensProcesses(t *testing.T) {
-	a, p := testApp(t)
-	demoSession(a, "web-1", "45.56.78.90")
-	a.active = 0
-	a.setLeftPage(leftSystem) // the monitor's page
-	a.processes.api = demoProcesses()
-	tt := ui.NewTester(a.View, 1280, 820)
-	p.tt = tt
-	tt.Frame()
-	if a.bottomTab != tabFiles {
-		t.Fatalf("tab %d", a.bottomTab)
-	}
-	if err := tt.Click("mysqld"); err != nil {
-		t.Fatal(err)
-	}
-	tt.Frame()
-	if a.bottomTab != tabProcesses {
-		t.Errorf("tab %d after the click", a.bottomTab)
-	}
-}
+

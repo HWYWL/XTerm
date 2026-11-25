@@ -2570,26 +2570,6 @@ func (msgs Messages) TopProcesses() string {
 	return Catalog.Format(msgs.locale, "topProcesses", nil)
 }
 
-// ByMemory says "By memory"
-// in the language the app shows.
-func ByMemory() string { return In(i18n.Locale()).ByMemory() }
-
-// ByMemory says "By memory"
-// in the language of msgs.
-func (msgs Messages) ByMemory() string {
-	return Catalog.Format(msgs.locale, "byMemory", nil)
-}
-
-// ViewAllProcesses says "View all %d processes →"
-// in the language the app shows.
-func ViewAllProcesses() string { return In(i18n.Locale()).ViewAllProcesses() }
-
-// ViewAllProcesses says "View all %d processes →"
-// in the language of msgs.
-func (msgs Messages) ViewAllProcesses() string {
-	return Catalog.Format(msgs.locale, "viewAllProcesses", nil)
-}
-
 // Mounts says "%d mounts"
 // in the language the app shows.
 func Mounts() string { return In(i18n.Locale()).Mounts() }
@@ -2598,6 +2578,316 @@ func Mounts() string { return In(i18n.Locale()).Mounts() }
 // in the language of msgs.
 func (msgs Messages) Mounts() string {
 	return Catalog.Format(msgs.locale, "mounts", nil)
+}
+
+// NetToday says "Today RX %s · TX %s"
+// in the language the app shows.
+func NetToday() string { return In(i18n.Locale()).NetToday() }
+
+// NetToday says "Today RX %s · TX %s"
+// in the language of msgs.
+func (msgs Messages) NetToday() string {
+	return Catalog.Format(msgs.locale, "netToday", nil)
+}
+
+// NetPeak says "Peak %s"
+// in the language the app shows.
+func NetPeak() string { return In(i18n.Locale()).NetPeak() }
+
+// NetPeak says "Peak %s"
+// in the language of msgs.
+func (msgs Messages) NetPeak() string {
+	return Catalog.Format(msgs.locale, "netPeak", nil)
+}
+
+// NetWindow says "%ds"
+// in the language the app shows.
+func NetWindow() string { return In(i18n.Locale()).NetWindow() }
+
+// NetWindow says "%ds"
+// in the language of msgs.
+func (msgs Messages) NetWindow() string {
+	return Catalog.Format(msgs.locale, "netWindow", nil)
+}
+
+// NetLinkSpeed says "%s · %sM"
+// in the language the app shows.
+func NetLinkSpeed() string { return In(i18n.Locale()).NetLinkSpeed() }
+
+// NetLinkSpeed says "%s · %sM"
+// in the language of msgs.
+func (msgs Messages) NetLinkSpeed() string {
+	return Catalog.Format(msgs.locale, "netLinkSpeed", nil)
+}
+
+// OptionsTextHighlight says "Text highlighting"
+// in the language the app shows.
+func OptionsTextHighlight() string { return In(i18n.Locale()).OptionsTextHighlight() }
+
+// OptionsTextHighlight says "Text highlighting"
+// in the language of msgs.
+func (msgs Messages) OptionsTextHighlight() string {
+	return Catalog.Format(msgs.locale, "optionsTextHighlight", nil)
+}
+
+// HighlightIntro says "Colors the terminal's text by rule: log levels, IP addresses, times, permissions, sizes. A preset keeps its pattern a…"
+// in the language the app shows.
+func HighlightIntro() string { return In(i18n.Locale()).HighlightIntro() }
+
+// HighlightIntro says "Colors the terminal's text by rule: log levels, IP addresses, times, permissions, sizes. A preset keeps its pattern a…"
+// in the language of msgs.
+func (msgs Messages) HighlightIntro() string {
+	return Catalog.Format(msgs.locale, "highlightIntro", nil)
+}
+
+// HighlightPresets says "Preset rules"
+// in the language the app shows.
+func HighlightPresets() string { return In(i18n.Locale()).HighlightPresets() }
+
+// HighlightPresets says "Preset rules"
+// in the language of msgs.
+func (msgs Messages) HighlightPresets() string {
+	return Catalog.Format(msgs.locale, "highlightPresets", nil)
+}
+
+// HighlightCustom says "Custom rules"
+// in the language the app shows.
+func HighlightCustom() string { return In(i18n.Locale()).HighlightCustom() }
+
+// HighlightCustom says "Custom rules"
+// in the language of msgs.
+func (msgs Messages) HighlightCustom() string {
+	return Catalog.Format(msgs.locale, "highlightCustom", nil)
+}
+
+// HighlightNoCustom says "No custom rules yet"
+// in the language the app shows.
+func HighlightNoCustom() string { return In(i18n.Locale()).HighlightNoCustom() }
+
+// HighlightNoCustom says "No custom rules yet"
+// in the language of msgs.
+func (msgs Messages) HighlightNoCustom() string {
+	return Catalog.Format(msgs.locale, "highlightNoCustom", nil)
+}
+
+// HighlightAdd says "Add rule"
+// in the language the app shows.
+func HighlightAdd() string { return In(i18n.Locale()).HighlightAdd() }
+
+// HighlightAdd says "Add rule"
+// in the language of msgs.
+func (msgs Messages) HighlightAdd() string {
+	return Catalog.Format(msgs.locale, "highlightAdd", nil)
+}
+
+// HighlightNewRule says "New rule"
+// in the language the app shows.
+func HighlightNewRule() string { return In(i18n.Locale()).HighlightNewRule() }
+
+// HighlightNewRule says "New rule"
+// in the language of msgs.
+func (msgs Messages) HighlightNewRule() string {
+	return Catalog.Format(msgs.locale, "highlightNewRule", nil)
+}
+
+// HighlightEditRule says "Edit rule"
+// in the language the app shows.
+func HighlightEditRule() string { return In(i18n.Locale()).HighlightEditRule() }
+
+// HighlightEditRule says "Edit rule"
+// in the language of msgs.
+func (msgs Messages) HighlightEditRule() string {
+	return Catalog.Format(msgs.locale, "highlightEditRule", nil)
+}
+
+// HighlightName says "Name"
+// in the language the app shows.
+func HighlightName() string { return In(i18n.Locale()).HighlightName() }
+
+// HighlightName says "Name"
+// in the language of msgs.
+func (msgs Messages) HighlightName() string {
+	return Catalog.Format(msgs.locale, "highlightName", nil)
+}
+
+// HighlightPattern says "Pattern"
+// in the language the app shows.
+func HighlightPattern() string { return In(i18n.Locale()).HighlightPattern() }
+
+// HighlightPattern says "Pattern"
+// in the language of msgs.
+func (msgs Messages) HighlightPattern() string {
+	return Catalog.Format(msgs.locale, "highlightPattern", nil)
+}
+
+// HighlightColor says "Color"
+// in the language the app shows.
+func HighlightColor() string { return In(i18n.Locale()).HighlightColor() }
+
+// HighlightColor says "Color"
+// in the language of msgs.
+func (msgs Messages) HighlightColor() string {
+	return Catalog.Format(msgs.locale, "highlightColor", nil)
+}
+
+// HighlightIgnoreCase says "Ignore case"
+// in the language the app shows.
+func HighlightIgnoreCase() string { return In(i18n.Locale()).HighlightIgnoreCase() }
+
+// HighlightIgnoreCase says "Ignore case"
+// in the language of msgs.
+func (msgs Messages) HighlightIgnoreCase() string {
+	return Catalog.Format(msgs.locale, "highlightIgnoreCase", nil)
+}
+
+// HighlightInvalid says "The pattern is not a valid regular expression."
+// in the language the app shows.
+func HighlightInvalid() string { return In(i18n.Locale()).HighlightInvalid() }
+
+// HighlightInvalid says "The pattern is not a valid regular expression."
+// in the language of msgs.
+func (msgs Messages) HighlightInvalid() string {
+	return Catalog.Format(msgs.locale, "highlightInvalid", nil)
+}
+
+// HighlightAllOn says "Turn all on"
+// in the language the app shows.
+func HighlightAllOn() string { return In(i18n.Locale()).HighlightAllOn() }
+
+// HighlightAllOn says "Turn all on"
+// in the language of msgs.
+func (msgs Messages) HighlightAllOn() string {
+	return Catalog.Format(msgs.locale, "highlightAllOn", nil)
+}
+
+// HighlightAllOff says "Turn all off"
+// in the language the app shows.
+func HighlightAllOff() string { return In(i18n.Locale()).HighlightAllOff() }
+
+// HighlightAllOff says "Turn all off"
+// in the language of msgs.
+func (msgs Messages) HighlightAllOff() string {
+	return Catalog.Format(msgs.locale, "highlightAllOff", nil)
+}
+
+// HighlightPresetError says "ERROR log"
+// in the language the app shows.
+func HighlightPresetError() string { return In(i18n.Locale()).HighlightPresetError() }
+
+// HighlightPresetError says "ERROR log"
+// in the language of msgs.
+func (msgs Messages) HighlightPresetError() string {
+	return Catalog.Format(msgs.locale, "highlightPresetError", nil)
+}
+
+// HighlightPresetWarn says "WARN log"
+// in the language the app shows.
+func HighlightPresetWarn() string { return In(i18n.Locale()).HighlightPresetWarn() }
+
+// HighlightPresetWarn says "WARN log"
+// in the language of msgs.
+func (msgs Messages) HighlightPresetWarn() string {
+	return Catalog.Format(msgs.locale, "highlightPresetWarn", nil)
+}
+
+// HighlightPresetInfo says "INFO log"
+// in the language the app shows.
+func HighlightPresetInfo() string { return In(i18n.Locale()).HighlightPresetInfo() }
+
+// HighlightPresetInfo says "INFO log"
+// in the language of msgs.
+func (msgs Messages) HighlightPresetInfo() string {
+	return Catalog.Format(msgs.locale, "highlightPresetInfo", nil)
+}
+
+// HighlightPresetDebug says "DEBUG log"
+// in the language the app shows.
+func HighlightPresetDebug() string { return In(i18n.Locale()).HighlightPresetDebug() }
+
+// HighlightPresetDebug says "DEBUG log"
+// in the language of msgs.
+func (msgs Messages) HighlightPresetDebug() string {
+	return Catalog.Format(msgs.locale, "highlightPresetDebug", nil)
+}
+
+// HighlightPresetPermissions says "File permissions"
+// in the language the app shows.
+func HighlightPresetPermissions() string { return In(i18n.Locale()).HighlightPresetPermissions() }
+
+// HighlightPresetPermissions says "File permissions"
+// in the language of msgs.
+func (msgs Messages) HighlightPresetPermissions() string {
+	return Catalog.Format(msgs.locale, "highlightPresetPermissions", nil)
+}
+
+// HighlightPresetTime says "Time"
+// in the language the app shows.
+func HighlightPresetTime() string { return In(i18n.Locale()).HighlightPresetTime() }
+
+// HighlightPresetTime says "Time"
+// in the language of msgs.
+func (msgs Messages) HighlightPresetTime() string {
+	return Catalog.Format(msgs.locale, "highlightPresetTime", nil)
+}
+
+// HighlightPresetIP says "IP address and port"
+// in the language the app shows.
+func HighlightPresetIP() string { return In(i18n.Locale()).HighlightPresetIP() }
+
+// HighlightPresetIP says "IP address and port"
+// in the language of msgs.
+func (msgs Messages) HighlightPresetIP() string {
+	return Catalog.Format(msgs.locale, "highlightPresetIP", nil)
+}
+
+// HighlightPresetLink says "Link"
+// in the language the app shows.
+func HighlightPresetLink() string { return In(i18n.Locale()).HighlightPresetLink() }
+
+// HighlightPresetLink says "Link"
+// in the language of msgs.
+func (msgs Messages) HighlightPresetLink() string {
+	return Catalog.Format(msgs.locale, "highlightPresetLink", nil)
+}
+
+// HighlightPresetSize says "File size"
+// in the language the app shows.
+func HighlightPresetSize() string { return In(i18n.Locale()).HighlightPresetSize() }
+
+// HighlightPresetSize says "File size"
+// in the language of msgs.
+func (msgs Messages) HighlightPresetSize() string {
+	return Catalog.Format(msgs.locale, "highlightPresetSize", nil)
+}
+
+// HighlightPresetKeywords says "Shell keywords"
+// in the language the app shows.
+func HighlightPresetKeywords() string { return In(i18n.Locale()).HighlightPresetKeywords() }
+
+// HighlightPresetKeywords says "Shell keywords"
+// in the language of msgs.
+func (msgs Messages) HighlightPresetKeywords() string {
+	return Catalog.Format(msgs.locale, "highlightPresetKeywords", nil)
+}
+
+// HighlightPresetCommands says "Built-in commands"
+// in the language the app shows.
+func HighlightPresetCommands() string { return In(i18n.Locale()).HighlightPresetCommands() }
+
+// HighlightPresetCommands says "Built-in commands"
+// in the language of msgs.
+func (msgs Messages) HighlightPresetCommands() string {
+	return Catalog.Format(msgs.locale, "highlightPresetCommands", nil)
+}
+
+// HighlightPresetNumber says "Number"
+// in the language the app shows.
+func HighlightPresetNumber() string { return In(i18n.Locale()).HighlightPresetNumber() }
+
+// HighlightPresetNumber says "Number"
+// in the language of msgs.
+func (msgs Messages) HighlightPresetNumber() string {
+	return Catalog.Format(msgs.locale, "highlightPresetNumber", nil)
 }
 
 // MonitorPartsHint says "Right-click to choose what shows"
@@ -5102,6 +5392,216 @@ func SigCONT() string { return In(i18n.Locale()).SigCONT() }
 // in the language of msgs.
 func (msgs Messages) SigCONT() string {
 	return Catalog.Format(msgs.locale, "sigCONT", nil)
+}
+
+// SigTERMShort says "Graceful exit"
+// in the language the app shows.
+func SigTERMShort() string { return In(i18n.Locale()).SigTERMShort() }
+
+// SigTERMShort says "Graceful exit"
+// in the language of msgs.
+func (msgs Messages) SigTERMShort() string {
+	return Catalog.Format(msgs.locale, "sigTERMShort", nil)
+}
+
+// SigKILLShort says "Force kill"
+// in the language the app shows.
+func SigKILLShort() string { return In(i18n.Locale()).SigKILLShort() }
+
+// SigKILLShort says "Force kill"
+// in the language of msgs.
+func (msgs Messages) SigKILLShort() string {
+	return Catalog.Format(msgs.locale, "sigKILLShort", nil)
+}
+
+// SigHUPShort says "Reload config"
+// in the language the app shows.
+func SigHUPShort() string { return In(i18n.Locale()).SigHUPShort() }
+
+// SigHUPShort says "Reload config"
+// in the language of msgs.
+func (msgs Messages) SigHUPShort() string {
+	return Catalog.Format(msgs.locale, "sigHUPShort", nil)
+}
+
+// SigINTShort says "Interrupt"
+// in the language the app shows.
+func SigINTShort() string { return In(i18n.Locale()).SigINTShort() }
+
+// SigINTShort says "Interrupt"
+// in the language of msgs.
+func (msgs Messages) SigINTShort() string {
+	return Catalog.Format(msgs.locale, "sigINTShort", nil)
+}
+
+// SigSTOPShort says "Pause"
+// in the language the app shows.
+func SigSTOPShort() string { return In(i18n.Locale()).SigSTOPShort() }
+
+// SigSTOPShort says "Pause"
+// in the language of msgs.
+func (msgs Messages) SigSTOPShort() string {
+	return Catalog.Format(msgs.locale, "sigSTOPShort", nil)
+}
+
+// SigCONTShort says "Resume"
+// in the language the app shows.
+func SigCONTShort() string { return In(i18n.Locale()).SigCONTShort() }
+
+// SigCONTShort says "Resume"
+// in the language of msgs.
+func (msgs Messages) SigCONTShort() string {
+	return Catalog.Format(msgs.locale, "sigCONTShort", nil)
+}
+
+// ProcDialogTitle says "Process Details"
+// in the language the app shows.
+func ProcDialogTitle() string { return In(i18n.Locale()).ProcDialogTitle() }
+
+// ProcDialogTitle says "Process Details"
+// in the language of msgs.
+func (msgs Messages) ProcDialogTitle() string {
+	return Catalog.Format(msgs.locale, "procDialogTitle", nil)
+}
+
+// ProcDialogSection says "Process"
+// in the language the app shows.
+func ProcDialogSection() string { return In(i18n.Locale()).ProcDialogSection() }
+
+// ProcDialogSection says "Process"
+// in the language of msgs.
+func (msgs Messages) ProcDialogSection() string {
+	return Catalog.Format(msgs.locale, "procDialogSection", nil)
+}
+
+// ProcDialogCommand says "Command line"
+// in the language the app shows.
+func ProcDialogCommand() string { return In(i18n.Locale()).ProcDialogCommand() }
+
+// ProcDialogCommand says "Command line"
+// in the language of msgs.
+func (msgs Messages) ProcDialogCommand() string {
+	return Catalog.Format(msgs.locale, "procDialogCommand", nil)
+}
+
+// ProcDialogPaths says "Paths"
+// in the language the app shows.
+func ProcDialogPaths() string { return In(i18n.Locale()).ProcDialogPaths() }
+
+// ProcDialogPaths says "Paths"
+// in the language of msgs.
+func (msgs Messages) ProcDialogPaths() string {
+	return Catalog.Format(msgs.locale, "procDialogPaths", nil)
+}
+
+// ProcDialogActions says "Actions"
+// in the language the app shows.
+func ProcDialogActions() string { return In(i18n.Locale()).ProcDialogActions() }
+
+// ProcDialogActions says "Actions"
+// in the language of msgs.
+func (msgs Messages) ProcDialogActions() string {
+	return Catalog.Format(msgs.locale, "procDialogActions", nil)
+}
+
+// ProcDialogState says "State"
+// in the language the app shows.
+func ProcDialogState() string { return In(i18n.Locale()).ProcDialogState() }
+
+// ProcDialogState says "State"
+// in the language of msgs.
+func (msgs Messages) ProcDialogState() string {
+	return Catalog.Format(msgs.locale, "procDialogState", nil)
+}
+
+// ProcDialogLowerPriority says "Lower priority"
+// in the language the app shows.
+func ProcDialogLowerPriority() string { return In(i18n.Locale()).ProcDialogLowerPriority() }
+
+// ProcDialogLowerPriority says "Lower priority"
+// in the language of msgs.
+func (msgs Messages) ProcDialogLowerPriority() string {
+	return Catalog.Format(msgs.locale, "procDialogLowerPriority", nil)
+}
+
+// ProcDialogReniced says "Nice raised by 10: the process now yields the CPU."
+// in the language the app shows.
+func ProcDialogReniced() string { return In(i18n.Locale()).ProcDialogReniced() }
+
+// ProcDialogReniced says "Nice raised by 10: the process now yields the CPU."
+// in the language of msgs.
+func (msgs Messages) ProcDialogReniced() string {
+	return Catalog.Format(msgs.locale, "procDialogReniced", nil)
+}
+
+// ProcDialogNiceFailed says "Could not lower the priority: {error}"
+// in the language the app shows.
+func ProcDialogNiceFailed(error string) string { return In(i18n.Locale()).ProcDialogNiceFailed(error) }
+
+// ProcDialogNiceFailed says "Could not lower the priority: {error}"
+// in the language of msgs.
+func (msgs Messages) ProcDialogNiceFailed(error string) string {
+	return Catalog.Format(msgs.locale, "procDialogNiceFailed", map[string]any{"error": error})
+}
+
+// ProcDialogCopied says "Command line copied."
+// in the language the app shows.
+func ProcDialogCopied() string { return In(i18n.Locale()).ProcDialogCopied() }
+
+// ProcDialogCopied says "Command line copied."
+// in the language of msgs.
+func (msgs Messages) ProcDialogCopied() string {
+	return Catalog.Format(msgs.locale, "procDialogCopied", nil)
+}
+
+// ProcStateRunning says "Running"
+// in the language the app shows.
+func ProcStateRunning() string { return In(i18n.Locale()).ProcStateRunning() }
+
+// ProcStateRunning says "Running"
+// in the language of msgs.
+func (msgs Messages) ProcStateRunning() string {
+	return Catalog.Format(msgs.locale, "procStateRunning", nil)
+}
+
+// ProcStateSleeping says "Sleeping"
+// in the language the app shows.
+func ProcStateSleeping() string { return In(i18n.Locale()).ProcStateSleeping() }
+
+// ProcStateSleeping says "Sleeping"
+// in the language of msgs.
+func (msgs Messages) ProcStateSleeping() string {
+	return Catalog.Format(msgs.locale, "procStateSleeping", nil)
+}
+
+// ProcStateWaiting says "Waiting for I/O"
+// in the language the app shows.
+func ProcStateWaiting() string { return In(i18n.Locale()).ProcStateWaiting() }
+
+// ProcStateWaiting says "Waiting for I/O"
+// in the language of msgs.
+func (msgs Messages) ProcStateWaiting() string {
+	return Catalog.Format(msgs.locale, "procStateWaiting", nil)
+}
+
+// ProcStateZombie says "Zombie"
+// in the language the app shows.
+func ProcStateZombie() string { return In(i18n.Locale()).ProcStateZombie() }
+
+// ProcStateZombie says "Zombie"
+// in the language of msgs.
+func (msgs Messages) ProcStateZombie() string {
+	return Catalog.Format(msgs.locale, "procStateZombie", nil)
+}
+
+// ProcStateStopped says "Stopped"
+// in the language the app shows.
+func ProcStateStopped() string { return In(i18n.Locale()).ProcStateStopped() }
+
+// ProcStateStopped says "Stopped"
+// in the language of msgs.
+func (msgs Messages) ProcStateStopped() string {
+	return Catalog.Format(msgs.locale, "procStateStopped", nil)
 }
 
 // SignalTitle says "Send {signal} to {name} ({pid})?"

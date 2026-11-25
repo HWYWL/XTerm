@@ -81,7 +81,11 @@ func (a *App) serverView(c *ui.Context, s *Session) {
 		default:
 			st = &s.stats
 		}
-		serverStats(c, st, a.monitorHidden(), a.netPicker(s), &a.localNet, a.openProcesses)
+		var today func(monitor.NetView) (uint64, uint64)
+		if s != nil && s.Host != nil {
+			today = a.netToday(s.Host.ID)
+		}
+		serverStats(c, st, a.monitorHidden(), a.netPicker(s), &a.localNet, today)
 	})
 }
 
@@ -94,9 +98,9 @@ func (a *App) copyToClipboard(c *ui.Context, text string) {
 
 // serverStats shows st, or the skeleton for nil, without the parts in
 // hidden, or the hint to the panel's menu when every part is; net is the
-// choice of network interfaces, and a click on the process list calls
-// openProcs.
-func serverStats(c *ui.Context, st *monitor.Stats, hidden hiddenParts, net netPicker, local *localTraffic, openProcs func()) {
+// choice of network interfaces, and today the traffic of the day so far,
+// when a session is there to keep it for.
+func serverStats(c *ui.Context, st *monitor.Stats, hidden hiddenParts, net netPicker, local *localTraffic, today func(monitor.NetView) (uint64, uint64)) {
 	if hidden.none() {
 		monitorHint(c)
 		return
@@ -115,21 +119,14 @@ func serverStats(c *ui.Context, st *monitor.Stats, hidden hiddenParts, net netPi
 			donutRow(c, nil)
 			statCards(c, nil)
 		}
-		if hidden.shows(partProcesses) {
-			section(c, locales.TopProcesses(), func() { widgets.Muted(c, locales.ByMemory()) })
-			procTable(c, nil, 0, nil)
-		}
 		if hidden.shows(partNetwork) {
-			section(c, locales.RemoteNet(), nil)
-			netRow(c, 0, 0, "", "", nil)
-			widgets.Sparkline(c, monitor.HistoryLen, nil, nil, formatBytes)
+			netCard(c, monitor.NetView{}, "", "", nil, 0, 0)
 		}
 		if hidden.shows(partLocalNet) {
 			localNetGraph(c, nil)
 		}
 		if hidden.shows(partLatency) {
-			section(c, locales.Latency(), func() { ui.Text(c, "-").TextColor(theme.Accent) })
-			widgets.Sparkline(c, monitor.HistoryLen, nil, nil, formatMillis)
+			latencyCard(c, 0, nil)
 		}
 		if hidden.shows(partDisks) {
 			section(c, locales.MonitorPartDisks(), nil)
@@ -151,23 +148,27 @@ func serverStats(c *ui.Context, st *monitor.Stats, hidden hiddenParts, net netPi
 		donutRow(c, st)
 		statCards(c, st)
 	}
-	if hidden.shows(partProcesses) {
-		section(c, locales.TopProcesses(), func() { widgets.Muted(c, locales.ByMemory()) })
-		procTable(c, st.Procs, st.MemTotal, openProcs)
-		procFooter(c, openProcs, st.ProcTotal)
-	}
 	if hidden.shows(partNetwork) {
-		section(c, locales.RemoteNet(), nil)
-		netGraph(c, st, net)
+		v := st.Net(net.chosen)
+		label, tip := netLabel(v)
+		if v.Speed > 0 {
+			label = fmt.Sprintf(locales.NetLinkSpeed(), label, strconv.FormatFloat(v.Speed, 'f', -1, 64))
+		}
+		var menu func(m *ui.Menu)
+		if net.choose != nil {
+			menu = func(m *ui.Menu) { netMenu(m, st, v, net) }
+		}
+		var rx, tx uint64
+		if today != nil {
+			rx, tx = today(v)
+		}
+		netCard(c, v, label, tip, menu, rx, tx)
 	}
 	if hidden.shows(partLocalNet) {
 		localNetGraph(c, local)
 	}
 	if hidden.shows(partLatency) {
-		section(c, locales.Latency(), func() {
-			ui.Text(c, formatLatency(st.Latency)).TextColor(theme.Accent)
-		})
-		widgets.Sparkline(c, monitor.HistoryLen, [][]float64{st.LatHist}, []ui.Color{latencyChart}, formatMillis)
+		latencyCard(c, st.Latency, st.LatHist)
 	}
 	if hidden.shows(partDisks) {
 		section(c, locales.MonitorPartDisks(), func() {
@@ -177,21 +178,75 @@ func serverStats(c *ui.Context, st *monitor.Stats, hidden hiddenParts, net netPi
 	}
 }
 
-func formatMillis(v float64) string { return fmt.Sprintf("%.0f", v) }
-
-// netRow is the speeds above the network graph and, at the right, label:
-// the button of the interfaces' menu when there is a menu.
-func netRow(c *ui.Context, tx, rx float64, label, tip string, menu func(m *ui.Menu)) {
-	ui.Row(c).Gap(8).Margin(4, 0, 0, 0).Children(func() {
-		ui.Text(c, "↑"+formatBytes(tx)).TextColor(colors.tx).Shrink(0)
-		ui.Text(c, "↓"+formatBytes(rx)).TextColor(colors.rx).Shrink(0)
+// netCard is the network part of the panel: the section with the link at
+// its right, the download and upload speeds of the latest sample, the
+// graph of both, and under it the traffic of the day and the graph's
+// peak, as FinalShell's network card has them.
+func netCard(c *ui.Context, v monitor.NetView, label, tip string, menu func(m *ui.Menu), todayRx, todayTx uint64) {
+	var hint func()
+	switch {
+	case menu != nil:
+		hint = func() { netLabelButton(c, label, tip, menu) }
+	case label != "":
+		hint = func() { widgets.Muted(c, label).SingleLine() }
+	}
+	section(c, locales.RemoteNet(), hint)
+	ui.Row(c).Gap(10).Margin(2, 0, 0, 0).AlignItems(ui.Center).Children(func() {
+		ui.Text(c, "↓ "+formatRate(v.RxRate)).TextColor(colors.rx).FontSize(12).Shrink(0)
+		ui.Text(c, "↑ "+formatRate(v.TxRate)).TextColor(colors.tx).FontSize(12).Shrink(0)
 		ui.Spacer(c)
-		if menu != nil {
-			netLabelButton(c, label, tip, menu)
-		} else {
-			widgets.Muted(c, label)
-		}
+		widgets.Muted(c, graphWindow()).FontSize(11)
 	})
+	widgets.Curve(c, monitor.HistoryLen, [][]float64{v.RxHist, v.TxHist}, []ui.Color{rxChart, txChart}, 56)
+	ui.Row(c).Gap(8).Margin(2, 0, 0, 0).AlignItems(ui.Center).Children(func() {
+		ui.Text(c, fmt.Sprintf(locales.NetToday(), formatBytes(float64(todayRx)), formatBytes(float64(todayTx)))).
+			FontSize(11).TextColor(theme.TextMuted).SingleLine()
+		ui.Spacer(c)
+		ui.Text(c, fmt.Sprintf(locales.NetPeak(), formatRate(histPeak(v.RxHist, v.TxHist)))).
+			FontSize(11).TextColor(theme.TextMuted).SingleLine()
+	})
+}
+
+// latencyCard is the latency part, under the network's: the latest round
+// trip and the graph's peak over the curve, in the graph's green.
+func latencyCard(c *ui.Context, d time.Duration, hist []float64) {
+	value := "-"
+	if d > 0 {
+		value = formatLatency(d)
+	}
+	ui.Row(c).Gap(8).Margin(8, 0, 2, 0).AlignItems(ui.Center).Children(func() {
+		ui.Text(c, locales.Latency()).FontSize(12).TextColor(theme.TextMuted)
+		ui.Text(c, value).FontSize(13).FontWeight(600).SingleLine()
+		ui.Spacer(c)
+		ui.Text(c, fmt.Sprintf(locales.NetPeak(), latencyPeak(hist))).
+			FontSize(11).TextColor(theme.TextMuted).SingleLine()
+	})
+	widgets.Curve(c, monitor.HistoryLen, [][]float64{hist}, []ui.Color{latencyChart}, 46)
+}
+
+// latencyPeak is the graph's largest round trip, "-" for no sample yet.
+func latencyPeak(hist []float64) string {
+	if len(hist) == 0 {
+		return "-"
+	}
+	return formatLatency(time.Duration(histPeak(hist) * float64(time.Millisecond)))
+}
+
+// graphWindow is how much of the past the graphs span: their samples, at
+// the interval the panel reads the server.
+func graphWindow() string {
+	return fmt.Sprintf(locales.NetWindow(), int(monitor.Interval/time.Second)*monitor.HistoryLen)
+}
+
+// histPeak is the largest value of the series, 0 when there is none.
+func histPeak(series ...[]float64) float64 {
+	peak := 0.0
+	for _, s := range series {
+		for _, v := range s {
+			peak = math.Max(peak, v)
+		}
+	}
+	return peak
 }
 
 // section is one category of the panel: its title, the hint at its right
@@ -206,21 +261,6 @@ func section(c *ui.Context, title string, hint func()) {
 		}
 	})
 	ui.Box(c).Height(1).Margin(0, 0, 2, 0).Background(colors.frame)
-}
-
-// procFooter is the way from the few processes listed to all of them.
-func procFooter(c *ui.Context, open func(), total int) {
-	if open == nil {
-		return
-	}
-	link := ui.Row(c).Margin(4, 0, 0, 0).Cursor(ui.CursorPointer).Role(ui.RoleButton).
-		Tooltip(locales.OpenProcesses()).Label(locales.OpenProcesses())
-	if link.Clicked() {
-		open()
-	}
-	link.Children(func() {
-		ui.Text(c, fmt.Sprintf(locales.ViewAllProcesses(), total)).FontSize(12).TextColor(theme.Accent).SingleLine()
-	})
 }
 
 func ratio(a, b uint64) float64 {
@@ -311,7 +351,8 @@ func monitorCard(c *ui.Context, label, value string) {
 }
 
 // localNetGraph is this computer's traffic, under the server's: the
-// speeds at the section's right, then the graph of both directions.
+// speeds of the latest sample, the graph of both directions and the peak,
+// as the server's card has them.
 func localNetGraph(c *ui.Context, lt *localTraffic) {
 	up, down := 0.0, 0.0
 	var upHist, downHist []float64
@@ -319,55 +360,15 @@ func localNetGraph(c *ui.Context, lt *localTraffic) {
 		up, down = lt.up, lt.down
 		upHist, downHist = lt.upHist, lt.downHist
 	}
-	section(c, locales.LocalNet(), func() {
-		ui.Text(c, "↑"+formatBytes(up)).TextColor(colors.tx).Shrink(0)
-		ui.Text(c, "  ↓"+formatBytes(down)).TextColor(colors.rx).Shrink(0)
+	section(c, locales.LocalNet(), func() { widgets.Muted(c, graphWindow()).FontSize(11) })
+	ui.Row(c).Gap(10).Margin(2, 0, 0, 0).AlignItems(ui.Center).Children(func() {
+		ui.Text(c, "↓ "+formatRate(down)).TextColor(colors.rx).FontSize(12).Shrink(0)
+		ui.Text(c, "↑ "+formatRate(up)).TextColor(colors.tx).FontSize(12).Shrink(0)
+		ui.Spacer(c)
+		ui.Text(c, fmt.Sprintf(locales.NetPeak(), formatRate(histPeak(downHist, upHist)))).
+			FontSize(11).TextColor(theme.TextMuted).SingleLine()
 	})
-	widgets.Sparkline(c, monitor.HistoryLen, [][]float64{upHist, downHist}, []ui.Color{txChart, rxChart}, formatBytes)
-}
-
-// procTable is the processes using the most memory; a click opens the
-// process manager with open, when it is not nil. Its rows are the CPU
-// share, the memory share of memTotal, and the command, over a bar as
-// wide as the CPU share, as QuickTerm's list has them.
-func procTable(c *ui.Context, procs []monitor.Proc, memTotal uint64, open func()) {
-	headText := colors.procHeadText
-	// The tables keep their border and nothing else, as the bars and the
-	// graphs: the panel's own color shows through all of them.
-	table := ui.Column(c).Radius(6).Border(1, colors.frame).Clip()
-	if open != nil {
-		table.Cursor(ui.CursorPointer).Tooltip(locales.OpenProcesses()).Role(ui.RoleButton).Label(locales.OpenProcesses())
-		if table.Clicked() {
-			open()
-		}
-	}
-	table.Children(func() {
-		ui.Row(c).PaddingX(6).Height(20).Children(func() {
-			ui.Text(c, locales.Cpu()+"%").Width(44).TextColor(headText).FontSize(12)
-			ui.Text(c, locales.Memory()+"%").Width(44).TextColor(headText).FontSize(12)
-			ui.Text(c, locales.Command()).TextColor(headText).FontSize(12)
-		})
-		for i, p := range procs {
-			proc := p
-			ui.Box(c).Key(i).Height(22).Clip().Children(func() {
-				ui.Box(c).Absolute().Top(0).Left(0).Bottom(0).
-					WidthPercent(float32(math.Max(0, math.Min(1, proc.CPU/100)) * 100)).Background(colors.cpu)
-				ui.Row(c).Fill().PaddingX(6).AlignItems(ui.Center).Children(func() {
-					ui.Text(c, fmt.Sprintf("%.1f", proc.CPU)).Width(44).FontSize(12)
-					ui.Text(c, fmt.Sprintf("%.1f", procMemShare(proc, memTotal))).Width(44).FontSize(12)
-					ui.Text(c, proc.Name).FontSize(12).SingleLine().Grow(1).MinWidth(0)
-				})
-			})
-		}
-	})
-}
-
-// procMemShare is how much of the memory a process holds, in percent.
-func procMemShare(p monitor.Proc, memTotal uint64) float64 {
-	if memTotal == 0 {
-		return 0
-	}
-	return float64(p.RSS) / float64(memTotal) * 100
+	widgets.Curve(c, monitor.HistoryLen, [][]float64{downHist, upHist}, []ui.Color{rxChart, txChart}, 46)
 }
 
 func diskTable(c *ui.Context, disks []monitor.Disk) {

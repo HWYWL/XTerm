@@ -44,20 +44,6 @@ func (a *App) setMonitorIfaces(h *config.Host, names []string) {
 	}
 }
 
-// netGraph is the network row of the side panel, its speeds and the
-// interfaces' menu, and its graph: of the interfaces p chose, summed, or
-// of the busiest.
-func netGraph(c *ui.Context, st *monitor.Stats, p netPicker) {
-	v := st.Net(p.chosen)
-	label, tip := netLabel(v)
-	var menu func(m *ui.Menu)
-	if p.choose != nil {
-		menu = func(m *ui.Menu) { netMenu(m, st, v, p) }
-	}
-	netRow(c, v.TxRate, v.RxRate, label, tip, menu)
-	widgets.Sparkline(c, monitor.HistoryLen, [][]float64{v.TxHist, v.RxHist}, []ui.Color{txChart, rxChart}, formatBytes)
-}
-
 // netLabel is what the graph's top right says it shows, and its tooltip:
 // the interfaces, joined with "+", and those chosen that are missing.
 func netLabel(v monitor.NetView) (label, tip string) {

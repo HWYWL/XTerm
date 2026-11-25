@@ -108,6 +108,25 @@ func TestParsePSMissingFields(t *testing.T) {
 	}
 }
 
+// The fallback for a ps that lists no process, as OpenWrt's BusyBox ps
+// can be: the name, the parent, the state, the resident size in pages,
+// the user and the command line all come from /proc.
+func TestProcsFromStat(t *testing.T) {
+	stat := "  1 (init) S 0 1 1 0 -1 4194560 100 0 0 0 10 20 0 0 20 0 1 0 500 1000 100\n" +
+		"  2 (kthreadd) S 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 20 0 1 0 1 0 0\n"
+	cmdlines := "1 /sbin/init splash\n2 \n"
+	owners := "dr-xr-xr-x 9 root root 0 Nov 25 12:00 /proc/1\n" +
+		"dr-xr-xr-x 9 nobody nobody 0 Nov 25 12:00 /proc/2\n"
+	got := procsFromStat(stat, cmdlines, owners, 4096)
+	want := []Process{
+		{PID: 1, PPID: 0, User: "root", RSS: 100 * 4096, Name: "init", Args: "/sbin/init splash", State: 'S', Start: 500},
+		{PID: 2, PPID: 0, User: "nobody", Name: "kthreadd", State: 'S', Start: 1},
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("got %+v\nwant %+v", got, want)
+	}
+}
+
 func TestParseDetails(t *testing.T) {
 	own := "---FINALLYSHELL:uname---\nLinux\n" +
 		"---FINALLYSHELL:stat---\n7267 (java) S 1 7267 7267 0 -1 4194560 9000 0 0 0 20000 5000 0 0 20 0 60 0 3000 1 1\n\n---FINALLYSHELL:stat:ok---\n" +

@@ -15,6 +15,7 @@ type Iface struct {
 	TxRate float64
 	RxHist []float64
 	TxHist []float64
+	Speed  float64 // Mbps, 0 when the server does not tell
 
 	rx, tx uint64 // the byte counters, as /proc/net/dev has them
 }
@@ -51,16 +52,20 @@ func parseNet(s string) []netCounters {
 }
 
 // ifaceRank orders the interfaces in the menu: the others first, then
-// Docker's veth pairs, which can be many, then the loopback.
+// Docker's veth pairs, which can be many, then the loopback, lo on Linux
+// and lo0 on a Mac.
 func ifaceRank(name string) int {
 	switch {
-	case name == "lo":
+	case isLoopback(name):
 		return 2
 	case strings.HasPrefix(name, "veth"):
 		return 1
 	}
 	return 0
 }
+
+// isLoopback says whether name is a loopback interface.
+func isLoopback(name string) bool { return name == "lo" || name == "lo0" }
 
 // netState is what Run keeps between samples of /proc/net/dev: each
 // interface's counters and history, so that each has its own.
@@ -74,15 +79,21 @@ type netState struct {
 // An interface gets a sample from its second reading on; one whose
 // counters went back (it was made again) gets a zero, so that the
 // histories of all stay lined up at their ends.
-func (n *netState) update(st *Stats, out string, now time.Time) {
+func (n *netState) update(st *Stats, out string, speeds map[string]float64, now time.Time) {
+	n.updateCounters(st, parseNet(out), speeds, now)
+}
+
+// updateCounters is update from the counters already read, as a Mac's
+// netstat gives them.
+func (n *netState) updateCounters(st *Stats, counters []netCounters, speeds map[string]float64, now time.Time) {
 	secs := now.Sub(n.at).Seconds()
 	next := map[string]Iface{}
 	var ifaces []Iface
-	for _, c := range parseNet(out) {
+	for _, c := range counters {
 		if _, dup := next[c.name]; dup {
 			continue
 		}
-		it := Iface{Name: c.name, rx: c.rx, tx: c.tx}
+		it := Iface{Name: c.name, rx: c.rx, tx: c.tx, Speed: speeds[c.name]}
 		if old, ok := n.ifaces[c.name]; ok && secs > 0 {
 			it.RxHist, it.TxHist = old.RxHist, old.TxHist
 			if c.rx >= old.rx && c.tx >= old.tx {
@@ -111,7 +122,7 @@ func busiest(ifaces []Iface) *Iface {
 	var b *Iface
 	for i := range ifaces {
 		it := &ifaces[i]
-		if it.Name != "lo" && (b == nil || it.rx+it.tx > b.rx+b.tx) {
+		if !isLoopback(it.Name) && (b == nil || it.rx+it.tx > b.rx+b.tx) {
 			b = it
 		}
 	}
@@ -132,6 +143,12 @@ type NetView struct {
 	TxRate  float64
 	RxHist  []float64
 	TxHist  []float64
+	// RxTotal and TxTotal are the bytes received and sent since the
+	// interfaces' counters started, as "today" reads them from a base;
+	// Speed is the fastest link shown, in Mbps, 0 when unknown.
+	RxTotal uint64
+	TxTotal uint64
+	Speed   float64
 }
 
 // Net is the network graph of the interfaces chosen: their sum, or the
@@ -152,6 +169,9 @@ func (s *Stats) Net(chosen []string) NetView {
 		v.TxRate += it.TxRate
 		v.RxHist = addHist(v.RxHist, it.RxHist)
 		v.TxHist = addHist(v.TxHist, it.TxHist)
+		v.RxTotal += it.rx
+		v.TxTotal += it.tx
+		v.Speed = max(v.Speed, it.Speed)
 	}
 	if len(v.Names) == 0 {
 		v.Auto = true
@@ -160,6 +180,10 @@ func (s *Stats) Net(chosen []string) NetView {
 		}
 		v.RxRate, v.TxRate = s.RxRate, s.TxRate
 		v.RxHist, v.TxHist = s.RxHist, s.TxHist
+		if i := slices.IndexFunc(s.Ifaces, func(it Iface) bool { return it.Name == s.Iface }); i >= 0 {
+			v.RxTotal, v.TxTotal = s.Ifaces[i].rx, s.Ifaces[i].tx
+			v.Speed = s.Ifaces[i].Speed
+		}
 	}
 	return v
 }

@@ -29,6 +29,7 @@ const (
 	pageBackground = "terminal/background"
 	pageFont       = "terminal/font"
 	pageCommandBar = "terminal/commandbar"
+	pageHighlight  = "terminal/highlight"
 	pageFiles      = "files"
 	pageFileIcons  = "files/icons"
 	pageNetwork    = "network"
@@ -86,6 +87,10 @@ var optionPages = []optionPage{
 	{
 		id: pageCommandBar, parent: pageTerminal, title: locales.OptionsCommandBar,
 		view: (*App).commandBarPage,
+	},
+	{
+		id: pageHighlight, parent: pageTerminal, title: locales.OptionsTextHighlight,
+		view: (*App).highlightPage,
 	},
 	{
 		id: pageFiles, title: locales.OptionsFileManager,

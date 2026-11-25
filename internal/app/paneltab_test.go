@@ -113,12 +113,10 @@ func TestPanelRow(t *testing.T) {
 		t.Errorf("panel on %d, session on %d, label %q", panel.panelTab, a.bottomTab, listLabel(panel))
 	}
 	inList("Network")
-	// The monitor's process list shows the panel row's Processes tab.
+	// The Processes tab opens on the panel row.
 	a.setLeftPage(leftSystem)
 	tt.Frame()
-	if err := tt.Click("mysqld"); err != nil {
-		t.Fatal(err)
-	}
+	a.openProcesses()
 	tt.Frame()
 	if panel.panelTab != tabProcesses || a.current() != panel {
 		t.Errorf("after the monitor's click: tab %d, active %d", panel.panelTab, a.active)

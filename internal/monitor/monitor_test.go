@@ -15,9 +15,9 @@ func TestParse(t *testing.T) {
 	if len(d) != 1 || d[0].Mount != "/" || d[0].Avail != 600*1024 {
 		t.Errorf("disks %+v", d)
 	}
-	p := parseProcs("  2000 3.5 java\n 100 0.1 my daemon\n")
-	if len(p) != 2 || p[0].RSS != 2000*1024 || p[1].Name != "my daemon" {
-		t.Errorf("procs %+v", p)
+	speeds := parseSpeeds("eth0 1000\nwg0 \nlo -1\neth1 unknown\n")
+	if len(speeds) != 1 || speeds["eth0"] != 1000 {
+		t.Errorf("speeds %+v", speeds)
 	}
 	if l := parseLoad("0.28 0.31 0.27 1/200 999"); l != [3]float64{0.28, 0.31, 0.27} {
 		t.Errorf("load %v", l)

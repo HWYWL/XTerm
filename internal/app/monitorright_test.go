@@ -89,16 +89,6 @@ func TestMonitorOnRight(t *testing.T) {
 		t.Error("side not read back")
 	}
 
-	// A click on its process list still opens the Processes tab.
-	a.bottomTab = tabFiles
-	if err := tt.Click("mysqld"); err != nil {
-		t.Fatal(err)
-	}
-	tt.Frame()
-	if a.bottomTab != tabProcesses {
-		t.Errorf("tab %d after the monitor's click", a.bottomTab)
-	}
-
 	// The panel's bottom collapsed: its tab row under the terminal.
 	a.setBottomPanelHidden(true)
 	tt.Frame()

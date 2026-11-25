@@ -17,9 +17,13 @@ import (
 // HistoryLen is how many samples the graphs keep.
 const HistoryLen = 60
 
+// Interval is how often Run reads a server: the graphs' samples are this
+// far apart.
+const Interval = 2 * time.Second
+
 // Stats is what the side panel shows about a server.
 type Stats struct {
-	OK        bool // the server answered the script (Linux)
+	OK        bool // the server answered its stats script (Linux, or macOS)
 	Uptime    time.Duration
 	Load      [3]float64
 	CPU       float64 // percent, over the last interval
@@ -27,7 +31,6 @@ type Stats struct {
 	MemTotal  uint64
 	SwapUsed  uint64
 	SwapTotal uint64
-	Procs     []Proc
 	Iface     string
 	RxRate    float64 // bytes per second
 	TxRate    float64
@@ -49,12 +52,6 @@ type Stats struct {
 	Ifaces []Iface
 }
 
-type Proc struct {
-	RSS  uint64 // bytes
-	CPU  float64
-	Name string
-}
-
 type Disk struct {
 	Mount string
 	Avail uint64
@@ -63,8 +60,9 @@ type Disk struct {
 
 const sep = "---FINALLYSHELL---"
 
-// statsScript reads everything in one round trip. It needs only /proc, df,
-// ps, who and the sensors of /sys, as on any Linux server.
+// statsScript reads everything in one round trip. It needs only /proc,
+// df, who, the sensors of /sys and the link speeds of /sys, as on any
+// Linux server.
 const statsScript = `export LC_ALL=C
 cat /proc/uptime; echo ` + sep + `
 cat /proc/loadavg; echo ` + sep + `
@@ -72,10 +70,10 @@ head -1 /proc/stat; echo ` + sep + `
 grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree):' /proc/meminfo; echo ` + sep + `
 cat /proc/net/dev; echo ` + sep + `
 df -kP -x tmpfs -x devtmpfs -x overlay -x squashfs 2>/dev/null || df -kP; echo ` + sep + `
-ps -eo rss=,pcpu=,comm= --sort=-rss 2>/dev/null | head -5; echo ` + sep + `
 for f in /sys/class/thermal/thermal_zone*/temp /sys/class/hwmon/hwmon*/temp*_input; do cat "$f" 2>/dev/null; echo; done; echo ` + sep + `
 ls -d /proc/[0-9]* 2>/dev/null | wc -l; echo ` + sep + `
-who 2>/dev/null | wc -l
+who 2>/dev/null | wc -l; echo ` + sep + `
+for d in /sys/class/net/*; do n=${d##*/}; s=$(cat "$d/speed" 2>/dev/null); echo "$n $s"; done
 `
 
 // scriptTimeout is how long a read of the stats waits for the server:
@@ -96,6 +94,7 @@ func run(ctx context.Context, client *ssh.Client, interval, timeout time.Duratio
 		prevIdle  uint64
 		prevTotal uint64
 		net       netState
+		system    string // the server's uname -s, read once
 	)
 	tick := time.NewTicker(interval)
 	defer tick.Stop()
@@ -107,31 +106,25 @@ func run(ctx context.Context, client *ssh.Client, interval, timeout time.Duratio
 		st.Latency = time.Since(start)
 		st.LatHist = pushHist(st.LatHist, float64(st.Latency.Microseconds())/1000)
 
-		if out, err := runOutput(client, statsScript, timeout); err == nil {
+		if system == "" {
+			system = detectSystem(client, timeout)
+		}
+		script := statsScript
+		darwin := system == "Darwin"
+		if darwin {
+			script = statsScriptDarwin
+		}
+		if out, err := runOutput(client, script, timeout); err == nil {
 			parts := strings.Split(out, sep+"\n")
-			if len(parts) >= 7 {
+			// An empty first part is a server whose script failed before
+			// it wrote anything: it has no stats yet.
+			if len(parts) >= 6 && strings.TrimSpace(parts[0]) != "" {
 				st.OK = true
-				st.Uptime = parseUptime(parts[0])
-				st.Load = parseLoad(parts[1])
-				idle, total := parseCPU(parts[2])
-				if prevTotal != 0 && total > prevTotal {
-					st.CPU = 100 * (1 - float64(idle-prevIdle)/float64(total-prevTotal))
-				}
-				prevIdle, prevTotal = idle, total
-				st.MemTotal, st.MemUsed, st.SwapTotal, st.SwapUsed = parseMem(parts[3])
-				net.update(&st, parts[4], time.Now())
-				st.Disks = parseDisks(parts[5])
-				st.Procs = parseProcs(parts[6])
-				// The rest came with a later version of the script: a
-				// server still answering the older one leaves them zero.
-				if len(parts) > 7 {
-					st.TempC = parseTempC(parts[7])
-				}
-				if len(parts) > 8 {
-					st.ProcTotal = parseCount(parts[8])
-				}
-				if len(parts) > 9 {
-					st.Users = parseCount(parts[9])
+				now := time.Now()
+				if darwin {
+					parseDarwin(&st, parts, &net, now)
+				} else {
+					parseLinux(&st, parts, &net, &prevIdle, &prevTotal, now)
 				}
 			}
 		}
@@ -143,6 +136,48 @@ func run(ctx context.Context, client *ssh.Client, interval, timeout time.Duratio
 		case <-tick.C:
 		}
 	}
+}
+
+// detectSystem is the server's uname -s: the stats' script is Linux's,
+// and macOS, which is a Darwin, has one of its own. "" is a server that
+// did not answer: it is asked again at the next read, and read as Linux
+// until then, as before.
+func detectSystem(client *ssh.Client, timeout time.Duration) string {
+	out, err := runOutput(client, "uname -s 2>/dev/null", timeout)
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(out)
+}
+
+// parseLinux reads the output of statsScript, and the CPU against the
+// last read.
+func parseLinux(st *Stats, parts []string, net *netState, prevIdle, prevTotal *uint64, now time.Time) {
+	st.Uptime = parseUptime(parts[0])
+	st.Load = parseLoad(parts[1])
+	idle, total := parseCPU(parts[2])
+	if *prevTotal != 0 && total > *prevTotal {
+		st.CPU = 100 * (1 - float64(idle-*prevIdle)/float64(total-*prevTotal))
+	}
+	*prevIdle, *prevTotal = idle, total
+	st.MemTotal, st.MemUsed, st.SwapTotal, st.SwapUsed = parseMem(parts[3])
+	st.Disks = parseDisks(parts[5])
+	// The rest came with a later version of the script: a server still
+	// answering an older one leaves them zero.
+	var speeds map[string]float64
+	if len(parts) > 6 {
+		st.TempC = parseTempC(parts[6])
+	}
+	if len(parts) > 7 {
+		st.ProcTotal = parseCount(parts[7])
+	}
+	if len(parts) > 8 {
+		st.Users = parseCount(parts[8])
+	}
+	if len(parts) > 9 {
+		speeds = parseSpeeds(parts[9])
+	}
+	net.update(st, parts[4], speeds, now)
 }
 
 // errScriptTimeout is a script that did not end in its time.
@@ -207,7 +242,6 @@ func pushHist(h []float64, v float64) []float64 {
 // cloneStats copies the slices, so the UI never reads what the poller
 // is about to change.
 func cloneStats(s Stats) Stats {
-	s.Procs = append([]Proc(nil), s.Procs...)
 	s.Ifaces = cloneIfaces(s.Ifaces)
 	s.RxHist = append([]float64(nil), s.RxHist...)
 	s.TxHist = append([]float64(nil), s.TxHist...)
@@ -324,17 +358,20 @@ func parseCount(s string) int {
 	return n
 }
 
-func parseProcs(s string) []Proc {
-	var procs []Proc
+// parseSpeeds reads the link speed of every interface, in Mbps, as
+// /sys/class/net/<name>/speed has it: one whose speed cannot be read, as
+// the loopback's, is left out.
+func parseSpeeds(s string) map[string]float64 {
+	speeds := map[string]float64{}
 	sc := bufio.NewScanner(strings.NewReader(s))
 	for sc.Scan() {
 		f := strings.Fields(sc.Text())
-		if len(f) < 3 {
+		if len(f) < 2 {
 			continue
 		}
-		rss, _ := strconv.ParseUint(f[0], 10, 64)
-		cpu, _ := strconv.ParseFloat(f[1], 64)
-		procs = append(procs, Proc{RSS: rss * 1024, CPU: cpu, Name: strings.Join(f[2:], " ")})
+		if v, err := strconv.ParseFloat(f[1], 64); err == nil && v > 0 {
+			speeds[f[0]] = v
+		}
 	}
-	return procs
+	return speeds
 }

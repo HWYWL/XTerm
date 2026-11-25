@@ -1,6 +1,7 @@
 package app
 
 import (
+	"io/fs"
 	"os"
 	"path/filepath"
 	"slices"
@@ -336,5 +337,46 @@ func TestFileDialogFollowsTheWindow(t *testing.T) {
 	tt.Frame()
 	if r, ok := tt.Find(title); !ok || r.W != 400 {
 		t.Fatalf("the dialog is %v wide in 800, ok %v", r.W, ok)
+	}
+}
+
+// A click on the header of a column of the file table sorts the rows by
+// what it shows, another turns the order over, and the folders go first
+// either way.
+func TestFileTableSortsByColumn(t *testing.T) {
+	a, p := testApp(t)
+	s := demoSession(a, "files", "127.0.0.1")
+	a.active = 0
+	s.files.entries = []remotefs.Entry{
+		{Name: "zdir", Mode: fs.ModeDir | 0o755},
+		{Name: "bbb.txt", Size: 10, Mode: 0o644},
+		{Name: "aaa.log", Size: 200, Mode: 0o644},
+		{Name: "ccc.bin", Size: 3000, Mode: 0o600},
+	}
+	tt := ui.NewTester(a.View, 1280, 820)
+	p.tt = tt
+	tt.Frame()
+	names := func() []string {
+		out := make([]string, 0, len(s.files.entries))
+		for _, e := range s.files.entries {
+			out = append(out, e.Name)
+		}
+		return out
+	}
+	for _, tc := range []struct {
+		header string
+		want   []string
+	}{
+		{locales.ColSize(), []string{"zdir", "bbb.txt", "aaa.log", "ccc.bin"}},
+		{locales.ColSize(), []string{"zdir", "ccc.bin", "aaa.log", "bbb.txt"}},
+		{locales.ColName(), []string{"zdir", "aaa.log", "bbb.txt", "ccc.bin"}},
+		{locales.ColName(), []string{"zdir", "ccc.bin", "bbb.txt", "aaa.log"}},
+	} {
+		if err := tt.Click(tc.header); err != nil {
+			t.Fatalf("%s: %v; texts %q", tc.header, err, tt.Texts())
+		}
+		p.until(t, "the rows sorted by "+tc.header, func() bool {
+			return slices.Equal(names(), tc.want)
+		})
 	}
 }

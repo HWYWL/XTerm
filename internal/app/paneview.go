@@ -110,12 +110,20 @@ func (a *App) startPane(s *Session, p *pane, spec shellSpec) {
 	a.updateTerminal(p.term, spec.topts)
 }
 
-// end ends p's shell and its follower, keeping its place in the tree.
-func (p *pane) end() {
+// stopFollower stops what reads p's shell, the follower of its folder and
+// foreground program, leaving its terminal as it is.
+func (p *pane) stopFollower() {
 	if p.stop != nil {
 		p.stop()
 		p.stop = nil
 	}
+}
+
+// end ends p's shell and its follower, and closes its terminal, keeping
+// its place in the tree. The screen the terminal kept for the one of the
+// next connection stays (pane.keep).
+func (p *pane) end() {
+	p.stopFollower()
 	if p.term != nil {
 		p.term.Close()
 		p.term = nil
@@ -143,6 +151,7 @@ func (a *App) paneExited(s *Session, p *pane) {
 		a.closePane(s, p)
 	case s.isLocal():
 		s.status, s.err = statusClosed, errShellExited
+		p.sayEnd(locales.StatusExited())
 	case s.cancel == nil: // the user disconnected
 	case !s.split():
 		a.connectionLost(s)
@@ -170,6 +179,9 @@ func (a *App) paneExited(s *Session, p *pane) {
 // connectionLost marks s lost: its connection dropped.
 func (a *App) connectionLost(s *Session) {
 	s.status, s.err = statusClosed, errConnectionLost
+	for _, p := range s.panes.panes() {
+		p.sayEnd(locales.ConnectionLost())
+	}
 	a.stopRecording(s, locales.RecordSessionEnded())
 	s.stopTunnels()
 }
@@ -591,13 +603,14 @@ func (a *App) swapPane(s *Session, d paneDir) {
 
 // paneTerminal is the terminal of p, one of s's panes, with its find
 // bar; the focused one's takes the keyboard as the panes or the command
-// bar ask.
+// bar ask. A terminal of a session that is not connected takes no keys,
+// so its cursor does not blink: the connection is gone, not the output.
 func (a *App) paneTerminal(c *ui.Context, s *Session, p *pane) {
 	if p == nil || p.term == nil {
 		return
 	}
 	view := terminal.View(c, p.term).Fill()
-	focused := p == s.panes.focus
+	focused := p == s.panes.focus && s.status == statusConnected
 	if focused {
 		view.AutoFocus()
 		if s.panes.refocus {

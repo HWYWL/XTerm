@@ -1,6 +1,8 @@
 package app
 
 import (
+	"bytes"
+	"io"
 	"slices"
 	"strings"
 	"testing"
@@ -10,6 +12,7 @@ import (
 	"finallyshell/internal/sshtest"
 	"finallyshell/locales"
 
+	"github.com/egoist/mygo/plugins/terminal"
 	"github.com/egoist/mygo/ui"
 )
 
@@ -409,6 +412,148 @@ func TestPanesReconnect(t *testing.T) {
 	if s.panes.count() != 3 || s.status != statusConnected {
 		t.Fatalf("%d panes, status %d after a refusal", s.panes.count(), s.status)
 	}
+}
+
+// A pane keeps the screen of its terminal for the terminal of its next
+// connection, but not a full-screen program's, whose replay would leave
+// the new shell's prompt on the alternate screen.
+func TestPaneHistory(t *testing.T) {
+	done := make(chan struct{})
+	defer close(done)
+	old, err := terminal.New(terminal.Options{Conn: idleConn{done}})
+	if err != nil {
+		t.Skip("no terminal:", err)
+	}
+	defer old.Close()
+	old.Resize(100, 30)
+	old.Feed([]byte("before-the-drop\r\n"))
+
+	pn := newPane()
+	pn.term = old
+	pn.sayEnd("connection lost")
+	if !bytes.Contains(old.Snapshot(), []byte("\x1b[?25l")) {
+		t.Error("the cursor of the terminal that ended still shows")
+	}
+	pn.keepHistory()
+	if pn.keep == nil {
+		t.Fatal("the screen of the terminal was not kept")
+	}
+
+	done2 := make(chan struct{})
+	defer close(done2)
+	fresh, err := terminal.New(terminal.Options{Conn: idleConn{done2}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer fresh.Close()
+	pn.restore(fresh)
+	if pn.keep != nil {
+		t.Error("the screen was kept after it was restored")
+	}
+	if got := fresh.Text(); !strings.Contains(got, "before-the-drop") {
+		t.Errorf("the new terminal shows %q", got)
+	}
+	if bytes.Contains(fresh.Snapshot(), []byte("\x1b[?25l")) {
+		t.Error("the cursor of the new terminal is hidden")
+	}
+
+	// A full-screen program's screen: not kept.
+	old.Feed([]byte("\x1b[?1049h"))
+	pn.term = old
+	pn.keepHistory()
+	if pn.keep != nil {
+		t.Error("kept the screen of a full-screen program")
+	}
+}
+
+// pipeConn is a connection over a pipe, which writes what a shell would
+// at once.
+type pipeConn struct {
+	r *io.PipeReader
+	w *io.PipeWriter
+}
+
+func (c pipeConn) Read(p []byte) (int, error)  { return c.r.Read(p) }
+func (c pipeConn) Write(p []byte) (int, error) { return c.w.Write(p) }
+func (c pipeConn) Close() error {
+	c.r.Close()
+	return c.w.Close()
+}
+
+// The reader of a connection opened for a pane waits until the terminal
+// has taken the screen of the one before, so that the shell's first
+// prompt comes under it.
+func TestHeldConn(t *testing.T) {
+	done := make(chan struct{})
+	defer close(done)
+	old, err := terminal.New(terminal.Options{Conn: idleConn{done}})
+	if err != nil {
+		t.Skip("no terminal:", err)
+	}
+	defer old.Close()
+	old.Resize(90, 20)
+	old.Feed([]byte("before-the-drop\r\n"))
+	pn := newPane()
+	pn.term = old
+	pn.keepHistory()
+
+	pr, pw := io.Pipe()
+	defer pw.Close()
+	held := make(chan struct{})
+	term, err := terminal.New(terminal.Options{
+		Conn:          &heldConn{ReadWriteCloser: pipeConn{pr, pw}, ready: held},
+		NoExitMessage: true,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer term.Close()
+	go pw.Write([]byte("prompt$ ")) // at once, as a shell does
+	pn.restore(term)
+	close(held)
+
+	deadline := time.Now().Add(5 * time.Second)
+	for time.Now().Before(deadline) {
+		text := term.Text()
+		if i, j := strings.Index(text, "before-the-drop"), strings.Index(text, "prompt$"); i >= 0 && j > i {
+			return
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	t.Fatalf("the terminal shows %q", term.Text())
+}
+
+// A session connected again keeps the histories of its panes: what the
+// shells wrote before the drop is still above the new prompts.
+func TestPanesReconnectKeepsHistory(t *testing.T) {
+	a, p, s, tt, srv := paneHost(t, followHome(t), false)
+	press(tt, a, scSplitRight)
+	untilPanes(t, p, s, 2)
+	ps := s.panes.panes()
+	tt.Frame()
+	ps[0].term.Feed([]byte("kept-by-the-first-pane\r\n"))
+	ps[1].term.Feed([]byte("kept-by-the-second-pane\r\n"))
+	tt.Frame()
+
+	srv.DropConnections()
+	p.until(t, "the session lost", func() bool { return s.status != statusConnected })
+	settle(p, 300*time.Millisecond)
+
+	a.reconnect(s)
+	p.until(t, "connected again", func() bool {
+		if s.hostKeyQ != nil {
+			s.hostKeyQ.Answer <- true
+			s.hostKeyQ = nil
+		}
+		return s.status == statusConnected || s.status == statusFailed
+	})
+	if s.status != statusConnected {
+		t.Fatalf("reconnect: status %d, err %v", s.status, s.err)
+	}
+	p.until(t, "the histories", func() bool {
+		return strings.Contains(ps[0].term.Text(), "kept-by-the-first-pane") &&
+			strings.Contains(ps[1].term.Text(), "kept-by-the-second-pane")
+	})
 }
 
 // With "All sessions" as the target, set in the Commands tab, Enter in

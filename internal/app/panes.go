@@ -1,6 +1,7 @@
 package app
 
 import (
+	"bytes"
 	"context"
 	"slices"
 	"sync/atomic"
@@ -68,9 +69,75 @@ type pane struct {
 	// in the high 32 bits, and their number in the low. The UI thread
 	// sets it as panes open and close; the follower reads it.
 	pick atomic.Uint64
+	// keep is the screen and the scrollback of the terminal the last
+	// connection left, for the one the next connection opens: see
+	// keepHistory.
+	keep *paneHistory
 }
 
 func newPane() *pane { return &pane{id: nextPaneID.Add(1)} }
+
+// paneHistory is the screen and the scrollback of a pane's terminal as its
+// connection went, as escape sequences, and the size they were laid out
+// at. The terminal of the connection after it takes them over, so that a
+// session connecting again keeps its history, rather than starting as a
+// window of its own.
+type paneHistory struct {
+	vt         []byte
+	cols, rows int
+}
+
+// altScreenEnters switch a terminal to the alternate screen, where
+// full-screen programs draw.
+var altScreenEnters = [][]byte{
+	[]byte("\x1b[?1049h"), []byte("\x1b[?1047h"), []byte("\x1b[?47h"),
+}
+
+// keepHistory keeps the screen of p's terminal for the terminal of its
+// next connection, unless a full-screen program had it: replaying that
+// one would put the shell's new prompt on the alternate screen, which the
+// next program takes away with it.
+func (p *pane) keepHistory() {
+	if p.term == nil {
+		return // nothing shows: what an attempt that failed kept stays
+	}
+	p.keep = nil
+	vt := p.term.Snapshot()
+	for _, seq := range altScreenEnters {
+		if bytes.Contains(vt, seq) {
+			return
+		}
+	}
+	cols, rows := p.term.Size()
+	p.keep = &paneHistory{vt: vt, cols: cols, rows: rows}
+}
+
+// restore gives term, the terminal a connection just opened for p, the
+// screen the one before left, laid out at the size it had, and drops it:
+// what the shell writes next comes under its last line.
+func (p *pane) restore(term *terminal.Terminal) {
+	h := p.keep
+	p.keep = nil
+	if h == nil || len(h.vt) == 0 {
+		return
+	}
+	term.Resize(h.cols, h.rows)
+	term.Feed(h.vt)
+	// The screen of a terminal that ended hid its cursor (sayEnd): the
+	// shell's own, at the prompt, shows.
+	term.Feed([]byte("\x1b[?25h"))
+}
+
+// sayEnd writes text on a line of its own under what p's terminal shows,
+// as a terminal app writes what ended the shell, and hides its cursor:
+// the banner of the session says the rest above it, and nothing blinks
+// over a terminal that takes no input.
+func (p *pane) sayEnd(text string) {
+	if p.term == nil || text == "" {
+		return
+	}
+	p.term.Feed([]byte("\r\n\x1b[0;2m" + text + "\x1b[0m\r\n\x1b[?25l"))
+}
 
 // shellPick is the pick the pane's follower reads its shell by.
 func (p *pane) shellPick() monitor.ShellPick {

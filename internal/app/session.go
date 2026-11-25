@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/x509"
 	"errors"
+	"io"
 	"net"
 	"sync/atomic"
 	"time"
@@ -211,6 +212,11 @@ func (a *App) connect(s *Session, secret string) {
 					terms[i].Close()
 					continue
 				}
+				// The terminal the pane kept the screen of, which this
+				// one has taken over (pane.restore).
+				if p.term != nil {
+					p.term.Close()
+				}
 				p.term = terms[i]
 				s.panes.opened(p)
 				a.startPane(s, p, spec)
@@ -290,9 +296,21 @@ func (a *App) openPaneShell(s *Session, p *pane, client *ssh.Client, spec shellS
 		return nil, &stepError{"shell", err}
 	}
 	topts := spec.topts
+	// The terminal reads what the shell writes only once it has taken the
+	// screen its last terminal left (pane.restore), so that the first
+	// prompt of the connection comes under it: held holds the reads back
+	// until then.
+	held := make(chan struct{})
 	// The transcript reads what the terminal reads, and is looked up each
 	// time: recording starts and stops without a new connection.
-	topts.Conn = &recordConn{ReadWriteCloser: termenc.Wrap(shell, spec.enc), app: a, s: s}
+	topts.Conn = &heldConn{
+		ReadWriteCloser: &recordConn{ReadWriteCloser: termenc.Wrap(shell, spec.enc), app: a, s: s},
+		ready:           held,
+	}
+	// The banner of the status says that the connection ended: the
+	// terminal's own line would sit above the history a terminal
+	// connected again keeps.
+	topts.NoExitMessage = true
 	keys := keySequences(spec.bs, spec.del, func() *terminal.Terminal { return p.term })
 	topts.OnKey = func(mods ui.Modifiers, key ui.Key) bool {
 		if a.dangerKey(s, p, mods, key) {
@@ -305,10 +323,34 @@ func (a *App) openPaneShell(s *Session, p *pane, client *ssh.Client, spec shellS
 	topts.OnExit = func(int) { a.post(func() { a.paneExited(s, p) }) }
 	term, err := terminal.New(topts)
 	if err != nil {
+		close(held)
 		shell.Close()
 		return nil, &stepError{"terminal", err}
 	}
+	p.restore(term)
+	close(held)
 	return term, nil
+}
+
+// heldConn is a connection whose reader waits until its pane's terminal
+// has taken the screen of the one before it: see openPaneShell.
+type heldConn struct {
+	io.ReadWriteCloser
+	ready <-chan struct{}
+}
+
+func (c *heldConn) Read(p []byte) (int, error) {
+	<-c.ready
+	return c.ReadWriteCloser.Read(p)
+}
+
+// Resize passes the size of the terminal's screen on, as the terminal
+// tells the connection through the record of what it reads.
+func (c *heldConn) Resize(cols, rows int) error {
+	if r, ok := c.ReadWriteCloser.(interface{ Resize(int, int) error }); ok {
+		return r.Resize(cols, rows)
+	}
+	return nil
 }
 
 // keepAliveTimeout is the longest a keepalive waits for its answer
@@ -369,7 +411,10 @@ func (a *App) noteConnected(h *config.Host) {
 }
 
 // disconnect ends s's connection, keeping its tab and the layout of its
-// panes, whose shells end.
+// panes, whose followers stop. The terminals keep the screens they show,
+// as the window of a terminal does when its server goes: the banner over
+// them says the connection is gone, and the connection after it takes the
+// screens over (pane.keep).
 func (s *Session) disconnect() {
 	if s.cancel != nil {
 		s.cancel()
@@ -385,12 +430,21 @@ func (s *Session) disconnect() {
 		s.sftp = nil
 	}
 	for _, p := range s.panes.panes() {
-		p.end()
+		p.stopFollower()
 	}
 	s.panes.order = nil
 	if s.client != nil {
 		s.client.Close()
 		s.client = nil
+	}
+}
+
+// end ends s's connection and the terminals of its panes: closing the
+// tab, or the app, rather than connecting again in it.
+func (s *Session) end() {
+	s.disconnect()
+	for _, p := range s.panes.panes() {
+		p.end()
 	}
 }
 

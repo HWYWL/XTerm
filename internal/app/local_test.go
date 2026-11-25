@@ -334,7 +334,10 @@ func TestLocalTerminalMenu(t *testing.T) {
 	a.active = 1
 	tt.Frame()
 
-	// Disconnect, then Reconnect.
+	// Disconnect ends the program with its terminal, which keeps the
+	// screen it showed for the run after.
+	s.term().Feed([]byte("\r\nkept-across-the-drop\r\n"))
+	tt.Frame()
 	tt.RightClickAt(row())
 	if err := tt.ChooseMenuItem(locales.Disconnect()); err != nil {
 		t.Fatal(err)
@@ -351,6 +354,9 @@ func TestLocalTerminalMenu(t *testing.T) {
 		t.Fatalf("reconnect: status %v, err %v", s.status, s.err)
 	}
 	untilScreen(t, p, s, "ready")
+	p.until(t, "the screen kept", func() bool {
+		return strings.Contains(s.term().Text(), "kept-across-the-drop")
+	})
 
 	// Close: the program ends with the tab.
 	term := s.term()

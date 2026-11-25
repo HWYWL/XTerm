@@ -1,6 +1,7 @@
 package app
 
 import (
+	"cmp"
 	"fmt"
 	"path"
 	"slices"
@@ -23,6 +24,12 @@ type fileState struct {
 	table    ui.ListState
 	chosen   ui.Selection[string] // names in cwd
 	row      int
+
+	// sort is the order the user chose with a click on a column's header,
+	// and applied the one the entries are in: they are sorted again as
+	// the two differ.
+	sort    ui.SortOrder
+	applied ui.SortOrder
 
 	// reveal is a name to choose in the table once cwd is read again: a
 	// file just renamed or made.
@@ -109,12 +116,15 @@ func (a *App) listDir(s *Session, dir string, quiet bool) {
 				f.row = -1
 			}
 			f.cwd, f.pathEdit, f.entries = dir, dir, entries
-			f.subdirs[dir] = dirNames(dir, entries)
-			if i := slices.IndexFunc(entries, func(e remotefs.Entry) bool { return e.Name == f.reveal }); f.reveal != "" && i >= 0 {
-				f.chosen.Clear()
-				f.chosen.Add(f.reveal)
-				f.row = i
-				f.table.ScrollIntoView(i)
+			f.subdirs[dir] = dirNames(dir, entries) // the tree keeps its order
+			f.sortEntries()
+			if f.reveal != "" {
+				if i := slices.IndexFunc(f.entries, func(e remotefs.Entry) bool { return e.Name == f.reveal }); i >= 0 {
+					f.chosen.Clear()
+					f.chosen.Add(f.reveal)
+					f.row = i
+					f.table.ScrollIntoView(i)
+				}
 			}
 			f.reveal = ""
 			// Open the tree down to the directory.
@@ -173,6 +183,64 @@ func dirNames(dir string, entries []remotefs.Entry) []string {
 	return names
 }
 
+// sortEntries puts f.entries in the order the table asks: the folders
+// first, as the server lists them, then by the column of the sort, and by
+// name among the entries the column cannot tell apart. The row the cursor
+// is on stays on the same file.
+func (f *fileState) sortEntries() {
+	f.applied = f.sort
+	by, desc := f.sort.Column, f.sort.Descending
+	var row string
+	if f.row >= 0 && f.row < len(f.entries) {
+		row = f.entries[f.row].Name
+	}
+	slices.SortStableFunc(f.entries, func(x, y remotefs.Entry) int {
+		if x.IsDir() != y.IsDir() {
+			if x.IsDir() {
+				return -1
+			}
+			return 1
+		}
+		c := compareEntries(by, x, y)
+		if desc {
+			c = -c
+		}
+		if c == 0 {
+			return strings.Compare(strings.ToLower(x.Name), strings.ToLower(y.Name))
+		}
+		return c
+	})
+	if row == "" {
+		return
+	}
+	if i := slices.IndexFunc(f.entries, func(e remotefs.Entry) bool { return e.Name == row }); i >= 0 {
+		f.row = i
+		f.table.ScrollIntoView(i)
+	}
+}
+
+// compareEntries orders two entries of the same kind, two files or two
+// folders, by the column whose ID is by: by their names for "name" and
+// for none, and by what the column shows otherwise.
+func compareEntries(by string, x, y remotefs.Entry) int {
+	switch by {
+	case "size":
+		return cmp.Compare(x.Size, y.Size)
+	case "type":
+		return strings.Compare(entryKind(x), entryKind(y))
+	case "modified":
+		return x.ModTime.Compare(y.ModTime)
+	case "perms":
+		return cmp.Compare(x.Mode.Perm(), y.Mode.Perm())
+	case "owner":
+		if c := cmp.Compare(x.UID, y.UID); c != 0 {
+			return c
+		}
+		return cmp.Compare(x.GID, y.GID)
+	}
+	return strings.Compare(strings.ToLower(x.Name), strings.ToLower(y.Name))
+}
+
 func entryKind(e remotefs.Entry) string {
 	switch {
 	case e.IsDir():
@@ -190,12 +258,12 @@ func entryKind(e remotefs.Entry) string {
 
 func fileColumns() []ui.TableColumn {
 	return []ui.TableColumn{
-		{ID: "name", Title: locales.ColName(), MinWidth: 160},
-		{ID: "size", Title: locales.ColSize(), Width: 90, Align: ui.End},
-		{ID: "type", Title: locales.ColType(), Width: 90},
-		{ID: "modified", Title: locales.ColModified(), Width: 140},
-		{ID: "perms", Title: locales.ColPermissions(), Width: 100},
-		{ID: "owner", Title: locales.ColOwner(), Width: 96},
+		{ID: "name", Title: locales.ColName(), MinWidth: 160, Sortable: true},
+		{ID: "size", Title: locales.ColSize(), Width: 90, Align: ui.End, Sortable: true},
+		{ID: "type", Title: locales.ColType(), Width: 90, Sortable: true},
+		{ID: "modified", Title: locales.ColModified(), Width: 140, Sortable: true},
+		{ID: "perms", Title: locales.ColPermissions(), Width: 100, Sortable: true},
+		{ID: "owner", Title: locales.ColOwner(), Width: 96, Sortable: true},
 	}
 }
 
@@ -309,6 +377,10 @@ func (a *App) dirTree(c *ui.Context, s *Session) {
 
 func (a *App) fileTable(c *ui.Context, s *Session) {
 	f := &s.files
+	f.table.Sort = &f.sort
+	if f.sort != f.applied {
+		f.sortEntries()
+	}
 	entries := f.entries
 	f.table.Selected = &f.row
 	f.table.Selection = &f.chosen

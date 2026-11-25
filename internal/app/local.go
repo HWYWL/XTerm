@@ -92,7 +92,7 @@ func (a *App) openLocal(tab *Session) {
 // program that is not found fails the tab with the error; one that
 // cannot start once found writes its error in the terminal and exits.
 func (a *App) connectLocal(s *Session) {
-	s.disconnect()
+	s.end() // the program of the run before goes with its terminal
 	if s.panes.root == nil {
 		s.panes.reset(newPane())
 	}
@@ -119,6 +119,10 @@ func (a *App) openLocalPane(s *Session, p *pane) (*terminal.Terminal, error) {
 	}
 	opts := a.terminalOptions(nil)
 	opts.Command = cmd
+	// The banner of the status says that the program exited: the
+	// terminal's own line would sit above the history a terminal started
+	// again keeps.
+	opts.NoExitMessage = true
 	var term *terminal.Terminal
 	opts.OnTitle = func(title string) {
 		a.post(func() {
@@ -138,6 +142,8 @@ func (a *App) openLocalPane(s *Session, p *pane) (*terminal.Terminal, error) {
 		}
 		return nil, &localStartError{program: program, err: err}
 	}
+	// The screen of the pane's terminal before the program started again.
+	p.restore(term)
 	return term, nil
 }
 

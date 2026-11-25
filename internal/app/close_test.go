@@ -1,8 +1,10 @@
 package app
 
 import (
+	"bytes"
 	"image/color"
 	"slices"
+	"strings"
 	"testing"
 
 	"finallyshell/locales"
@@ -64,6 +66,32 @@ func rowCenter(t *testing.T, tt *ui.Tester, name string) (x, y float32) {
 		t.Fatalf("no row %q; texts %q", name, tt.Texts())
 	}
 	return r.X + r.W/2, r.Y + r.H/2
+}
+
+// Disconnecting keeps the terminals of a session's panes, and the screens
+// they show, for connecting again; closing the session ends them.
+func TestDisconnectKeepsTheScreen(t *testing.T) {
+	a, tt, shows := closeApp(t, 0)
+	s := a.current()
+	term := s.term()
+	a.disconnectSession(s)
+	tt.Frame()
+	if s.status != statusClosed || s.term() != term {
+		t.Fatalf("disconnect: status %d, the same terminal %v", s.status, s.term() == term)
+	}
+	if got := tt.Image().RGBAAt(termSpotX, termSpotY); got != shows[s.label()] {
+		t.Errorf("the screen went with the connection: %v, want %v", got, shows[s.label()])
+	}
+	if text := s.term().Text(); !strings.Contains(text, locales.StatusDisconnected()) {
+		t.Errorf("the terminal does not say it disconnected: %q", text)
+	}
+	if snap := s.term().Snapshot(); !bytes.Contains(snap, []byte("\x1b[?25l")) {
+		t.Error("the cursor of the disconnected terminal still shows")
+	}
+	a.closeSession(s)
+	if s.term() != nil {
+		t.Error("the terminal stayed after the session closed")
+	}
 }
 
 // closeWith closes the session at row with the shortcut, the row's close

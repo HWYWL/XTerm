@@ -606,6 +606,12 @@ func (a *App) reconnect(s *Session) {
 	if s.isNewTab() || !slices.Contains(a.sessions, s) {
 		return
 	}
+	// The screens of the terminals this connection leaves go to the ones
+	// it opens: the session keeps its history, rather than starting as a
+	// window of its own.
+	for _, p := range s.panes.panes() {
+		p.keepHistory()
+	}
 	if s.isLocal() { // its program again, in the same tab
 		a.connectLocal(s)
 		return
@@ -637,7 +643,7 @@ func (a *App) closeSession(s *Session) {
 		}
 		a.transfers.cancelSession(s)
 		a.stopRecording(s, locales.RecordSessionEnded())
-		s.disconnect()
+		s.end()
 	}
 	a.sessions = slices.Delete(a.sessions, i, i+1)
 	if a.active >= len(a.sessions) || a.active > i {
@@ -663,7 +669,7 @@ func (a *App) CloseAll() {
 			continue // its session's
 		}
 		a.transfers.cancelSession(s)
-		s.disconnect()
+		s.end()
 	}
 }
 

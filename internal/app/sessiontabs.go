@@ -249,7 +249,21 @@ func (a *App) connectTabs(tabs []*Session) {
 func (a *App) disconnectSession(s *Session) {
 	a.transfers.cancelSession(s)
 	a.stopRecording(s, locales.RecordSessionEnded())
-	s.disconnect()
+	if s.isLocal() {
+		// The program ends with its terminal; the screen it showed is
+		// kept for the run after (pane.keep).
+		for _, p := range s.panes.panes() {
+			p.keepHistory()
+		}
+		s.end()
+	} else {
+		// A server's terminal keeps the screen it shows, as the window of
+		// a terminal app does: the connection is gone, not the output.
+		s.disconnect()
+		for _, p := range s.panes.panes() {
+			p.sayEnd(locales.StatusDisconnected())
+		}
+	}
 	s.status, s.err = statusClosed, nil
 }
 

@@ -116,8 +116,8 @@ func (a *App) panelCornerButton(c *ui.Context, tab int) {
 // panelTabIcons and panelTabNames are the icon and the name of each tab
 // of the bottom panel, by its constant, as a panel row shows it.
 var (
-	panelTabIcons = [...]string{tabFiles: "folder", tabTransfers: "arrow-down-up", tabTunnels: "cable", tabProcesses: "cpu", tabNetwork: "network", tabCommands: "square-terminal"}
-	panelTabNames = [...]func() string{tabFiles: locales.TabFiles, tabTransfers: locales.TabTransfers, tabTunnels: locales.TabTunnels, tabProcesses: locales.TabProcesses, tabNetwork: locales.TabNetwork, tabCommands: locales.TabCommands}
+	panelTabIcons = [...]string{tabFiles: "folder", tabTransfers: "arrow-down-up", tabTunnels: "cable", tabProcesses: "cpu", tabNetwork: "network", tabCommands: "square-terminal", tabAI: "bot"}
+	panelTabNames = [...]func() string{tabFiles: locales.TabFiles, tabTransfers: locales.TabTransfers, tabTunnels: locales.TabTunnels, tabProcesses: locales.TabProcesses, tabNetwork: locales.TabNetwork, tabCommands: locales.TabCommands, tabAI: locales.Ai}
 )
 
 // panelTabName is the name of the panel row p: its tab's.

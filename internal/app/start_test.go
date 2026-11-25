@@ -427,9 +427,8 @@ func TestNewTabRows(t *testing.T) {
 	if len(a.sessions) != 3 || !a.sessions[2].isNewTab() || a.active != 2 {
 		t.Fatalf("+ made %d rows, active %d", len(a.sessions), a.active)
 	}
-	tt.Frame()
-	if !tt.HasText(locales.SessionsTitle(1)) {
-		t.Errorf("new tabs counted as sessions; texts %q", tt.Texts())
+	if n := a.sessionCount(); n != 1 {
+		t.Errorf("new tabs counted as sessions: %d", n)
 	}
 
 	// The next-tab shortcut goes through the new tabs and the session; the

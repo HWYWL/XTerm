@@ -41,7 +41,7 @@ func TestLeftTabs(t *testing.T) {
 		t.Fatalf("page %d at the start", a.left.page)
 	}
 	var tabs []ui.Rect
-	for _, want := range []string{locales.System(), locales.SessionsTitle(1), locales.ConnectionsPage()} {
+	for _, want := range []string{locales.System(), locales.SessionsTab(), locales.ConnectionsPage()} {
 		r, ok := tt.Find(want)
 		if !ok {
 			t.Errorf("no tab %q; texts %q", want, tt.Texts())
@@ -87,7 +87,7 @@ func TestLeftTabs(t *testing.T) {
 	}
 
 	// Back to the sessions, where the buttons of the page are.
-	if err := tt.Click(locales.SessionsTitle(1)); err != nil {
+	if err := tt.Click(locales.SessionsTab()); err != nil {
 		t.Fatal(err)
 	}
 	tt.Frame()

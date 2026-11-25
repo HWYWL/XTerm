@@ -35,6 +35,7 @@ const (
 	pageFileIcons  = "files/icons"
 	pageNetwork    = "network"
 	pageSync       = "sync"
+	pageAI         = "ai"
 	pageAbout      = "about"
 )
 
@@ -112,6 +113,10 @@ var optionPages = []optionPage{
 	{
 		id: pageSync, title: locales.OptionsSync,
 		view: (*App).syncPage,
+	},
+	{
+		id: pageAI, title: locales.OptionsAI,
+		view: (*App).aiPage,
 	},
 	{
 		id: pageAbout, title: locales.OptionsAbout,

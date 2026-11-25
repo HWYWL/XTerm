@@ -54,6 +54,7 @@ type Session struct {
 	tunnels tunnelState // see tunnels.go
 	procs   procState   // the Processes tab, see processes.go
 	net     netState    // the Network tab, see network.go
+	ai      aiChat      // the AI tab, see ai.go
 
 	hostKeyQ *sshx.HostKeyQuestion
 	cancel   context.CancelFunc

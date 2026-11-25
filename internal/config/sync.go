@@ -95,6 +95,7 @@ var (
 		"fileIconTheme", // only the themes every copy has: see portable
 		"noFollowTerminalDir", "noAgentIcons",
 		"noCommandBar", "noCommandBarPaths", "noCommandBarHistory", "noCommandBarCommands", "noServerHistory",
+		"recordAuto", // whether every session records as it connects
 	}
 	localSettings = []string{
 		"sidebarWidth", "monitorPercent", "terminalPercent", "treeWidth",
@@ -123,6 +124,9 @@ var (
 		// Which plugins are on, and pinned to the row of tabs, is where
 		// this device's window was left too (plugins.go).
 		"plugins",
+		// The assistant's services and models go with this device's API
+		// keys, in its credential store.
+		"ai",
 	}
 )
 

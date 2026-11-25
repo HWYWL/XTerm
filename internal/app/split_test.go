@@ -292,7 +292,7 @@ func TestDraggingDividersResizesTerminal(t *testing.T) {
 	if _, rows := told("the shortest size"); rows < 4 {
 		t.Errorf("shortest terminal: %d rows", rows)
 	}
-	for _, want := range []string{"Sessions (1)", "web-1", "lib64", "libacl.so.1", locales.TabTransfers()} {
+	for _, want := range []string{locales.SessionsTab(), "web-1", "lib64", "libacl.so.1", locales.TabTransfers()} {
 		if w, _ := shownWidth(tt, want); w < 20 {
 			t.Errorf("least panes: %q hidden (%.1f DIPs wide)", want, w)
 		}

@@ -128,7 +128,7 @@ func TestKeepAliveOption(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	if a.settings != (config.Settings{}) || config.LoadSettings() != (config.Settings{}) {
+	if !sameSettings(a.settings, config.Settings{}) || !sameSettings(config.LoadSettings(), config.Settings{}) {
 		t.Fatalf("back to 30: %+v, saved %+v", a.settings, config.LoadSettings())
 	}
 

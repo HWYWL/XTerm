@@ -2080,5 +2080,91 @@
   "errAgentNoAddress": "No SSH agent: SSH_AUTH_SOCK is not set. Enter the agent's address in Options › General.",
   "errAgentNoKeys": "The SSH agent at {addr} has no keys",
   "errAgentRefused": "The server refused every key in the SSH agent",
-  "errAgentSign": "The SSH agent did not sign the login (denied, or it failed): {error}"
+  "errAgentSign": "The SSH agent did not sign the login (denied, or it failed): {error}",
+
+  "ai": "AI",
+  "optionsAI": "AI assistant",
+  "aiIntro": "The assistant answers questions about the terminal over an OpenAI-compatible API. It reads what the terminal shows, and may run commands on the session's host, asking first by default.",
+  "aiEnable": "Turn the AI assistant on",
+  "aiEnableFirst": "The AI assistant is turned off.",
+  "aiOpenSettings": "Open settings",
+  "aiSettingsShort": "Settings",
+  "aiService": "Provider",
+  "aiBaseURL": "API address",
+  "aiAPIKey": "API key",
+  "aiAPIKeyHint": "Kept in the system credential store. A service on this machine (127.0.0.1) needs none.",
+  "aiAddProvider": "Add provider",
+  "aiDeleteProvider": "Remove provider",
+  "aiCustomProvider": "Custom",
+  "aiModel": "Model",
+  "aiNewModel": "Model name",
+  "aiAdd": "Add",
+  "aiDeleteModel": "Remove model",
+  "aiTestConnection": "Test connection",
+  "aiTesting": "Testing…",
+  "aiTestOK": "Connected.",
+  "aiTestFailed": "Connection failed: {error}",
+  "@aiTestFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "aiRequest": "Request",
+  "aiContextLines": "Lines of the terminal",
+  "aiTimeout": "Timeout, seconds",
+  "aiSystemPrompt": "System prompt",
+  "aiExec": "Running commands",
+  "aiAllowExec": "Let the assistant run commands",
+  "aiConfirmExec": "Ask before running one",
+  "aiScreenContext": "Send the terminal's screen every time",
+  "aiExecHint": "Commands run on a channel of their own: not in the terminal, and not in the shell the user is using.",
+  "aiNoProvider": "Choose a provider and its address first.",
+  "aiNoModel": "Choose a model first.",
+  "aiKeyMissing": "Enter the API key first.",
+  "aiKeyLoading": "Reading the API key…",
+  "aiThinking": "Answering…",
+  "aiStop": "Stop",
+  "aiSend": "Send",
+  "aiNewChat": "New chat",
+  "aiRegenerate": "Regenerate",
+  "aiCopy": "Copy",
+  "aiInsert": "Insert",
+  "aiAskPlaceholder": "Ask a question…",
+  "aiReasoning": "Reasoning",
+  "aiHideReasoning": "Hide reasoning",
+  "aiStopped": "(stopped)",
+  "aiTimeoutErr": "The model took too long to answer. Try again.",
+  "aiEmpty": "Type a question to begin.",
+  "aiEmptyHint": "The first question carries the end of the terminal; later ones carry the conversation.",
+  "aiRunCommand": "The assistant wants to run this command on the host. Allow it?",
+  "aiAllow": "Allow",
+  "aiDeny": "Deny",
+  "aiDenied": "The user denied running it.",
+  "aiNoSession": "No host is connected.",
+  "aiNoMonitor": "The monitor has not collected anything yet.",
+  "aiNoDir": "The file panel has no folder open.",
+  "aiUnknownTool": "No such tool: {name}",
+  "@aiUnknownTool": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "aiToolsOff": "Running commands is off in the options.",
+  "aiEmptyCommand": "The command is empty.",
+  "aiExecFailed": "Running it failed: {error}",
+  "@aiExecFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "aiTooManyTools": "The turn reached its limit of tool calls.",
+
+  "sessionsTab": "Sessions",
+  "aiDefaultSystemPrompt": "You are a terminal operations assistant. Answer briefly and directly; put commands in code blocks and say what they risk."
 }

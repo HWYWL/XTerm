@@ -113,7 +113,7 @@ func TestOptionsPages(t *testing.T) {
 // Each option of the General page applies at once and is saved.
 func TestGeneralOptionsPersist(t *testing.T) {
 	a, p := testApp(t)
-	if a.settings != (config.Settings{}) {
+	if !sameSettings(a.settings, config.Settings{}) {
 		t.Fatalf("a new app's settings %+v", a.settings)
 	}
 	a.openOptions()
@@ -124,13 +124,13 @@ func TestGeneralOptionsPersist(t *testing.T) {
 		}
 	}
 	want := config.Settings{NoAutoSelectTab: true, CloseAction: config.CloseTray, NoConfirmClose: true}
-	if a.settings != want || config.LoadSettings() != want {
+	if !sameSettings(a.settings, want) || !sameSettings(config.LoadSettings(), want) {
 		t.Fatalf("settings %+v, saved %+v", a.settings, config.LoadSettings())
 	}
 
 	// A new run reads them back, and the page shows them.
 	b := New(p)
-	if b.settings != want {
+	if !sameSettings(b.settings, want) {
 		t.Fatalf("read back %+v", b.settings)
 	}
 	for _, label := range []string{locales.OptionAutoSelectTab(), locales.OptionCloseAsk(), locales.OptionConfirmClose()} {
@@ -138,7 +138,7 @@ func TestGeneralOptionsPersist(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	if a.settings != (config.Settings{}) || config.LoadSettings() != (config.Settings{}) {
+	if !sameSettings(a.settings, config.Settings{}) || !sameSettings(config.LoadSettings(), config.Settings{}) {
 		t.Fatalf("back to the defaults: %+v, saved %+v", a.settings, config.LoadSettings())
 	}
 }

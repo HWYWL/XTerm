@@ -142,7 +142,7 @@ func (a *App) leftPage() int {
 // column.
 func (a *App) leftTabs() (pages []int, labels []string) {
 	pages = []int{leftSystem, leftSessions, leftConnections}
-	labels = []string{locales.System(), locales.SessionsTitle(a.sessionCount()), locales.ConnectionsPage()}
+	labels = []string{locales.System(), locales.SessionsTab(), locales.ConnectionsPage()}
 	if a.monitorOnRight() {
 		return pages[1:], labels[1:]
 	}

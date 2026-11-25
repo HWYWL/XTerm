@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -180,7 +181,7 @@ func TestLayoutInBothLanguages(t *testing.T) {
 	tt := ui.NewTester(a.View, 1280, 820)
 	p.tt = tt
 	tt.Frame()
-	for _, want := range []string{"Sessions (3)", "web-1", "db-1", "libacl.so.1", "Name", "Files", "Transfers"} {
+	for _, want := range []string{locales.SessionsTab(), "web-1", "db-1", "libacl.so.1", "Name", "Files", "Transfers"} {
 		if !tt.HasText(want) {
 			t.Errorf("English: missing %q", want)
 		}
@@ -200,7 +201,7 @@ func TestLayoutInBothLanguages(t *testing.T) {
 	if a.settings.Language != "zh-Hans" || config.LoadSettings().Language != "zh-Hans" {
 		t.Errorf("language not kept: %+v", config.LoadSettings())
 	}
-	for _, want := range []string{"会话 (3)", "运行 410 天", "命令", "文件名", "文件", "传输", "修改时间"} {
+	for _, want := range []string{"会话", "运行 410 天", "命令", "文件名", "文件", "传输", "修改时间"} {
 		if !tt.HasText(want) {
 			t.Errorf("Chinese: missing %q; texts %q", want, tt.Texts())
 		}
@@ -361,6 +362,14 @@ func TestUploadFromDialog(t *testing.T) {
 	if data, _ := os.ReadFile(filepath.Join(remote, "notes.md")); string(data) != "# notes" {
 		t.Errorf("uploaded %q", data)
 	}
+}
+
+// sameSettings says whether two settings are the same, the assistant's
+// lists aside: a slice cannot be compared, and the look's pages, which
+// these tests are about, do not touch the assistant.
+func sameSettings(a, b config.Settings) bool {
+	a.AI, b.AI = config.AISettings{}, config.AISettings{}
+	return reflect.DeepEqual(a, b)
 }
 
 func TestErrorsInBothLanguages(t *testing.T) {

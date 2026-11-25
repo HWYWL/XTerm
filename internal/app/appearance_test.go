@@ -7,6 +7,7 @@ import (
 	"image/png"
 	"os"
 	"path/filepath"
+	"reflect"
 	"slices"
 	"strings"
 	"sync"
@@ -290,11 +291,11 @@ func TestFontPage(t *testing.T) {
 		t.Fatal(err)
 	}
 	tt.Frame()
-	want := config.Settings{TermFontFamily: "Fira Code", TermFontSize: 14.5, TermLineHeight: 1.2, TermFontWeight: 500, TermNoLigatures: true}
-	if got := a.settings; got != want {
+	want := config.Settings{TermFontFamily: "Fira Code", TermFontSize: 14.5, TermLineHeight: 1.2, TermFontWeight: 500, TermNoLigatures: true, AI: config.DefaultAISettings()}
+	if got := a.settings; !reflect.DeepEqual(got, want) {
 		t.Fatalf("settings %+v, want %+v", got, want)
 	}
-	if got := config.LoadSettings(); got != want {
+	if got := config.LoadSettings(); !reflect.DeepEqual(got, want) {
 		t.Errorf("saved %+v", got)
 	}
 	if f := a.termFont; f.Family != "Fira Code" || f.Size != 14.5 || f.Weight != 500 || f.LineHeight != 1.2 || !slices.Equal(f.Features, []string{"-calt", "-liga"}) {
@@ -304,7 +305,9 @@ func TestFontPage(t *testing.T) {
 	if err := tt.Click(locales.LookRestoreDefaults()); err != nil {
 		t.Fatal(err)
 	}
-	if a.settings != (config.Settings{}) || !sameFont(a.termFont, termFontOf(config.Settings{})) {
+	got := a.settings
+	got.AI = config.AISettings{} // the options of the assistant are not of the look
+	if !reflect.DeepEqual(got, config.Settings{}) || !sameFont(a.termFont, termFontOf(config.Settings{})) {
 		t.Errorf("defaults: %+v, %+v", a.settings, a.termFont)
 	}
 	// A size typed back to the default is kept as the default.

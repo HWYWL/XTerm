@@ -330,6 +330,10 @@ type App struct {
 	// The Commands tab's quick commands (quickcmds.go).
 	quickUI quickState
 
+	// The AI tabs' key and the Options › AI page (ai.go, aichat.go); the
+	// conversations themselves are each session's.
+	ai aiState
+
 	// Where the command bar and the Commands tab send (sendtarget.go):
 	// never saved, the current session at every start.
 	sendTo sendTarget
@@ -517,6 +521,7 @@ const (
 	tabProcesses
 	tabNetwork
 	tabCommands
+	tabAI
 )
 
 // bottomTab is a tab of the bottom panel: its label, and its page.
@@ -542,6 +547,7 @@ func (a *App) bottomTabs() []bottomTab {
 		tabProcesses: {locales.TabProcesses(), a.processPanel},
 		tabNetwork:   {locales.TabNetwork(), a.networkPanel},
 		tabCommands:  {locales.TabCommands(), a.quickPanel},
+		tabAI:        {locales.Ai(), a.aiPanel},
 	}
 }
 

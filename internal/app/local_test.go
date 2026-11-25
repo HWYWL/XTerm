@@ -80,7 +80,10 @@ func TestLocalTerminalFromHeader(t *testing.T) {
 	}
 	untilScreen(t, p, s, "ready")
 	tt.Frame()
-	for _, want := range []string{locales.SessionsTitle(2), locales.LocalTerminal(), locales.LocalThisComputer()} {
+	if n := a.sessionCount(); n != 2 {
+		t.Errorf("%d sessions", n)
+	}
+	for _, want := range []string{locales.SessionsTab(), locales.LocalTerminal(), locales.LocalThisComputer()} {
 		if !tt.HasText(want) {
 			t.Errorf("no %q; texts %q", want, tt.Texts())
 		}

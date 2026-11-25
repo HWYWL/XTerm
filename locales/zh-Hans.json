@@ -1348,5 +1348,91 @@
   "errAgentNoAddress": "找不到 SSH Agent：没有设置 SSH_AUTH_SOCK，请在 选项 › 常规 里填写 agent 的地址",
   "errAgentNoKeys": "SSH Agent 里没有私钥（地址：{addr}）",
   "errAgentRefused": "服务器拒绝了 agent 里的所有私钥",
-  "errAgentSign": "SSH Agent 没有签名（被拒绝或出错）：{error}"
+  "errAgentSign": "SSH Agent 没有签名（被拒绝或出错）：{error}",
+
+  "ai": "AI",
+  "optionsAI": "AI 助手",
+  "aiIntro": "AI 助手通过 OpenAI 兼容接口回答终端里的问题。它可以读取终端内容，也可以在会话的主机上执行命令（默认每次都要确认）。",
+  "aiEnable": "启用 AI 助手",
+  "aiEnableFirst": "AI 助手还没有启用。",
+  "aiOpenSettings": "打开设置",
+  "aiSettingsShort": "设置",
+  "aiService": "服务商",
+  "aiBaseURL": "接口地址",
+  "aiAPIKey": "API Key",
+  "aiAPIKeyHint": "保存在系统凭据库中。本地服务（127.0.0.1）可以不填。",
+  "aiAddProvider": "添加服务商",
+  "aiDeleteProvider": "删除服务商",
+  "aiCustomProvider": "自定义",
+  "aiModel": "模型",
+  "aiNewModel": "模型名称",
+  "aiAdd": "添加",
+  "aiDeleteModel": "删除模型",
+  "aiTestConnection": "测试连接",
+  "aiTesting": "正在测试…",
+  "aiTestOK": "连接成功。",
+  "aiTestFailed": "连接失败：{error}",
+  "@aiTestFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "aiRequest": "请求参数",
+  "aiContextLines": "附带终端行数",
+  "aiTimeout": "超时（秒）",
+  "aiSystemPrompt": "系统提示词",
+  "aiExec": "命令执行",
+  "aiAllowExec": "允许 AI 执行命令",
+  "aiConfirmExec": "执行前需确认",
+  "aiScreenContext": "每次附带终端当前屏幕",
+  "aiExecHint": "命令在独立通道上执行，不会出现在终端里，也不占用用户正在用的 shell。",
+  "aiNoProvider": "请先选择服务商并填写接口地址。",
+  "aiNoModel": "请先选择模型。",
+  "aiKeyMissing": "请先填写 API Key。",
+  "aiKeyLoading": "正在读取 API Key…",
+  "aiThinking": "正在生成…",
+  "aiStop": "停止",
+  "aiSend": "发送",
+  "aiNewChat": "新对话",
+  "aiRegenerate": "重新生成",
+  "aiCopy": "复制",
+  "aiInsert": "插入终端",
+  "aiAskPlaceholder": "输入问题…",
+  "aiReasoning": "思考过程",
+  "aiHideReasoning": "收起思考",
+  "aiStopped": "（已中断）",
+  "aiTimeoutErr": "等待模型响应超时，请重试。",
+  "aiEmpty": "直接输入问题开始对话。",
+  "aiEmptyHint": "首轮会附带终端最近的内容，后续追问沿用前面的问答。",
+  "aiRunCommand": "AI 想在当前主机上执行下面的命令，是否允许？",
+  "aiAllow": "允许",
+  "aiDeny": "拒绝",
+  "aiDenied": "用户拒绝了执行。",
+  "aiNoSession": "当前没有连接的主机。",
+  "aiNoMonitor": "还没有采集到监控数据。",
+  "aiNoDir": "文件面板还没有打开目录。",
+  "aiUnknownTool": "没有这个工具：{name}",
+  "@aiUnknownTool": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "aiToolsOff": "命令执行已在设置中关闭。",
+  "aiEmptyCommand": "命令为空。",
+  "aiExecFailed": "执行失败：{error}",
+  "@aiExecFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "aiTooManyTools": "本轮的工具调用次数已达上限，不再继续执行。",
+
+  "sessionsTab": "会话",
+  "aiDefaultSystemPrompt": "你是终端运维助手。回答简洁直接，可执行的命令请放在代码块中，并说明风险。"
 }

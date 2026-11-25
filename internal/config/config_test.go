@@ -24,7 +24,8 @@ func TestSettings(t *testing.T) {
 	if err := SaveSettings(want); err != nil {
 		t.Fatal(err)
 	}
-	if s := LoadSettings(); s != want {
+	want.AI = DefaultAISettings()
+	if s := LoadSettings(); !reflect.DeepEqual(s, want) {
 		t.Errorf("settings %+v, want %+v", s, want)
 	}
 
@@ -36,7 +37,7 @@ func TestSettings(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(Dir(), "settings.json"), []byte(old), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if s := LoadSettings(); s != (Settings{Language: "en", SidebarWidth: 300}) {
+	if s := LoadSettings(); !reflect.DeepEqual(s, Settings{Language: "en", SidebarWidth: 300, AI: DefaultAISettings()}) {
 		t.Errorf("old file: %+v", s)
 	}
 	// A file saved before the app asked about closing keeps its answer:

@@ -99,7 +99,7 @@ func TestPanelRow(t *testing.T) {
 	}
 	inList("Processes")
 	// One session each, two sessions open.
-	if !tt.HasText("Sessions (2)") || a.sessionCount() != 2 || a.liveSessions() != 2 {
+	if !tt.HasText(locales.SessionsTab()) || a.sessionCount() != 2 || a.liveSessions() != 2 {
 		t.Errorf("count %d, live %d; texts %q", a.sessionCount(), a.liveSessions(), tt.Texts())
 	}
 	saveShot(t, tt, "panel-row-processes.png")

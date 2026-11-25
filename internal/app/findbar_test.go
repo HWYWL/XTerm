@@ -145,7 +145,7 @@ func TestFullScreen(t *testing.T) {
 	a, p, s, conn, tt := findTerm(t)
 	a.setLeftPage(leftSystem) // the monitor's page, with the IP line
 	tt.Frame()
-	panes := []string{"Sessions (2)", locales.TabFiles(), "IP 45.56.78.90"}
+	panes := []string{locales.SessionsTab(), locales.TabFiles(), "IP 45.56.78.90"}
 	for _, x := range panes {
 		if !tt.HasText(x) {
 			t.Fatalf("no %q before full screen", x)
@@ -182,7 +182,7 @@ func TestFullScreen(t *testing.T) {
 	p.SetLocale("zh-Hans")
 	a.NewTab()
 	tt.Key(fullScreen.Mods, fullScreen.Key)
-	if !a.fullScreen.on || tt.HasText("会话 (2)") || !tt.HasText("快速连接") {
+	if !a.fullScreen.on || tt.HasText("会话") || !tt.HasText("快速连接") {
 		t.Fatalf("full screen on a new tab; texts %q", tt.Texts())
 	}
 	saveShot(t, tt, "fullscreen-zh.png")
@@ -204,7 +204,7 @@ func TestFullScreen(t *testing.T) {
 	p.full = false // the green button
 	a.WindowLeftFullScreen()
 	tt.Frame()
-	if a.fullScreen.on || !tt.HasText("会话 (2)") {
+	if a.fullScreen.on || !tt.HasText("会话") {
 		t.Errorf("left by the system: app %v", a.fullScreen.on)
 	}
 }

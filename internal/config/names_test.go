@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"reflect"
 	"slices"
 	"strings"
 	"testing"
@@ -55,7 +56,8 @@ func TestMonitorHiddenSaved(t *testing.T) {
 	if !strings.Contains(string(data), `"monitorHidden": [`) {
 		t.Errorf("no monitorHidden list in %s", data)
 	}
-	if got := LoadSettings(); got != want {
+	want.AI = DefaultAISettings()
+	if got := LoadSettings(); !reflect.DeepEqual(got, want) {
 		t.Errorf("read back %q", got.MonitorHidden.List())
 	}
 	if _, ok := SyncedSettings(want)["monitorHidden"]; ok {

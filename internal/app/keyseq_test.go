@@ -55,7 +55,7 @@ func TestTerminalDefaultsPage(t *testing.T) {
 		}
 	}
 	want := config.Settings{TermEncoding: config.EncodingGBK, TermBackspace: config.BackspaceCtrlH, TermDelete: config.DeleteDEL}
-	if a.settings != want || config.LoadSettings() != want {
+	if !sameSettings(a.settings, want) || !sameSettings(config.LoadSettings(), want) {
 		t.Fatalf("settings %+v, saved %+v", a.settings, config.LoadSettings())
 	}
 	saveShot(t, tt, "options-terminal-changed-en.png")
@@ -89,7 +89,7 @@ func TestTerminalDefaultsPage(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	if a.settings != (config.Settings{}) || config.LoadSettings() != (config.Settings{}) {
+	if !sameSettings(a.settings, config.Settings{}) || !sameSettings(config.LoadSettings(), config.Settings{}) {
 		t.Fatalf("chosen back: %+v, saved %+v", a.settings, config.LoadSettings())
 	}
 	a.changeSettings(func() { a.settings = want })
@@ -97,7 +97,7 @@ func TestTerminalDefaultsPage(t *testing.T) {
 	if err := tt.Click(locales.LookRestoreDefaults()); err != nil {
 		t.Fatal(err)
 	}
-	if a.settings != (config.Settings{}) || config.LoadSettings() != (config.Settings{}) {
+	if !sameSettings(a.settings, config.Settings{}) || !sameSettings(config.LoadSettings(), config.Settings{}) {
 		t.Fatalf("restored %+v, saved %+v", a.settings, config.LoadSettings())
 	}
 }

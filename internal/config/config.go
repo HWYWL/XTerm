@@ -263,6 +263,10 @@ type Settings struct {
 	// settings are synced, if anywhere (sync.go).
 	Sync SyncSettings `json:"sync,omitzero"`
 
+	// AI is the Options › AI page: the assistant of the sessions' AI tabs
+	// (ai.go).
+	AI AISettings `json:"ai,omitzero"`
+
 	// The Command bar page of the options (Terminal › Command bar), all
 	// on by default, so each is named for turning it off.
 	//
@@ -421,6 +425,7 @@ func LoadSettings() Settings {
 	default:
 		s.CloseAction = CloseAsk
 	}
+	s.AI.fill()
 	return s
 }
 

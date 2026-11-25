@@ -13629,3 +13629,633 @@ func ErrAgentSign(error string) string { return In(i18n.Locale()).ErrAgentSign(e
 func (msgs Messages) ErrAgentSign(error string) string {
 	return Catalog.Format(msgs.locale, "errAgentSign", map[string]any{"error": error})
 }
+
+// Ai says "AI"
+// in the language the app shows.
+func Ai() string { return In(i18n.Locale()).Ai() }
+
+// Ai says "AI"
+// in the language of msgs.
+func (msgs Messages) Ai() string {
+	return Catalog.Format(msgs.locale, "ai", nil)
+}
+
+// OptionsAI says "AI assistant"
+// in the language the app shows.
+func OptionsAI() string { return In(i18n.Locale()).OptionsAI() }
+
+// OptionsAI says "AI assistant"
+// in the language of msgs.
+func (msgs Messages) OptionsAI() string {
+	return Catalog.Format(msgs.locale, "optionsAI", nil)
+}
+
+// AiIntro says "The assistant answers questions about the terminal over an OpenAI-compatible API. It reads what the terminal shows, a…"
+// in the language the app shows.
+func AiIntro() string { return In(i18n.Locale()).AiIntro() }
+
+// AiIntro says "The assistant answers questions about the terminal over an OpenAI-compatible API. It reads what the terminal shows, a…"
+// in the language of msgs.
+func (msgs Messages) AiIntro() string {
+	return Catalog.Format(msgs.locale, "aiIntro", nil)
+}
+
+// AiEnable says "Turn the AI assistant on"
+// in the language the app shows.
+func AiEnable() string { return In(i18n.Locale()).AiEnable() }
+
+// AiEnable says "Turn the AI assistant on"
+// in the language of msgs.
+func (msgs Messages) AiEnable() string {
+	return Catalog.Format(msgs.locale, "aiEnable", nil)
+}
+
+// AiEnableFirst says "The AI assistant is turned off."
+// in the language the app shows.
+func AiEnableFirst() string { return In(i18n.Locale()).AiEnableFirst() }
+
+// AiEnableFirst says "The AI assistant is turned off."
+// in the language of msgs.
+func (msgs Messages) AiEnableFirst() string {
+	return Catalog.Format(msgs.locale, "aiEnableFirst", nil)
+}
+
+// AiOpenSettings says "Open settings"
+// in the language the app shows.
+func AiOpenSettings() string { return In(i18n.Locale()).AiOpenSettings() }
+
+// AiOpenSettings says "Open settings"
+// in the language of msgs.
+func (msgs Messages) AiOpenSettings() string {
+	return Catalog.Format(msgs.locale, "aiOpenSettings", nil)
+}
+
+// AiSettingsShort says "Settings"
+// in the language the app shows.
+func AiSettingsShort() string { return In(i18n.Locale()).AiSettingsShort() }
+
+// AiSettingsShort says "Settings"
+// in the language of msgs.
+func (msgs Messages) AiSettingsShort() string {
+	return Catalog.Format(msgs.locale, "aiSettingsShort", nil)
+}
+
+// AiService says "Provider"
+// in the language the app shows.
+func AiService() string { return In(i18n.Locale()).AiService() }
+
+// AiService says "Provider"
+// in the language of msgs.
+func (msgs Messages) AiService() string {
+	return Catalog.Format(msgs.locale, "aiService", nil)
+}
+
+// AiBaseURL says "API address"
+// in the language the app shows.
+func AiBaseURL() string { return In(i18n.Locale()).AiBaseURL() }
+
+// AiBaseURL says "API address"
+// in the language of msgs.
+func (msgs Messages) AiBaseURL() string {
+	return Catalog.Format(msgs.locale, "aiBaseURL", nil)
+}
+
+// AiAPIKey says "API key"
+// in the language the app shows.
+func AiAPIKey() string { return In(i18n.Locale()).AiAPIKey() }
+
+// AiAPIKey says "API key"
+// in the language of msgs.
+func (msgs Messages) AiAPIKey() string {
+	return Catalog.Format(msgs.locale, "aiAPIKey", nil)
+}
+
+// AiAPIKeyHint says "Kept in the system credential store. A service on this machine (127.0.0.1) needs none."
+// in the language the app shows.
+func AiAPIKeyHint() string { return In(i18n.Locale()).AiAPIKeyHint() }
+
+// AiAPIKeyHint says "Kept in the system credential store. A service on this machine (127.0.0.1) needs none."
+// in the language of msgs.
+func (msgs Messages) AiAPIKeyHint() string {
+	return Catalog.Format(msgs.locale, "aiAPIKeyHint", nil)
+}
+
+// AiAddProvider says "Add provider"
+// in the language the app shows.
+func AiAddProvider() string { return In(i18n.Locale()).AiAddProvider() }
+
+// AiAddProvider says "Add provider"
+// in the language of msgs.
+func (msgs Messages) AiAddProvider() string {
+	return Catalog.Format(msgs.locale, "aiAddProvider", nil)
+}
+
+// AiDeleteProvider says "Remove provider"
+// in the language the app shows.
+func AiDeleteProvider() string { return In(i18n.Locale()).AiDeleteProvider() }
+
+// AiDeleteProvider says "Remove provider"
+// in the language of msgs.
+func (msgs Messages) AiDeleteProvider() string {
+	return Catalog.Format(msgs.locale, "aiDeleteProvider", nil)
+}
+
+// AiCustomProvider says "Custom"
+// in the language the app shows.
+func AiCustomProvider() string { return In(i18n.Locale()).AiCustomProvider() }
+
+// AiCustomProvider says "Custom"
+// in the language of msgs.
+func (msgs Messages) AiCustomProvider() string {
+	return Catalog.Format(msgs.locale, "aiCustomProvider", nil)
+}
+
+// AiModel says "Model"
+// in the language the app shows.
+func AiModel() string { return In(i18n.Locale()).AiModel() }
+
+// AiModel says "Model"
+// in the language of msgs.
+func (msgs Messages) AiModel() string {
+	return Catalog.Format(msgs.locale, "aiModel", nil)
+}
+
+// AiNewModel says "Model name"
+// in the language the app shows.
+func AiNewModel() string { return In(i18n.Locale()).AiNewModel() }
+
+// AiNewModel says "Model name"
+// in the language of msgs.
+func (msgs Messages) AiNewModel() string {
+	return Catalog.Format(msgs.locale, "aiNewModel", nil)
+}
+
+// AiAdd says "Add"
+// in the language the app shows.
+func AiAdd() string { return In(i18n.Locale()).AiAdd() }
+
+// AiAdd says "Add"
+// in the language of msgs.
+func (msgs Messages) AiAdd() string {
+	return Catalog.Format(msgs.locale, "aiAdd", nil)
+}
+
+// AiDeleteModel says "Remove model"
+// in the language the app shows.
+func AiDeleteModel() string { return In(i18n.Locale()).AiDeleteModel() }
+
+// AiDeleteModel says "Remove model"
+// in the language of msgs.
+func (msgs Messages) AiDeleteModel() string {
+	return Catalog.Format(msgs.locale, "aiDeleteModel", nil)
+}
+
+// AiTestConnection says "Test connection"
+// in the language the app shows.
+func AiTestConnection() string { return In(i18n.Locale()).AiTestConnection() }
+
+// AiTestConnection says "Test connection"
+// in the language of msgs.
+func (msgs Messages) AiTestConnection() string {
+	return Catalog.Format(msgs.locale, "aiTestConnection", nil)
+}
+
+// AiTesting says "Testing…"
+// in the language the app shows.
+func AiTesting() string { return In(i18n.Locale()).AiTesting() }
+
+// AiTesting says "Testing…"
+// in the language of msgs.
+func (msgs Messages) AiTesting() string {
+	return Catalog.Format(msgs.locale, "aiTesting", nil)
+}
+
+// AiTestOK says "Connected."
+// in the language the app shows.
+func AiTestOK() string { return In(i18n.Locale()).AiTestOK() }
+
+// AiTestOK says "Connected."
+// in the language of msgs.
+func (msgs Messages) AiTestOK() string {
+	return Catalog.Format(msgs.locale, "aiTestOK", nil)
+}
+
+// AiTestFailed says "Connection failed: {error}"
+// in the language the app shows.
+func AiTestFailed(error string) string { return In(i18n.Locale()).AiTestFailed(error) }
+
+// AiTestFailed says "Connection failed: {error}"
+// in the language of msgs.
+func (msgs Messages) AiTestFailed(error string) string {
+	return Catalog.Format(msgs.locale, "aiTestFailed", map[string]any{"error": error})
+}
+
+// AiRequest says "Request"
+// in the language the app shows.
+func AiRequest() string { return In(i18n.Locale()).AiRequest() }
+
+// AiRequest says "Request"
+// in the language of msgs.
+func (msgs Messages) AiRequest() string {
+	return Catalog.Format(msgs.locale, "aiRequest", nil)
+}
+
+// AiContextLines says "Lines of the terminal"
+// in the language the app shows.
+func AiContextLines() string { return In(i18n.Locale()).AiContextLines() }
+
+// AiContextLines says "Lines of the terminal"
+// in the language of msgs.
+func (msgs Messages) AiContextLines() string {
+	return Catalog.Format(msgs.locale, "aiContextLines", nil)
+}
+
+// AiTimeout says "Timeout, seconds"
+// in the language the app shows.
+func AiTimeout() string { return In(i18n.Locale()).AiTimeout() }
+
+// AiTimeout says "Timeout, seconds"
+// in the language of msgs.
+func (msgs Messages) AiTimeout() string {
+	return Catalog.Format(msgs.locale, "aiTimeout", nil)
+}
+
+// AiSystemPrompt says "System prompt"
+// in the language the app shows.
+func AiSystemPrompt() string { return In(i18n.Locale()).AiSystemPrompt() }
+
+// AiSystemPrompt says "System prompt"
+// in the language of msgs.
+func (msgs Messages) AiSystemPrompt() string {
+	return Catalog.Format(msgs.locale, "aiSystemPrompt", nil)
+}
+
+// AiExec says "Running commands"
+// in the language the app shows.
+func AiExec() string { return In(i18n.Locale()).AiExec() }
+
+// AiExec says "Running commands"
+// in the language of msgs.
+func (msgs Messages) AiExec() string {
+	return Catalog.Format(msgs.locale, "aiExec", nil)
+}
+
+// AiAllowExec says "Let the assistant run commands"
+// in the language the app shows.
+func AiAllowExec() string { return In(i18n.Locale()).AiAllowExec() }
+
+// AiAllowExec says "Let the assistant run commands"
+// in the language of msgs.
+func (msgs Messages) AiAllowExec() string {
+	return Catalog.Format(msgs.locale, "aiAllowExec", nil)
+}
+
+// AiConfirmExec says "Ask before running one"
+// in the language the app shows.
+func AiConfirmExec() string { return In(i18n.Locale()).AiConfirmExec() }
+
+// AiConfirmExec says "Ask before running one"
+// in the language of msgs.
+func (msgs Messages) AiConfirmExec() string {
+	return Catalog.Format(msgs.locale, "aiConfirmExec", nil)
+}
+
+// AiScreenContext says "Send the terminal's screen every time"
+// in the language the app shows.
+func AiScreenContext() string { return In(i18n.Locale()).AiScreenContext() }
+
+// AiScreenContext says "Send the terminal's screen every time"
+// in the language of msgs.
+func (msgs Messages) AiScreenContext() string {
+	return Catalog.Format(msgs.locale, "aiScreenContext", nil)
+}
+
+// AiExecHint says "Commands run on a channel of their own: not in the terminal, and not in the shell the user is using."
+// in the language the app shows.
+func AiExecHint() string { return In(i18n.Locale()).AiExecHint() }
+
+// AiExecHint says "Commands run on a channel of their own: not in the terminal, and not in the shell the user is using."
+// in the language of msgs.
+func (msgs Messages) AiExecHint() string {
+	return Catalog.Format(msgs.locale, "aiExecHint", nil)
+}
+
+// AiNoProvider says "Choose a provider and its address first."
+// in the language the app shows.
+func AiNoProvider() string { return In(i18n.Locale()).AiNoProvider() }
+
+// AiNoProvider says "Choose a provider and its address first."
+// in the language of msgs.
+func (msgs Messages) AiNoProvider() string {
+	return Catalog.Format(msgs.locale, "aiNoProvider", nil)
+}
+
+// AiNoModel says "Choose a model first."
+// in the language the app shows.
+func AiNoModel() string { return In(i18n.Locale()).AiNoModel() }
+
+// AiNoModel says "Choose a model first."
+// in the language of msgs.
+func (msgs Messages) AiNoModel() string {
+	return Catalog.Format(msgs.locale, "aiNoModel", nil)
+}
+
+// AiKeyMissing says "Enter the API key first."
+// in the language the app shows.
+func AiKeyMissing() string { return In(i18n.Locale()).AiKeyMissing() }
+
+// AiKeyMissing says "Enter the API key first."
+// in the language of msgs.
+func (msgs Messages) AiKeyMissing() string {
+	return Catalog.Format(msgs.locale, "aiKeyMissing", nil)
+}
+
+// AiKeyLoading says "Reading the API key…"
+// in the language the app shows.
+func AiKeyLoading() string { return In(i18n.Locale()).AiKeyLoading() }
+
+// AiKeyLoading says "Reading the API key…"
+// in the language of msgs.
+func (msgs Messages) AiKeyLoading() string {
+	return Catalog.Format(msgs.locale, "aiKeyLoading", nil)
+}
+
+// AiThinking says "Answering…"
+// in the language the app shows.
+func AiThinking() string { return In(i18n.Locale()).AiThinking() }
+
+// AiThinking says "Answering…"
+// in the language of msgs.
+func (msgs Messages) AiThinking() string {
+	return Catalog.Format(msgs.locale, "aiThinking", nil)
+}
+
+// AiStop says "Stop"
+// in the language the app shows.
+func AiStop() string { return In(i18n.Locale()).AiStop() }
+
+// AiStop says "Stop"
+// in the language of msgs.
+func (msgs Messages) AiStop() string {
+	return Catalog.Format(msgs.locale, "aiStop", nil)
+}
+
+// AiSend says "Send"
+// in the language the app shows.
+func AiSend() string { return In(i18n.Locale()).AiSend() }
+
+// AiSend says "Send"
+// in the language of msgs.
+func (msgs Messages) AiSend() string {
+	return Catalog.Format(msgs.locale, "aiSend", nil)
+}
+
+// AiNewChat says "New chat"
+// in the language the app shows.
+func AiNewChat() string { return In(i18n.Locale()).AiNewChat() }
+
+// AiNewChat says "New chat"
+// in the language of msgs.
+func (msgs Messages) AiNewChat() string {
+	return Catalog.Format(msgs.locale, "aiNewChat", nil)
+}
+
+// AiRegenerate says "Regenerate"
+// in the language the app shows.
+func AiRegenerate() string { return In(i18n.Locale()).AiRegenerate() }
+
+// AiRegenerate says "Regenerate"
+// in the language of msgs.
+func (msgs Messages) AiRegenerate() string {
+	return Catalog.Format(msgs.locale, "aiRegenerate", nil)
+}
+
+// AiCopy says "Copy"
+// in the language the app shows.
+func AiCopy() string { return In(i18n.Locale()).AiCopy() }
+
+// AiCopy says "Copy"
+// in the language of msgs.
+func (msgs Messages) AiCopy() string {
+	return Catalog.Format(msgs.locale, "aiCopy", nil)
+}
+
+// AiInsert says "Insert"
+// in the language the app shows.
+func AiInsert() string { return In(i18n.Locale()).AiInsert() }
+
+// AiInsert says "Insert"
+// in the language of msgs.
+func (msgs Messages) AiInsert() string {
+	return Catalog.Format(msgs.locale, "aiInsert", nil)
+}
+
+// AiAskPlaceholder says "Ask a question…"
+// in the language the app shows.
+func AiAskPlaceholder() string { return In(i18n.Locale()).AiAskPlaceholder() }
+
+// AiAskPlaceholder says "Ask a question…"
+// in the language of msgs.
+func (msgs Messages) AiAskPlaceholder() string {
+	return Catalog.Format(msgs.locale, "aiAskPlaceholder", nil)
+}
+
+// AiReasoning says "Reasoning"
+// in the language the app shows.
+func AiReasoning() string { return In(i18n.Locale()).AiReasoning() }
+
+// AiReasoning says "Reasoning"
+// in the language of msgs.
+func (msgs Messages) AiReasoning() string {
+	return Catalog.Format(msgs.locale, "aiReasoning", nil)
+}
+
+// AiHideReasoning says "Hide reasoning"
+// in the language the app shows.
+func AiHideReasoning() string { return In(i18n.Locale()).AiHideReasoning() }
+
+// AiHideReasoning says "Hide reasoning"
+// in the language of msgs.
+func (msgs Messages) AiHideReasoning() string {
+	return Catalog.Format(msgs.locale, "aiHideReasoning", nil)
+}
+
+// AiStopped says "(stopped)"
+// in the language the app shows.
+func AiStopped() string { return In(i18n.Locale()).AiStopped() }
+
+// AiStopped says "(stopped)"
+// in the language of msgs.
+func (msgs Messages) AiStopped() string {
+	return Catalog.Format(msgs.locale, "aiStopped", nil)
+}
+
+// AiTimeoutErr says "The model took too long to answer. Try again."
+// in the language the app shows.
+func AiTimeoutErr() string { return In(i18n.Locale()).AiTimeoutErr() }
+
+// AiTimeoutErr says "The model took too long to answer. Try again."
+// in the language of msgs.
+func (msgs Messages) AiTimeoutErr() string {
+	return Catalog.Format(msgs.locale, "aiTimeoutErr", nil)
+}
+
+// AiEmpty says "Type a question to begin."
+// in the language the app shows.
+func AiEmpty() string { return In(i18n.Locale()).AiEmpty() }
+
+// AiEmpty says "Type a question to begin."
+// in the language of msgs.
+func (msgs Messages) AiEmpty() string {
+	return Catalog.Format(msgs.locale, "aiEmpty", nil)
+}
+
+// AiEmptyHint says "The first question carries the end of the terminal; later ones carry the conversation."
+// in the language the app shows.
+func AiEmptyHint() string { return In(i18n.Locale()).AiEmptyHint() }
+
+// AiEmptyHint says "The first question carries the end of the terminal; later ones carry the conversation."
+// in the language of msgs.
+func (msgs Messages) AiEmptyHint() string {
+	return Catalog.Format(msgs.locale, "aiEmptyHint", nil)
+}
+
+// AiRunCommand says "The assistant wants to run this command on the host. Allow it?"
+// in the language the app shows.
+func AiRunCommand() string { return In(i18n.Locale()).AiRunCommand() }
+
+// AiRunCommand says "The assistant wants to run this command on the host. Allow it?"
+// in the language of msgs.
+func (msgs Messages) AiRunCommand() string {
+	return Catalog.Format(msgs.locale, "aiRunCommand", nil)
+}
+
+// AiAllow says "Allow"
+// in the language the app shows.
+func AiAllow() string { return In(i18n.Locale()).AiAllow() }
+
+// AiAllow says "Allow"
+// in the language of msgs.
+func (msgs Messages) AiAllow() string {
+	return Catalog.Format(msgs.locale, "aiAllow", nil)
+}
+
+// AiDeny says "Deny"
+// in the language the app shows.
+func AiDeny() string { return In(i18n.Locale()).AiDeny() }
+
+// AiDeny says "Deny"
+// in the language of msgs.
+func (msgs Messages) AiDeny() string {
+	return Catalog.Format(msgs.locale, "aiDeny", nil)
+}
+
+// AiDenied says "The user denied running it."
+// in the language the app shows.
+func AiDenied() string { return In(i18n.Locale()).AiDenied() }
+
+// AiDenied says "The user denied running it."
+// in the language of msgs.
+func (msgs Messages) AiDenied() string {
+	return Catalog.Format(msgs.locale, "aiDenied", nil)
+}
+
+// AiNoSession says "No host is connected."
+// in the language the app shows.
+func AiNoSession() string { return In(i18n.Locale()).AiNoSession() }
+
+// AiNoSession says "No host is connected."
+// in the language of msgs.
+func (msgs Messages) AiNoSession() string {
+	return Catalog.Format(msgs.locale, "aiNoSession", nil)
+}
+
+// AiNoMonitor says "The monitor has not collected anything yet."
+// in the language the app shows.
+func AiNoMonitor() string { return In(i18n.Locale()).AiNoMonitor() }
+
+// AiNoMonitor says "The monitor has not collected anything yet."
+// in the language of msgs.
+func (msgs Messages) AiNoMonitor() string {
+	return Catalog.Format(msgs.locale, "aiNoMonitor", nil)
+}
+
+// AiNoDir says "The file panel has no folder open."
+// in the language the app shows.
+func AiNoDir() string { return In(i18n.Locale()).AiNoDir() }
+
+// AiNoDir says "The file panel has no folder open."
+// in the language of msgs.
+func (msgs Messages) AiNoDir() string {
+	return Catalog.Format(msgs.locale, "aiNoDir", nil)
+}
+
+// AiUnknownTool says "No such tool: {name}"
+// in the language the app shows.
+func AiUnknownTool(name string) string { return In(i18n.Locale()).AiUnknownTool(name) }
+
+// AiUnknownTool says "No such tool: {name}"
+// in the language of msgs.
+func (msgs Messages) AiUnknownTool(name string) string {
+	return Catalog.Format(msgs.locale, "aiUnknownTool", map[string]any{"name": name})
+}
+
+// AiToolsOff says "Running commands is off in the options."
+// in the language the app shows.
+func AiToolsOff() string { return In(i18n.Locale()).AiToolsOff() }
+
+// AiToolsOff says "Running commands is off in the options."
+// in the language of msgs.
+func (msgs Messages) AiToolsOff() string {
+	return Catalog.Format(msgs.locale, "aiToolsOff", nil)
+}
+
+// AiEmptyCommand says "The command is empty."
+// in the language the app shows.
+func AiEmptyCommand() string { return In(i18n.Locale()).AiEmptyCommand() }
+
+// AiEmptyCommand says "The command is empty."
+// in the language of msgs.
+func (msgs Messages) AiEmptyCommand() string {
+	return Catalog.Format(msgs.locale, "aiEmptyCommand", nil)
+}
+
+// AiExecFailed says "Running it failed: {error}"
+// in the language the app shows.
+func AiExecFailed(error string) string { return In(i18n.Locale()).AiExecFailed(error) }
+
+// AiExecFailed says "Running it failed: {error}"
+// in the language of msgs.
+func (msgs Messages) AiExecFailed(error string) string {
+	return Catalog.Format(msgs.locale, "aiExecFailed", map[string]any{"error": error})
+}
+
+// AiTooManyTools says "The turn reached its limit of tool calls."
+// in the language the app shows.
+func AiTooManyTools() string { return In(i18n.Locale()).AiTooManyTools() }
+
+// AiTooManyTools says "The turn reached its limit of tool calls."
+// in the language of msgs.
+func (msgs Messages) AiTooManyTools() string {
+	return Catalog.Format(msgs.locale, "aiTooManyTools", nil)
+}
+
+// SessionsTab says "Sessions"
+// in the language the app shows.
+func SessionsTab() string { return In(i18n.Locale()).SessionsTab() }
+
+// SessionsTab says "Sessions"
+// in the language of msgs.
+func (msgs Messages) SessionsTab() string {
+	return Catalog.Format(msgs.locale, "sessionsTab", nil)
+}
+
+// AiDefaultSystemPrompt says "You are a terminal operations assistant. Answer briefly and directly; put commands in code blocks and say what they r…"
+// in the language the app shows.
+func AiDefaultSystemPrompt() string { return In(i18n.Locale()).AiDefaultSystemPrompt() }
+
+// AiDefaultSystemPrompt says "You are a terminal operations assistant. Answer briefly and directly; put commands in code blocks and say what they r…"
+// in the language of msgs.
+func (msgs Messages) AiDefaultSystemPrompt() string {
+	return Catalog.Format(msgs.locale, "aiDefaultSystemPrompt", nil)
+}

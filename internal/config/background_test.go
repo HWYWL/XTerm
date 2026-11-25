@@ -4,6 +4,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -20,7 +21,8 @@ func TestTerminalLookSettings(t *testing.T) {
 	if err := SaveSettings(want); err != nil {
 		t.Fatal(err)
 	}
-	if s := LoadSettings(); s != want {
+	want.AI = DefaultAISettings()
+	if s := LoadSettings(); !reflect.DeepEqual(s, want) {
 		t.Errorf("settings %+v, want %+v", s, want)
 	}
 	data, _ := os.ReadFile(filepath.Join(Dir(), "settings.json"))
@@ -32,7 +34,7 @@ func TestTerminalLookSettings(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(Dir(), "settings.json"), []byte(`{"language":"en"}`), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if s := LoadSettings(); s != (Settings{Language: "en"}) {
+	if s := LoadSettings(); !reflect.DeepEqual(s, Settings{Language: "en", AI: DefaultAISettings()}) {
 		t.Errorf("a file of before reads %+v", s)
 	}
 }

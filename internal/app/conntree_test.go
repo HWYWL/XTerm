@@ -76,7 +76,7 @@ func TestConnectionPage(t *testing.T) {
 	if got := connShown(a); !slices.Equal(got, want) {
 		t.Fatalf("rows %q, want %q", got, want)
 	}
-	if tt.HasText("old-box") || tt.HasText(locales.NoSessions()) || !tt.HasText(locales.SessionsTitle(0)) {
+	if tt.HasText("old-box") || tt.HasText(locales.NoSessions()) || !tt.HasText(locales.SessionsTab()) {
 		t.Errorf("texts %q", tt.Texts())
 	}
 	// One column: no address, no notes.
@@ -114,7 +114,7 @@ func TestConnectionPage(t *testing.T) {
 	}
 
 	// Back to the sessions.
-	if err := tt.Click(locales.SessionsTitle(0)); err != nil {
+	if err := tt.Click(locales.SessionsTab()); err != nil {
 		t.Fatal(err)
 	}
 	if a.left.page != leftSessions || !tt.HasText(locales.NoSessions()) || config.LoadSettings().LeftPanelPage != "" {
@@ -125,7 +125,7 @@ func TestConnectionPage(t *testing.T) {
 	if err := tt.Click("连接"); err != nil {
 		t.Fatalf("%v; texts %q", err, tt.Texts())
 	}
-	for _, s := range []string{"会话 (0)", "连接", "搜索连接", "Production"} {
+	for _, s := range []string{"会话", "连接", "搜索连接", "Production"} {
 		if !tt.HasText(s) {
 			if _, ok := tt.Access(s); !ok {
 				t.Errorf("missing %q; texts %q", s, tt.Texts())
@@ -180,8 +180,8 @@ func TestConnectFromPage(t *testing.T) {
 	if _, ok := a.sessionDot(a.hosts.Host("web-1")); ok {
 		t.Error("a dot on a host with no session")
 	}
-	if !tt.HasText(locales.SessionsTitle(1)) {
-		t.Errorf("the count; texts %q", tt.Texts())
+	if n := a.sessionCount(); n != 1 {
+		t.Errorf("the count %d", n)
 	}
 
 	// Enter on the next one opens it in a tab of its own; back on the

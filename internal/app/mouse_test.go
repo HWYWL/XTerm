@@ -130,7 +130,7 @@ func TestMousePage(t *testing.T) {
 		}
 	}
 	want := config.Settings{CopyOnSelect: true, RightClick: config.RightClickCopyOrPaste, NoLinkClick: true, WheelLines: 5}
-	if a.settings != want || config.LoadSettings() != want {
+	if !sameSettings(a.settings, want) || !sameSettings(config.LoadSettings(), want) {
 		t.Fatalf("settings %+v, saved %+v", a.settings, config.LoadSettings())
 	}
 	saveShot(t, tt, "options-mouse-changed-en.png")
@@ -139,7 +139,7 @@ func TestMousePage(t *testing.T) {
 	if !tt.HasText(locales.RightClickCopyOrPaste()) || wheelField(t, tt) != "5" {
 		t.Errorf("lines %q; texts %q", wheelField(t, tt), tt.Texts())
 	}
-	if b := New(p); b.settings != want {
+	if b := New(p); !sameSettings(b.settings, want) {
 		t.Fatalf("read back %+v", b.settings)
 	}
 
@@ -160,7 +160,7 @@ func TestMousePage(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	if a.settings != (config.Settings{}) || config.LoadSettings() != (config.Settings{}) {
+	if !sameSettings(a.settings, config.Settings{}) || !sameSettings(config.LoadSettings(), config.Settings{}) {
 		t.Fatalf("back to the defaults: %+v, saved %+v", a.settings, config.LoadSettings())
 	}
 }

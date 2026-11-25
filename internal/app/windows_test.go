@@ -272,7 +272,7 @@ func TestOptionsWindowChangesLanguage(t *testing.T) {
 	}
 	saveShot(t, tt, "options-zh.png")
 	mainWin.Frame()
-	if !mainWin.HasText("会话 (1)") {
+	if !mainWin.HasText("会话") {
 		t.Errorf("main window not in Chinese; texts %q", mainWin.Texts())
 	}
 

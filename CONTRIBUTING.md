@@ -3,7 +3,7 @@
 Thanks for helping. Issues and pull requests are welcome.
 
 XTerm is a secondary development based on the open source project
-[FinalShell](https://github.com/TooonyChen/finallyshell); the licenses and
+[FinallyShell](https://github.com/TooonyChen/finallyshell); the licenses and
 the contribution terms below come from it and still apply.
 
 ## License of contributions

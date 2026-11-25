@@ -107,7 +107,7 @@ func TestSidePanelSkeleton(t *testing.T) {
 	}
 }
 
-func TestSysInfoPopover(t *testing.T) {
+func TestSysInfoDialog(t *testing.T) {
 	a, p := testApp(t)
 	demoSession(a, "web-1", "45.56.78.90")
 	a.active = 0
@@ -121,21 +121,26 @@ func TestSysInfoPopover(t *testing.T) {
 	if !a.sysInfo.open || !a.sysInfo.loading || !tt.HasText(locales.ReadingServerInfo()) {
 		t.Fatalf("not loading: %+v; texts %q", a.sysInfo, tt.Texts())
 	}
-	saveShot(t, tt, "popover-loading-en.png")
+	saveShot(t, tt, "sysinfo-loading-en.png")
 	f.next(t).reply <- sysInfoReply{info: debianSample(t)}
 	p.until(t, "the system info", func() bool { return !a.sysInfo.loading })
-	for _, want := range []string{"Hostname", "Debian GNU/Linux 12 (bookworm)", "6.1.0-18-amd64", "x86_64",
-		"Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz", "2 cores, 4 threads", "3.8 GB", "410 days, 0:17",
-		"ens3  45.56.78.90/24", "docker0  172.17.0.1/16", "vda  25.0 GB"} {
+	for _, want := range []string{locales.SysOverview(), locales.SysCpuUsage(), locales.SysNetwork(), locales.SysFilesystems(),
+		"Debian GNU/Linux 12 (bookworm)", "6.1.0-18-amd64", "web-1", "x86_64",
+		"0.08 0.12 0.09", "up 410 days, 0 hours",
+		"Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz", "4", "2397.222", "35840 KB", "4794.44",
+		"NVIDIA Corporation GA104 [GeForce RTX 3070]",
+		"1.2%", "98.4%", "3.8 GB", "1.9 GB", "2.2 GB",
+		"ens3", "117.7 MB", "941.9 MB",
+		"/dev/vda1", "25.0 GB", "/run"} {
 		if !tt.HasText(want) {
 			t.Errorf("English: missing %q; texts %q", want, tt.Texts())
 		}
 	}
-	saveShot(t, tt, "popover-en.png")
+	saveShot(t, tt, "sysinfo-en.png")
 
 	clickButton(t, tt, locales.Copy())
 	got := tt.Clipboard()
-	for _, want := range []string{"Hostname: web-1\n", "OS: Debian GNU/Linux 12 (bookworm)\n", "CPU:\n  Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz\n  2 cores, 4 threads\n", "IP addresses:\n  ens3  45.56.78.90/24\n"} {
+	for _, want := range []string{"Hostname: web-1\n", "OS: Debian GNU/Linux 12 (bookworm)\n", "CPU:\n  Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz\n", "CPU usage:\n", "Network interfaces:\n", "ens3  Sent 117.7 MB  Received 941.9 MB\n", "Filesystems:\n", "/dev/vda1  11.8 GB  /\n"} {
 		if !strings.Contains(got, want) {
 			t.Errorf("summary lacks %q:\n%s", want, got)
 		}
@@ -149,19 +154,20 @@ func TestSysInfoPopover(t *testing.T) {
 	// Closed, then opened in Chinese: it reads again.
 	tt.Key(0, ui.KeyEscape)
 	if a.sysInfo.open {
-		t.Fatal("Escape left the popover open")
+		t.Fatal("Escape left the dialog open")
 	}
 	a.setLanguage("zh-Hans")
 	tt.Frame()
 	clickButton(t, tt, "系统信息")
 	f.next(t).reply <- sysInfoReply{info: debianSample(t)}
 	p.until(t, "the system info", func() bool { return !a.sysInfo.loading })
-	for _, want := range []string{"主机名", "内核", "处理器", "2 核 4 线程", "410 天 0:17", "IP 地址", "硬盘"} {
+	for _, want := range []string{"主机名", "内核", "概览", "处理器", "CPU 占用", "内存", "交换", "网络接口", "文件系统",
+		"web-1", "up 410 days, 0 hours", "Intel(R) Xeon(R) CPU E5-2680 v4 @ 2.40GHz"} {
 		if !tt.HasText(want) {
 			t.Errorf("Chinese: missing %q; texts %q", want, tt.Texts())
 		}
 	}
-	saveShot(t, tt, "popover-zh.png")
+	saveShot(t, tt, "sysinfo-zh.png")
 	tt.Key(0, ui.KeyEscape)
 
 	// An error, then a retry that works.
@@ -173,7 +179,7 @@ func TestSysInfoPopover(t *testing.T) {
 	if want := locales.SysInfoFailed(locales.SysInfoNoShell()); !tt.HasText(want) {
 		t.Errorf("no error shown; texts %q", tt.Texts())
 	}
-	saveShot(t, tt, "popover-error-en.png")
+	saveShot(t, tt, "sysinfo-error-en.png")
 	clickButton(t, tt, locales.Retry())
 	f.next(t).reply <- sysInfoReply{info: debianSample(t)}
 	p.until(t, "the retry", func() bool { return !a.sysInfo.loading })
@@ -198,9 +204,10 @@ func TestSysInfoStaleReads(t *testing.T) {
 	// Opened twice quickly: the first read is canceled, its answer dropped.
 	clickButton(t, tt, locales.SystemInfo())
 	first := f.next(t)
-	clickButton(t, tt, locales.SystemInfo())
+	// The dialog covers the button: Escape closes it, as the Close button.
+	tt.Key(0, ui.KeyEscape)
 	if a.sysInfo.open {
-		t.Fatal("a second click left it open")
+		t.Fatal("Escape left it open")
 	}
 	clickButton(t, tt, locales.SystemInfo())
 	second := f.next(t)
@@ -215,7 +222,7 @@ func TestSysInfoStaleReads(t *testing.T) {
 		t.Errorf("shown %q", a.sysInfo.info.Hostname)
 	}
 
-	// The session closes mid-read: the popover goes, and the other
+	// The session closes mid-read: the dialog goes, and the other
 	// session gets nothing of it.
 	tt.Key(0, ui.KeyEscape)
 	clickButton(t, tt, locales.SystemInfo())
@@ -248,7 +255,7 @@ func TestSysInfoStaleReads(t *testing.T) {
 }
 
 // A host with the monitor off opens no exec channel: the side panel says
-// so over the skeleton, and the popover reads nothing.
+// so over the skeleton, and the dialog reads nothing.
 // The copy after the IP puts the address in the clipboard, and says so in
 // a toast that fades out two seconds later; the System info button ends
 // the line.

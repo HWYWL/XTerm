@@ -25,8 +25,8 @@ func (a *App) fileEditorView(c *ui.Context) {
 	}
 	a.fileEditorKeys(c)
 	t := fe.current()
-	// No background of its own: the window's sky shows where the text does
-	// not, as in the main window.
+	// No background of its own: the window's background shows where the text
+	// does not, as in the main window.
 	ui.Column(c).Fill().Children(func() {
 		a.editorTabStrip(c)
 		a.editorToolbar(c, t)

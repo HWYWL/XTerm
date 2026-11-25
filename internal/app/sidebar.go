@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"finallyshell/internal/icons"
@@ -23,7 +24,7 @@ func (a *App) monitorPanel(c *ui.Context) {
 	}
 	ui.Scroll(c).Fill().ContextMenu(a.monitorMenu).Children(func() {
 		if s.isLocal() {
-			localMonitor(c)
+			a.localMonitor(c)
 			return
 		}
 		a.serverView(c, s)
@@ -79,7 +80,7 @@ func (a *App) serverView(c *ui.Context, s *Session) {
 		default:
 			st = &s.stats
 		}
-		serverStats(c, st, a.monitorHidden(), a.netPicker(s), a.openProcesses)
+		serverStats(c, st, a.monitorHidden(), a.netPicker(s), &a.localNet, a.openProcesses)
 	})
 }
 
@@ -94,7 +95,7 @@ func (a *App) copyToClipboard(c *ui.Context, text string) {
 // hidden, or the hint to the panel's menu when every part is; net is the
 // choice of network interfaces, and a click on the process list calls
 // openProcs.
-func serverStats(c *ui.Context, st *monitor.Stats, hidden hiddenParts, net netPicker, openProcs func()) {
+func serverStats(c *ui.Context, st *monitor.Stats, hidden hiddenParts, net netPicker, local *localTraffic, openProcs func()) {
 	if hidden.none() {
 		monitorHint(c)
 		return
@@ -108,13 +109,17 @@ func serverStats(c *ui.Context, st *monitor.Stats, hidden hiddenParts, net netPi
 			widgets.UsageBar(c, locales.Cpu(), 0, "0%", colors.cpu)
 			widgets.UsageBar(c, locales.Memory(), 0, "0%", colors.mem)
 			widgets.UsageBar(c, locales.Swap(), 0, "0%", colors.swap)
+			donutRow(c, nil)
 		}
 		if hidden.shows(partProcesses) {
-			procTable(c, nil, nil)
+			procTable(c, nil, 0, nil)
 		}
 		if hidden.shows(partNetwork) {
 			netRow(c, 0, 0, "", "", nil)
 			widgets.Sparkline(c, monitor.HistoryLen, nil, nil, formatBytes)
+		}
+		if hidden.shows(partLocalNet) {
+			localNetGraph(c, nil)
 		}
 		if hidden.shows(partLatency) {
 			latencyRow(c, "-")
@@ -133,12 +138,16 @@ func serverStats(c *ui.Context, st *monitor.Stats, hidden hiddenParts, net netPi
 		widgets.UsageBar(c, locales.Cpu(), st.CPU/100, fmt.Sprintf("%.0f%%", st.CPU), colors.cpu)
 		widgets.UsageBar(c, locales.Memory(), ratio(st.MemUsed, st.MemTotal), usage(st.MemUsed, st.MemTotal), colors.mem)
 		widgets.UsageBar(c, locales.Swap(), ratio(st.SwapUsed, st.SwapTotal), usage(st.SwapUsed, st.SwapTotal), colors.swap)
+		donutRow(c, st)
 	}
 	if hidden.shows(partProcesses) {
-		procTable(c, st.Procs, openProcs)
+		procTable(c, st.Procs, st.MemTotal, openProcs)
 	}
 	if hidden.shows(partNetwork) {
 		netGraph(c, st, net)
+	}
+	if hidden.shows(partLocalNet) {
+		localNetGraph(c, local)
 	}
 	if hidden.shows(partLatency) {
 		latencyRow(c, formatLatency(st.Latency))
@@ -185,9 +194,67 @@ func usage(used, total uint64) string {
 	return fmt.Sprintf("%.0f%%  %s/%s", 100*ratio(used, total), formatBytes(float64(used)), formatBytes(float64(total)))
 }
 
+// donutRow is the ring gauges under the bars: the CPU, the memory and
+// the disks as a whole, which is what the bars cannot show — each of them
+// reads one part at a glance, the three of them side by side.
+func donutRow(c *ui.Context, st *monitor.Stats) {
+	cpu, mem, disk := 0.0, 0.0, 0.0
+	if st != nil {
+		cpu = st.CPU / 100
+		mem = ratio(st.MemUsed, st.MemTotal)
+		disk = diskUsedRatio(st.Disks)
+	}
+	ui.Row(c).Gap(4).Margin(0, 2, 0, 0).Children(func() {
+		widgets.Donut(c, locales.Cpu(), cpu, percentText(cpu), colors.cpuRing)
+		widgets.Donut(c, locales.Memory(), mem, percentText(mem), colors.memRing)
+		widgets.Donut(c, locales.SysDisks(), disk, percentText(disk), colors.diskRing)
+	})
+}
+
+// percentText is a share, from 0 to 1, as the rings show it.
+func percentText(frac float64) string {
+	return fmt.Sprintf("%.0f%%", math.Max(0, math.Min(1, frac))*100)
+}
+
+// diskUsedRatio is how much of the disks is used, their partitions
+// summed: the ring shows them as one disk, as the bars show one server.
+func diskUsedRatio(disks []monitor.Disk) float64 {
+	var used, total uint64
+	for _, d := range disks {
+		if d.Size > d.Avail {
+			used += d.Size - d.Avail
+		}
+		total += d.Size
+	}
+	if total == 0 {
+		return 0
+	}
+	return float64(used) / float64(total)
+}
+
+// localNetGraph is this computer's traffic, under the server's: the
+// speeds, then the graph of both directions, as the server's is.
+func localNetGraph(c *ui.Context, lt *localTraffic) {
+	up, down := 0.0, 0.0
+	var upHist, downHist []float64
+	if lt != nil {
+		up, down = lt.up, lt.down
+		upHist, downHist = lt.upHist, lt.downHist
+	}
+	ui.Row(c).Gap(8).Margin(4, 0, 0, 0).Children(func() {
+		ui.Text(c, "↑"+formatBytes(up)).TextColor(colors.tx).Shrink(0)
+		ui.Text(c, "↓"+formatBytes(down)).TextColor(colors.rx).Shrink(0)
+		ui.Spacer(c)
+		widgets.Muted(c, locales.LocalNet())
+	})
+	widgets.Sparkline(c, monitor.HistoryLen, [][]float64{upHist, downHist}, []ui.Color{txChart, rxChart}, formatBytes)
+}
+
 // procTable is the processes using the most memory; a click opens the
-// process manager with open, when it is not nil.
-func procTable(c *ui.Context, procs []monitor.Proc, open func()) {
+// process manager with open, when it is not nil. Its rows are the CPU
+// share, the memory share of memTotal, and the command, over a bar as
+// wide as the CPU share, as QuickTerm's list has them.
+func procTable(c *ui.Context, procs []monitor.Proc, memTotal uint64, open func()) {
 	headText := colors.procHeadText
 	table := ui.Column(c).Border(1, colors.frame).Background(colors.procTable)
 	if open != nil {
@@ -198,18 +265,31 @@ func procTable(c *ui.Context, procs []monitor.Proc, open func()) {
 	}
 	table.Children(func() {
 		ui.Row(c).Background(colors.procHead).PaddingX(6).Height(20).Children(func() {
-			ui.Text(c, locales.Memory()).Width(54).TextColor(headText).FontSize(12)
-			ui.Text(c, locales.Cpu()).Width(40).TextColor(headText).FontSize(12)
+			ui.Text(c, locales.Cpu()+"%").Width(44).TextColor(headText).FontSize(12)
+			ui.Text(c, locales.Memory()+"%").Width(44).TextColor(headText).FontSize(12)
 			ui.Text(c, locales.Command()).TextColor(headText).FontSize(12)
 		})
 		for i, p := range procs {
-			ui.Row(c.Key(i)).PaddingX(6).Height(19).Children(func() {
-				ui.Text(c, formatBytes(float64(p.RSS))).Width(54).FontSize(12)
-				ui.Text(c, fmt.Sprintf("%.1f", p.CPU)).Width(40).FontSize(12)
-				ui.Text(c, p.Name).FontSize(12).SingleLine().Grow(1).MinWidth(0)
+			proc := p
+			ui.Box(c).Key(i).Height(22).Clip().Children(func() {
+				ui.Box(c).Absolute().Top(0).Left(0).Bottom(0).
+					WidthPercent(float32(math.Max(0, math.Min(1, proc.CPU/100)) * 100)).Background(colors.cpu)
+				ui.Row(c).Fill().PaddingX(6).AlignItems(ui.Center).Children(func() {
+					ui.Text(c, fmt.Sprintf("%.1f", proc.CPU)).Width(44).FontSize(12)
+					ui.Text(c, fmt.Sprintf("%.1f", procMemShare(proc, memTotal))).Width(44).FontSize(12)
+					ui.Text(c, proc.Name).FontSize(12).SingleLine().Grow(1).MinWidth(0)
+				})
 			})
 		}
 	})
+}
+
+// procMemShare is how much of the memory a process holds, in percent.
+func procMemShare(p monitor.Proc, memTotal uint64) float64 {
+	if memTotal == 0 {
+		return 0
+	}
+	return float64(p.RSS) / float64(memTotal) * 100
 }
 
 func diskTable(c *ui.Context, disks []monitor.Disk) {

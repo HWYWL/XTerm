@@ -18,6 +18,7 @@ func monitorMarks(s *Session) (live, skeleton map[string]string) {
 		partCPU:       locales.Swap(),
 		partProcesses: "mysqld",
 		partNetwork:   "↑" + formatBytes(s.stats.TxRate),
+		partLocalNet:  locales.LocalNet(),
 		partLatency:   formatLatency(s.stats.Latency),
 		partDisks:     locales.DiskPath(),
 	}
@@ -26,6 +27,7 @@ func monitorMarks(s *Session) (live, skeleton map[string]string) {
 		partCPU:       locales.Swap(),
 		partProcesses: locales.Command(),
 		partNetwork:   "↑" + formatBytes(0),
+		partLocalNet:  locales.LocalNet(),
 		partLatency:   locales.Latency(),
 		partDisks:     locales.DiskPath(),
 	}
@@ -153,6 +155,26 @@ func TestMonitorPartsMenu(t *testing.T) {
 	}
 }
 
+// TestMonitorDonuts: the rings under the bars show the CPU, the memory
+// and the disks as a whole, and go with the CPU part.
+func TestMonitorDonuts(t *testing.T) {
+	a, tt, _ := monitorPartsApp(t, "en")
+	for _, label := range []string{locales.Cpu(), locales.Memory()} {
+		if got := countText(tt, label); got != 2 { // its bar's label, and its ring's
+			t.Errorf("%q shows %d times, want the bar and the ring", label, got)
+		}
+	}
+	// The disks have no bar, only a ring.
+	if countText(tt, locales.SysDisks()) != 1 {
+		t.Errorf("%q shows %d times, want the ring", locales.SysDisks(), countText(tt, locales.SysDisks()))
+	}
+	a.settings.MonitorHidden = config.NewNames(partCPU)
+	tt.Frame()
+	if tt.HasText(locales.SysDisks()) || tt.HasText(locales.Swap()) {
+		t.Errorf("rings or bars with the CPU part hidden: texts %q", tt.Texts())
+	}
+}
+
 // TestMonitorPartsSkeleton: the skeleton, of a new tab or a session not
 // connected yet, leaves out the same parts as the live view.
 func TestMonitorPartsSkeleton(t *testing.T) {
@@ -174,7 +196,7 @@ func TestMonitorPartsSkeleton(t *testing.T) {
 		for _, hidden := range [][]string{
 			{partCPU, partNetwork, partDisks},
 			{partUptime, partProcesses, partLatency},
-			{partUptime, partCPU, partProcesses, partNetwork, partLatency, partDisks},
+			{partUptime, partCPU, partProcesses, partNetwork, partLocalNet, partLatency, partDisks},
 		} {
 			a.settings.MonitorHidden = config.NewNames(hidden...)
 			tt.Frame()

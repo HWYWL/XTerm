@@ -116,7 +116,7 @@ func (a *App) openImport() {
 	a.openWindow(importSpec, a.importView)
 	a.post(func() {
 		if a.imp == st && a.windowOpen(WindowImport) && st.reads == 0 {
-			a.readImport(st, false)
+			a.readImport(st, false, false)
 		}
 	})
 }
@@ -139,13 +139,16 @@ func (a *App) chooseImportSource(st *importState, s importSource) {
 	}
 	a.importKind = s.Kind
 	*st = importState{source: s, row: -1, reads: st.reads}
-	a.readImport(st, false)
+	a.readImport(st, false, true)
 }
 
 // readImport reads the source's file or folder for st, off the UI thread:
 // the one its Find finds, unless choose, and the one the user chooses
-// when there is none. Canceling the choice keeps what st shows.
-func (a *App) readImport(st *importState, choose bool) {
+// when there is none and prompt. Without prompt, as the window opens, the
+// window says that it found none, and its button opens the chooser:
+// rather the window alone than the chooser over it as it comes up.
+// Canceling the choice keeps what st shows.
+func (a *App) readImport(st *importState, choose, prompt bool) {
 	st.reads++
 	read := st.reads
 	st.busy = true
@@ -159,6 +162,16 @@ func (a *App) readImport(st *importState, choose bool) {
 		path := ""
 		if !choose && find != nil {
 			path = find()
+		}
+		if path == "" && !choose && !prompt {
+			a.post(func() {
+				if a.imp != st || st.reads != read {
+					return
+				}
+				st.busy = false
+				st.notFound = st.notFound || st.src == nil && st.err == nil
+			})
+			return
 		}
 		var err error
 		switch {
@@ -267,13 +280,13 @@ func (a *App) importView(c *ui.Context) {
 					ui.Text(c, a.importError(st)).TextColor(theme.Danger).TextAlign(ui.Center).MaxWidth(520)
 					if st.path == "" { // the chooser failed: the top row has no button
 						if ui.PrimaryButton(c, st.chooseLabel()).Clicked() {
-							a.readImport(st, true)
+							a.readImport(st, true, true)
 						}
 					}
 				case st.notFound:
 					ui.Text(c, st.source.notFound()).TextAlign(ui.Center).MaxWidth(520)
 					if ui.PrimaryButton(c, st.chooseLabel()).Clicked() {
-						a.readImport(st, true)
+						a.readImport(st, true, true)
 					}
 				}
 			})
@@ -336,7 +349,7 @@ func (a *App) importSourceRow(c *ui.Context, st *importState) {
 			ui.Spinner(c)
 		}
 		if ui.Button(c, st.chooseLabel()).Disabled(st.busy).Clicked() {
-			a.readImport(st, true)
+			a.readImport(st, true, true)
 		}
 	})
 }

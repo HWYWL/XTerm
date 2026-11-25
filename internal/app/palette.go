@@ -105,8 +105,10 @@ type palette struct {
 	procTable, diskTable   ui.Color
 	procHead, procHeadText ui.Color
 	// cpu, mem and swap fill the side panel's usage bars, with the
-	// theme's text over them.
-	cpu, mem, swap ui.Color
+	// theme's text over them. cpuRing, memRing and diskRing stroke the
+	// monitor's ring gauges, which need a color that reads on its own.
+	cpu, mem, swap         ui.Color
+	cpuRing, memRing, diskRing ui.Color
 	// tx and rx are the upload and download speeds.
 	tx, rx ui.Color
 	// tableHead is the header row of the start page's table; note is the
@@ -135,6 +137,9 @@ var lightColors = palette{
 	cpu:           ui.RGBA(18, 168, 120, 0.45),
 	mem:           ui.RGBA(184, 121, 10, 0.35),
 	swap:          ui.RGBA(10, 124, 255, 0.35),
+	cpuRing:       ui.Hex("#12a878"),
+	memRing:       ui.Hex("#b8790a"),
+	diskRing:      ui.Hex("#0a7cff"),
 	tx:            ui.Hex("#c2580a"),
 	rx:            ui.Hex("#0b8256"),
 	tableHead:     ui.RGBA(255, 255, 255, 0.60),
@@ -162,6 +167,9 @@ var darkColors = palette{
 	cpu:           ui.RGBA(61, 220, 151, 0.55),
 	mem:           ui.RGBA(255, 200, 97, 0.55),
 	swap:          ui.RGBA(99, 200, 255, 0.55),
+	cpuRing:       ui.Hex("#3ddc97"),
+	memRing:       ui.Hex("#ffc861"),
+	diskRing:      ui.Hex("#63c8ff"),
 	tx:            ui.Hex("#ffb37a"),
 	rx:            ui.Hex("#7ee0c0"),
 	tableHead:     ui.RGBA(255, 255, 255, 0.045),

@@ -20,9 +20,38 @@ Model		: Raspberry Pi 4 Model B Rev 1.4
 4
 ---FINALLYSHELL:meminfo---
 MemTotal:        3884296 kB
+MemAvailable:    3100000 kB
+MemFree:         2500000 kB
+Buffers:           45000 kB
+Cached:           520000 kB
 SwapTotal:             0 kB
+SwapFree:              0 kB
 ---FINALLYSHELL:uptime---
 93784.52 371220.10
+---FINALLYSHELL:uptext---
+up 1 day, 2 hours
+---FINALLYSHELL:load---
+0.15 0.10 0.05
+---FINALLYSHELL:ips---
+192.168.1.40 192.168.1.41
+---FINALLYSHELL:stat---
+cpu  12345 678 9012 123456 456 0 789 0
+---FINALLYSHELL:freq---
+---FINALLYSHELL:cache---
+cache size	: 512 KB
+---FINALLYSHELL:bogo---
+bogomips	: 108.00
+---FINALLYSHELL:gpu---
+---FINALLYSHELL:netdev---
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo:    1824      20    0    0    0     0          0         0     1824      20    0    0    0     0       0          0
+  eth0:  12345678   98765    0    0    0     0          0         0  2345678   54321    0    0    0     0       0          0
+ wlan0:   2345678   12345    0    0    0     0          0         0   123456    5432    0    0    0     0       0          0
+---FINALLYSHELL:df---
+Filesystem     1024-blocks     Used Available Capacity Mounted on
+/dev/mmcblk0p2    30535680  8123456  20876544      28% /
+/dev/sda1        976704112 123456789 803247323      14% /media/ssd
 ---FINALLYSHELL:addr---
 1: lo    inet 127.0.0.1/8 scope host lo\       valid_lft forever preferred_lft forever
 2: eth0    inet 192.168.1.40/24 brd 192.168.1.255 scope global eth0\       valid_lft forever preferred_lft forever

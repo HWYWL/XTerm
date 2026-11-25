@@ -2,9 +2,9 @@
 
 简体中文
 
-XTerm 基于开源项目 [FinalShell](https://github.com/TooonyChen/finallyshell)
+XTerm 基于开源项目 [FinallyShell](https://github.com/TooonyChen/finallyshell)
 二次开发，自己的版本号从 0.0.1 开始，上游项目的版本历史仍在
-[它的仓库](https://github.com/TooonyChen/XTerm/releases)。
+[它的仓库](https://github.com/TooonyChen/finallyshell/releases)。
 
 这一页按界面逐一说明 XTerm 的功能，包括每个选项在 `settings.json` 里对应的键，以及支持到什么程度。磁盘上的文件见 [configuration.md](configuration.md)；编译和代码见 [development.md](development.md)。
 

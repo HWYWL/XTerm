@@ -28,6 +28,18 @@ func TestParseSysInfoSamples(t *testing.T) {
 			MemTotal: 4009216 * 1024, SwapTotal: 2306044 * 1024, Uptime: 35425043 * time.Second,
 			Addrs: []Addr{{"ens3", "45.56.78.90/24"}, {"ens3", "2600:3c01::f03c:93ff:fe4a:1b2c/64"}, {"docker0", "172.17.0.1/16"}},
 			Disks: []BlockDevice{{Name: "vda", Size: 52428800 * 512}},
+
+			Load: "0.08 0.12 0.09", UptimeUp: "up 410 days, 0 hours",
+			IPs:     "45.56.78.90 2600:3c01::f03c:93ff:fe4a:1b2c",
+			CPUFreq: "2397.222", CPUCache: "35840 KB", CPUBogo: "4794.44",
+			GPU: "NVIDIA Corporation GA104 [GeForce RTX 3070]",
+			Mem: Memory{Total: 4009216 * 1024, Available: 3200000 * 1024, Free: 1200000 * 1024, Buffers: 123456 * 1024, Cached: 1876543 * 1024},
+			Swap: Memory{Total: 2306044 * 1024, Available: 2200000 * 1024, Free: 2200000 * 1024},
+			Nets: []NetIface{{"lo", 1824, 1824}, {"ens3", 987654321, 123456789}},
+			FS: []Filesystem{
+				{"/dev/vda1", 26214400 * 1024, 12345678 * 1024, 12400000 * 1024, "/"},
+				{"tmpfs", 2048000 * 1024, 0, 2048000 * 1024, "/run"},
+			},
 		}},
 		// BusyBox: no lscpu, an arm64 cpuinfo without "model name".
 		{"sysinfo-alpine.txt", SysInfo{
@@ -36,6 +48,20 @@ func TestParseSysInfoSamples(t *testing.T) {
 			MemTotal: 3884296 * 1024, Uptime: 93785 * time.Second,
 			Addrs: []Addr{{"eth0", "192.168.1.40/24"}, {"wlan0", "192.168.1.41/24"}},
 			Disks: []BlockDevice{{Name: "mmcblk0", Size: 62333952 * 512}, {Name: "sda", Size: 1953525168 * 512, Model: "Extreme SSD"}},
+
+			Load: "0.15 0.10 0.05", UptimeUp: "up 1 day, 2 hours",
+			IPs:      "192.168.1.40 192.168.1.41",
+			CPUCache: "512 KB", CPUBogo: "108.00",
+			Mem: Memory{Total: 3884296 * 1024, Available: 3100000 * 1024, Free: 2500000 * 1024, Buffers: 45000 * 1024, Cached: 520000 * 1024},
+			Nets: []NetIface{
+				{"lo", 1824, 1824},
+				{"eth0", 12345678, 2345678},
+				{"wlan0", 2345678, 123456},
+			},
+			FS: []Filesystem{
+				{"/dev/mmcblk0p2", 30535680 * 1024, 8123456 * 1024, 20876544 * 1024, "/"},
+				{"/dev/sda1", 976704112 * 1024, 123456789 * 1024, 803247323 * 1024, "/media/ssd"},
+			},
 		}},
 		// CentOS 6: no os-release, two sockets with hyper-threading.
 		{"sysinfo-centos.txt", SysInfo{
@@ -44,13 +70,29 @@ func TestParseSysInfoSamples(t *testing.T) {
 			MemTotal: 16330708 * 1024, SwapTotal: 8191996 * 1024, Uptime: 4021 * time.Second,
 			Addrs: []Addr{{"eth0", "10.10.1.20/24"}, {"eth0", "10.10.1.21/24"}},
 			Disks: []BlockDevice{{Name: "sda", Size: 209715200 * 512, Model: "Virtual disk"}, {Name: "sdb", Size: 1073741824 * 512, Model: "Virtual disk"}},
+
+			Load: "0.42 0.55 0.61", UptimeUp: "up 1 hour, 7 minutes",
+			IPs:     "10.10.1.20 10.10.1.21",
+			CPUFreq: "2400.000", CPUCache: "12288 KB", CPUBogo: "4800.12",
+			Mem: Memory{Total: 16330708 * 1024, Available: 15200000 * 1024, Free: 8000000 * 1024, Buffers: 234567 * 1024, Cached: 6000000 * 1024},
+			Swap: Memory{Total: 8191996 * 1024, Available: 8091996 * 1024, Free: 8091996 * 1024},
+			Nets: []NetIface{{"lo", 1824, 1824}, {"eth0", 543210987, 234567890}},
+			FS: []Filesystem{
+				{"/dev/sda1", 103212320 * 1024, 45678901 * 1024, 51234567 * 1024, "/"},
+				{"/dev/sdb1", 524288000 * 1024, 12345678 * 1024, 511942322 * 1024, "/data"},
+			},
 		}},
 	}
 	for _, tc := range tests {
 		t.Run(tc.file, func(t *testing.T) {
 			got := ParseSysInfo(readSample(t, tc.file))
+			usage := got.Usage
+			got.Usage = CPUUsage{} // divisions: summed below
 			if !reflect.DeepEqual(got, tc.want) {
 				t.Errorf("got  %+v\nwant %+v", got, tc.want)
+			}
+			if sum := usage.User + usage.Nice + usage.System + usage.Idle + usage.IOWait + usage.IRQ + usage.SoftIRQ + usage.Steal; sum < 99.9 || sum > 100.1 {
+				t.Errorf("%s: the usage sums to %v", tc.file, sum)
 			}
 		})
 	}
@@ -104,7 +146,8 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
 
 func TestSysInfoScriptSections(t *testing.T) {
 	// Each section the parser reads is one the script writes.
-	for _, name := range []string{"hostname", "uname", "os-release", "release", "cpuinfo", "lscpu", "nproc", "meminfo", "uptime", "addr", "disks", "end"} {
+	for _, name := range []string{"hostname", "uname", "os-release", "release", "cpuinfo", "lscpu", "nproc", "meminfo", "uptime",
+		"uptext", "load", "ips", "stat", "freq", "cache", "bogo", "gpu", "netdev", "df", "addr", "disks", "end"} {
 		if !strings.Contains(sysInfoScript, "m "+name+";") && !strings.Contains(sysInfoScript, "m "+name+"\n") {
 			t.Errorf("the script has no %s section", name)
 		}

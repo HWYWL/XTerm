@@ -35,9 +35,39 @@ core id		: 1
 4
 ---FINALLYSHELL:meminfo---
 MemTotal:        4009216 kB
+MemAvailable:    3200000 kB
+MemFree:         1200000 kB
+Buffers:          123456 kB
+Cached:          1876543 kB
 SwapTotal:       2306044 kB
+SwapFree:        2200000 kB
 ---FINALLYSHELL:uptime---
 35425043.31 139105562.24
+---FINALLYSHELL:uptext---
+up 410 days, 0 hours
+---FINALLYSHELL:load---
+0.08 0.12 0.09
+---FINALLYSHELL:ips---
+45.56.78.90 2600:3c01::f03c:93ff:fe4a:1b2c
+---FINALLYSHELL:stat---
+cpu  12345678 234567 3456789 987654321 123456 0 98765 0
+---FINALLYSHELL:freq---
+cpu MHz		: 2397.222
+---FINALLYSHELL:cache---
+cache size	: 35840 KB
+---FINALLYSHELL:bogo---
+bogomips	: 4794.44
+---FINALLYSHELL:gpu---
+01:00.0 VGA compatible controller: NVIDIA Corporation GA104 [GeForce RTX 3070]
+---FINALLYSHELL:netdev---
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo:    1824      20    0    0    0     0          0         0     1824      20    0    0    0     0       0          0
+  ens3: 987654321  765432    0    0    0     0          0         0 123456789    5432    0    0    0     0       0          0
+---FINALLYSHELL:df---
+Filesystem     1024-blocks     Used Available Capacity Mounted on
+/dev/vda1         26214400 12345678  12400000      50% /
+tmpfs              2048000        0   2048000       0% /run
 ---FINALLYSHELL:addr---
 1: lo    inet 127.0.0.1/8 scope host lo\       valid_lft forever preferred_lft forever
 1: lo    inet6 ::1/128 scope host noprefixroute \       valid_lft forever preferred_lft forever

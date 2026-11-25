@@ -371,9 +371,9 @@ func TestImportChooseFolder(t *testing.T) {
 	a, p := testApp(t)
 	findFinalShell(a, func() string { return "" })
 	_, tt := openImport(t, a, p)
-	picks := p.folderPicks()
-	if len(picks) != 1 || picks[0].parent != WindowImport || picks[0].title != locales.ChooseFinalShellFolder() {
-		t.Fatalf("picks %+v", picks)
+	// The window comes up alone: its button opens the chooser.
+	if picks := p.folderPicks(); len(picks) != 0 {
+		t.Fatalf("the chooser opened with the window: %+v", picks)
 	}
 	if !tt.HasText(locales.FinalShellNotFound()) || a.imp.src != nil {
 		t.Fatalf("texts %q", tt.Texts())
@@ -383,13 +383,16 @@ func TestImportChooseFolder(t *testing.T) {
 	}
 	saveShot(t, tt, "import-not-found-en.png")
 
-	// A folder without connections.
+	// A folder without connections: the button asks for one.
 	empty := t.TempDir()
 	p.pickFolder(empty)
 	if err := tt.Click(locales.ChooseFolder()); err != nil {
 		t.Fatal(err)
 	}
 	p.until(t, "the folder read", func() bool { return !a.imp.busy })
+	if picks := p.folderPicks(); len(picks) != 1 || picks[0].parent != WindowImport || picks[0].title != locales.ChooseFinalShellFolder() {
+		t.Fatalf("picks %+v", picks)
+	}
 	tt.Frame()
 	if !tt.HasText(locales.ImportNoConnections(empty)) {
 		t.Errorf("texts %q", tt.Texts())
@@ -430,6 +433,12 @@ func TestImportChooserFails(t *testing.T) {
 	findFinalShell(a, func() string { return "" })
 	p.failPicks(errors.New("no portal"))
 	_, tt := openImport(t, a, p)
+	// The window comes up alone: its button opens the failing chooser.
+	if err := tt.Click(locales.ChooseFolder()); err != nil {
+		t.Fatal(err)
+	}
+	p.until(t, "the chooser", func() bool { return !a.imp.busy })
+	tt.Frame()
 	if !tt.HasText(locales.ImportReadFailed("no portal")) || a.imp.path != "" {
 		t.Fatalf("texts %q", tt.Texts())
 	}
@@ -633,8 +642,13 @@ func TestImportSources(t *testing.T) {
 		t.Errorf("no %q; texts %q", want, manager.Texts())
 	}
 
-	// The window opens on the list the next time.
+	// The window opens on the list the next time, its file to choose.
 	_, tt = openImport(t, a, p)
+	if err := tt.Click(locales.ChooseFile()); err != nil {
+		t.Fatal(err)
+	}
+	p.until(t, "the list read", func() bool { return !a.imp.busy && a.imp.src != nil })
+	tt.Frame()
 	if a.imp.source.Kind != listSource || !tt.HasText(locales.ImportPresent("app-1")) {
 		t.Errorf("opened on %s; texts %q", a.imp.source.Kind, tt.Texts())
 	}

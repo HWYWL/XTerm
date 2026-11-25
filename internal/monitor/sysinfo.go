@@ -13,7 +13,7 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
-// SysInfo is what the system info popover shows about a server: what it
+// SysInfo is what the system info dialog shows about a server: what it
 // is, rather than how busy it is.
 type SysInfo struct {
 	Hostname  string
@@ -29,6 +29,51 @@ type SysInfo struct {
 	Uptime    time.Duration
 	Addrs     []Addr
 	Disks     []BlockDevice
+
+	// The rest of the dialog, as QuickTerm's: what /proc and df say.
+	Load     string // the three numbers of /proc/loadavg
+	UptimeUp string // uptime -p: "up 2 weeks, 3 days"
+	IPs      string // hostname -I
+	CPUFreq  string // cpu MHz
+	CPUCache string // cache size
+	CPUBogo  string // bogomips
+	GPU      string // lspci's display controller, if it has one
+	Mem      Memory // the rest of /proc/meminfo
+	Swap     Memory // total and free of the swap
+	Usage    CPUUsage
+	Nets     []NetIface
+	FS       []Filesystem
+}
+
+// Memory is what /proc/meminfo says, in bytes.
+type Memory struct {
+	Total     uint64
+	Available uint64 // MemAvailable, else MemFree
+	Free      uint64
+	Buffers   uint64
+	Cached    uint64
+}
+
+// Cached is what Linux can drop to give memory back: buffers and cache.
+func (m Memory) CachedTotal() uint64 { return m.Buffers + m.Cached }
+
+// CPUUsage is the cpu line of /proc/stat in percent: one sample, so idle
+// is since boot, not now.
+type CPUUsage struct {
+	User, Nice, System, Idle, IOWait, IRQ, SoftIRQ, Steal float64
+}
+
+// NetIface is one line of /proc/net/dev: its bytes since boot.
+type NetIface struct {
+	Name   string
+	Rx, Tx uint64
+}
+
+// Filesystem is one line of df -kP.
+type Filesystem struct {
+	Name              string
+	Size, Used, Avail uint64 // bytes
+	Mount             string
 }
 
 // Addr is an address of the server, with its prefix length: 10.0.0.5/24.
@@ -59,8 +104,18 @@ m release; head -n 1 /etc/redhat-release 2>/dev/null || head -n 1 /etc/issue 2>/
 m cpuinfo; grep -E '^(processor|model name|physical id|core id|Hardware|Model|cpu model|Processor)[[:space:]]*:' /proc/cpuinfo 2>/dev/null
 m lscpu; lscpu 2>/dev/null | grep -E '^[[:space:]]*(Model name|Socket\(s\)|Core\(s\) per socket):'
 m nproc; nproc 2>/dev/null || getconf _NPROCESSORS_ONLN 2>/dev/null
-m meminfo; grep -E '^(MemTotal|SwapTotal):' /proc/meminfo 2>/dev/null
+m meminfo; grep -E '^(MemTotal|MemAvailable|MemFree|Buffers|Cached|SwapTotal|SwapFree):' /proc/meminfo 2>/dev/null
 m uptime; cat /proc/uptime 2>/dev/null
+m uptext; uptime -p 2>/dev/null
+m load; cut -d' ' -f1-3 /proc/loadavg 2>/dev/null
+m ips; hostname -I 2>/dev/null
+m stat; head -n 1 /proc/stat 2>/dev/null
+m freq; grep -i '^cpu MHz' /proc/cpuinfo 2>/dev/null | head -n 1
+m cache; grep -i '^cache size' /proc/cpuinfo 2>/dev/null | head -n 1
+m bogo; grep -i '^bogomips' /proc/cpuinfo 2>/dev/null | head -n 1
+m gpu; lspci 2>/dev/null | grep -Ei 'VGA|3D|Display' | head -n 1
+m netdev; cat /proc/net/dev 2>/dev/null
+m df; df -kP 2>/dev/null
 m addr; ip -o addr show 2>/dev/null || ifconfig -a 2>/dev/null
 m disks; for d in /sys/block/*; do
   [ -r "$d/size" ] || continue
@@ -175,7 +230,132 @@ func ParseSysInfo(out string) SysInfo {
 	info.Uptime = parseUptime(sec["uptime"]).Round(time.Second)
 	info.Addrs = parseAddrs(sec["addr"])
 	info.Disks = parseBlockDevices(sec["disks"])
+
+	// The rest of the dialog. What a server lacks stays empty, and the
+	// dialog shows it as "-".
+	info.Load = firstLine(sec["load"])
+	info.UptimeUp = firstLine(sec["uptext"])
+	info.IPs = firstLine(sec["ips"])
+	info.CPUFreq = colonValue(sec["freq"])
+	info.CPUCache = colonValue(sec["cache"])
+	info.CPUBogo = colonValue(sec["bogo"])
+	info.GPU = parseGPU(sec["gpu"])
+	info.Mem = Memory{
+		Total:     mem["MemTotal"],
+		Available: mem["MemAvailable"],
+		Free:      mem["MemFree"],
+		Buffers:   mem["Buffers"],
+		Cached:    mem["Cached"],
+	}
+	if info.Mem.Available == 0 {
+		info.Mem.Available = info.Mem.Free
+	}
+	info.Swap = Memory{Total: mem["SwapTotal"], Available: mem["SwapFree"], Free: mem["SwapFree"]}
+	info.Usage = parseCPUUsage(firstLine(sec["stat"]))
+	info.Nets = parseNetDev(sec["netdev"])
+	info.FS = parseDF(sec["df"])
 	return info
+}
+
+// colonValue is what follows the colon of a /proc/cpuinfo line, with its
+// spaces trimmed: " 3.5 GHz" of "cache size	: 3.5 GHz".
+func colonValue(s string) string {
+	_, v, ok := strings.Cut(firstLine(s), ":")
+	if !ok {
+		return ""
+	}
+	return strings.TrimSpace(v)
+}
+
+// parseGPU keeps the controller's name of lspci's line, without the PCI
+// address: "NVIDIA Corporation GA104 [GeForce RTX 3070]".
+func parseGPU(s string) string {
+	l := firstLine(s)
+	if i := strings.Index(l, ": "); i >= 0 {
+		if j := strings.Index(l[i+2:], ": "); j >= 0 {
+			return strings.TrimSpace(l[i+2+j+2:])
+		}
+		return strings.TrimSpace(l[i+2:])
+	}
+	return strings.TrimSpace(l)
+}
+
+// parseCPUUsage reads the cpu line of /proc/stat: cpu user nice system
+// idle iowait irq softirq steal, in jiffies, as percent of their sum.
+func parseCPUUsage(line string) CPUUsage {
+	f := strings.Fields(line)
+	if len(f) < 5 || f[0] != "cpu" {
+		return CPUUsage{}
+	}
+	var v [8]float64
+	total := 0.0
+	for i := range v {
+		if i+1 < len(f) {
+			n, _ := strconv.ParseFloat(f[i+1], 64)
+			v[i] = n
+		}
+		total += v[i]
+	}
+	if total <= 0 {
+		return CPUUsage{}
+	}
+	pct := func(i int) float64 { return v[i] / total * 100 }
+	return CPUUsage{
+		User: pct(0), Nice: pct(1), System: pct(2), Idle: pct(3),
+		IOWait: pct(4), IRQ: pct(5), SoftIRQ: pct(6), Steal: pct(7),
+	}
+}
+
+// parseNetDev reads /proc/net/dev: "eth0: rxbytes ... txbytes ...".
+func parseNetDev(s string) []NetIface {
+	var nets []NetIface
+	for _, l := range lines(s) {
+		name, rest, ok := strings.Cut(l, ":")
+		if !ok {
+			continue
+		}
+		name = strings.TrimSpace(name)
+		if name == "" || strings.HasPrefix(name, "Inter-") || strings.HasPrefix(name, "face") {
+			continue
+		}
+		f := strings.Fields(rest)
+		if len(f) < 9 {
+			continue
+		}
+		rx, err1 := strconv.ParseUint(f[0], 10, 64)
+		tx, err2 := strconv.ParseUint(f[8], 10, 64)
+		if err1 != nil || err2 != nil {
+			continue
+		}
+		nets = append(nets, NetIface{Name: name, Rx: rx, Tx: tx})
+	}
+	return nets
+}
+
+// parseDF reads df -kP: filesystem, 1024-byte blocks, used, available,
+// capacity, mount point.
+func parseDF(s string) []Filesystem {
+	var fss []Filesystem
+	for _, l := range lines(s) {
+		f := strings.Fields(l)
+		if len(f) < 6 || f[0] == "Filesystem" {
+			continue
+		}
+		size, err1 := strconv.ParseUint(f[1], 10, 64)
+		used, err2 := strconv.ParseUint(f[2], 10, 64)
+		avail, err3 := strconv.ParseUint(f[3], 10, 64)
+		if err1 != nil || err2 != nil || err3 != nil {
+			continue
+		}
+		fss = append(fss, Filesystem{
+			Name:  f[0],
+			Size:  size * 1024,
+			Used:  used * 1024,
+			Avail: avail * 1024,
+			Mount: strings.Join(f[5:], " "),
+		})
+	}
+	return fss
 }
 
 func lines(s string) []string {

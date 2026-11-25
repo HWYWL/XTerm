@@ -112,14 +112,19 @@ func (a *App) openWindow(spec WindowSpec, view func(c *ui.Context)) {
 	kind, title, sheet, ownKeys, closed := spec.Kind, spec.Title, spec.Modal && sheets, spec.OwnKeys, spec.Closed
 	a.plat.OpenWindow(spec, func(c *ui.Context) {
 		useTheme(c)
-		// The window's own sky, as the main window's: without it the dialog
-		// shows the system's background, not the app's.
-		a.aurora(c, kind)
+		// The window's own background, as the main window's: without it the
+		// dialog shows the system's, not the app's.
+		a.backdrop(c, kind)
 		if !ownKeys && (c.Shortcut(0, ui.KeyEscape) || a.closeWindowShortcut(c)) {
 			a.closeWindow(kind)
 		}
 		if !sheet {
-			view(c)
+			// The bar the window's buttons sit in, as the main window's:
+			// the window has no title bar of its own.
+			ui.Column(c).Fill().Children(func() {
+				a.chromeBar(c, title())
+				ui.Column(c).Grow(1).MinHeight(0).Children(func() { view(c) })
+			})
 			return
 		}
 		ui.Column(c).Fill().Children(func() {

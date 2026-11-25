@@ -72,6 +72,10 @@ func openTable(t *testing.T, a *App, p *fakePlatform, path string) *ui.Tester {
 	if a.imp.source.Kind != importer.Table {
 		t.Fatalf("opened on %s", a.imp.source.Kind)
 	}
+	// The window comes up alone: its button opens the chooser.
+	if err := tt.Click(locales.ChooseFile()); err != nil {
+		t.Fatalf("%v; texts %q", err, tt.Texts())
+	}
 	p.until(t, "the list read", func() bool { return !a.imp.busy })
 	tt.Frame()
 	return tt

@@ -119,9 +119,9 @@ func TestImportSSHConfigChooseFile(t *testing.T) {
 	findSSHConfig(a, func() string { return "" })
 	a.importKind = importer.SSHConfig
 	_, tt := openImport(t, a, p)
-	picks := p.typedPicks()
-	if len(picks) != 1 || picks[0].title != locales.ChooseSSHConfigFile() || picks[0].typeName != "" || picks[0].extensions != nil {
-		t.Fatalf("picks %+v", picks)
+	// The window comes up alone: its button opens the chooser.
+	if picks := p.typedPicks(); len(picks) != 0 {
+		t.Fatalf("the chooser opened with the window: %+v", picks)
 	}
 	if !tt.HasText(locales.ImportSSHConfigNotFound(sshConfigPath(runtime.GOOS))) {
 		t.Errorf("texts %q", tt.Texts())
@@ -133,6 +133,9 @@ func TestImportSSHConfigChooseFile(t *testing.T) {
 	}
 	p.until(t, "the file read", func() bool { return !a.imp.busy && a.imp.src != nil })
 	tt.Frame()
+	if picks := p.typedPicks(); len(picks) != 1 || picks[0].title != locales.ChooseSSHConfigFile() || picks[0].typeName != "" || picks[0].extensions != nil {
+		t.Fatalf("picks %+v", picks)
+	}
 	if !tt.HasText("work-1") || !tt.HasText(locales.ImportCount(2)) {
 		t.Errorf("texts %q", tt.Texts())
 	}

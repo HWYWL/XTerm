@@ -1,7 +1,7 @@
 # XTerm
 
 An SSH client in Go laid out like FinalShell, with vertical session tabs,
-developed from [FinalShell](https://github.com/TooonyChen/finallyshell).
+developed from [FinallyShell](https://github.com/TooonyChen/finallyshell).
 UI: MyGo native UI (`github.com/egoist/mygo/ui`); terminal: MyGo's terminal
 plugin (libghostty-vt). See docs/zh-CN/development.md for the package layout.
 

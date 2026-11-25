@@ -126,6 +126,50 @@ func Sparkline(c *ui.Context, n int, series [][]float64, colors []ui.Color, form
 	})
 }
 
+// Donut is a ring gauge: the track round, then the part of it filled to
+// frac, from the top round clockwise, the text in the middle and the
+// label under it. Three of them share a row, the sides equal.
+func Donut(c *ui.Context, label string, frac float64, text string, color ui.Color) {
+	t := c.Theme()
+	frac = math.Max(0, math.Min(1, frac))
+	ui.Column(c).Grow(1).Shrink(1).MinWidth(0).Gap(2).AlignItems(ui.Center).Children(func() {
+		ui.Box(c).Size(46, 46).Shrink(0).Center().Draw(func(p *ui.Painter, r ui.Rect) {
+			drawDonut(p, r, frac, color, t.TextMuted.Alpha(0.22))
+		}).Children(func() {
+			ui.Text(c, text).FontSize(11).TextColor(color).SingleLine()
+		})
+		ui.Text(c, label).FontSize(11).TextColor(t.TextMuted).SingleLine()
+	})
+}
+
+// drawDonut strokes the ring: the track all the way round, then the part
+// of it filled, whose arc is drawn a segment at a time from the top.
+func drawDonut(p *ui.Painter, r ui.Rect, frac float64, color, track ui.Color) {
+	cx, cy := r.X+r.W/2, r.Y+r.H/2
+	rad := min(r.W, r.H)/2 - 3
+	if rad <= 0 {
+		return
+	}
+	arc := func(sweep float64) *ui.Path {
+		var path ui.Path
+		steps := max(int(sweep*8), 2)
+		for i := 0; i <= steps; i++ {
+			a := -math.Pi/2 + sweep*float64(i)/float64(steps)
+			x, y := cx+rad*float32(math.Cos(a)), cy+rad*float32(math.Sin(a))
+			if i == 0 {
+				path.MoveTo(x, y)
+			} else {
+				path.LineTo(x, y)
+			}
+		}
+		return &path
+	}
+	p.StrokePath(arc(2*math.Pi), 4, track)
+	if frac > 0 {
+		p.StrokePath(arc(2*math.Pi*frac), 4, color)
+	}
+}
+
 // Field is a form row: a label, then what fn builds.
 func Field(c *ui.Context, label string, fn func()) {
 	ui.Row(c).Gap(10).Children(func() {

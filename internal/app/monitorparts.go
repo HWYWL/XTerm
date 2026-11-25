@@ -18,6 +18,7 @@ const (
 	partCPU       = "cpu"       // the CPU, memory and swap bars
 	partProcesses = "processes" // the top-processes table
 	partNetwork   = "network"   // the speeds row and its graph
+	partLocalNet  = "localnet"  // this computer's speeds and graph
 	partLatency   = "latency"   // the latency row and its graph
 	partDisks     = "disks"     // the disk table
 )
@@ -29,6 +30,7 @@ var monitorParts = []monitorPart{
 	{partCPU, locales.MonitorPartCpu},
 	{partProcesses, locales.MonitorPartProcesses},
 	{partNetwork, locales.MonitorPartNetwork},
+	{partLocalNet, locales.LocalNet},
 	{partLatency, locales.MonitorPartLatency},
 	{partDisks, locales.MonitorPartDisks},
 }

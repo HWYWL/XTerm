@@ -179,11 +179,14 @@ func localUnavailable(c *ui.Context) {
 }
 
 // localMonitor is the server monitor's place for a local terminal: a
-// muted line, no stats, no polling.
-func localMonitor(c *ui.Context) {
-	ui.Row(c).FillWidth().Padding(10, 10, 8, 10).Gap(6).AlignItems(ui.Center).Children(func() {
-		ui.Icon(c, icons.Get("laptop")).FontSize(14).TextColor(theme.TextMuted)
-		widgets.Muted(c, locales.LocalTerminal()).SingleLine().MinWidth(0).Shrink(1)
+// muted line, then this computer's traffic — the one server it has.
+func (a *App) localMonitor(c *ui.Context) {
+	ui.Column(c).FillWidth().Padding(10, 10, 8, 10).Gap(6).Children(func() {
+		ui.Row(c).Gap(6).AlignItems(ui.Center).Children(func() {
+			ui.Icon(c, icons.Get("laptop")).FontSize(14).TextColor(theme.TextMuted)
+			widgets.Muted(c, locales.LocalTerminal()).SingleLine().MinWidth(0).Shrink(1)
+		})
+		localNetGraph(c, &a.localNet)
 	})
 }
 

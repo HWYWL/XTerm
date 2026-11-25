@@ -223,6 +223,10 @@ type App struct {
 	danger    dangerState
 	perf      perfState
 	storage   storageState
+	// This computer's traffic, and whether it is being sampled
+	// (localtraffic.go).
+	localNet      localTraffic
+	localWatching bool
 	runCmd    runCmdState
 	guard     dangerGuardState
 
@@ -270,8 +274,8 @@ type App struct {
 	// The file panel's dialog: a rename, a new folder or file, a delete.
 	fileDlg *fileDialog
 
-	// The System info popover, and what reads it (readSysInfo when nil).
-	sysInfo     sysInfoPopover
+	// The System info dialog, and what reads it (readSysInfo when nil).
+	sysInfo     sysInfoState
 	readSysInfo sysInfoReader
 
 	// keepAliveUnit is how long a second of the keepalive setting is: a
@@ -365,7 +369,7 @@ func (a *App) current() *Session {
 func (a *App) View(c *ui.Context) {
 	defer a.stopUnseenPolls()
 	useTheme(c)
-	a.aurora(c, WindowMain)
+	a.backdrop(c, WindowMain)
 	a.showNotices(c)
 	a.shortcuts(c)
 	a.saveLayoutAtRest(c)

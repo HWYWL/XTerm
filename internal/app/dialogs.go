@@ -10,6 +10,7 @@ import (
 )
 
 func (a *App) dialogs(c *ui.Context) {
+	a.sysInfoDialog(c)
 	a.closeAskView(c)
 	ui.Modal(c, &a.pwOpen, func() { a.passwordView(c) })
 	a.passwordCancelled()

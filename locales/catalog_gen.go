@@ -2046,6 +2046,336 @@ func (msgs Messages) SysInfoOff() string {
 	return Catalog.Format(msgs.locale, "sysInfoOff", nil)
 }
 
+// SysOverview says "Overview"
+// in the language the app shows.
+func SysOverview() string { return In(i18n.Locale()).SysOverview() }
+
+// SysOverview says "Overview"
+// in the language of msgs.
+func (msgs Messages) SysOverview() string {
+	return Catalog.Format(msgs.locale, "sysOverview", nil)
+}
+
+// SysLoad says "Load"
+// in the language the app shows.
+func SysLoad() string { return In(i18n.Locale()).SysLoad() }
+
+// SysLoad says "Load"
+// in the language of msgs.
+func (msgs Messages) SysLoad() string {
+	return Catalog.Format(msgs.locale, "sysLoad", nil)
+}
+
+// SysIPs says "IP"
+// in the language the app shows.
+func SysIPs() string { return In(i18n.Locale()).SysIPs() }
+
+// SysIPs says "IP"
+// in the language of msgs.
+func (msgs Messages) SysIPs() string {
+	return Catalog.Format(msgs.locale, "sysIPs", nil)
+}
+
+// SysGpu says "GPU"
+// in the language the app shows.
+func SysGpu() string { return In(i18n.Locale()).SysGpu() }
+
+// SysGpu says "GPU"
+// in the language of msgs.
+func (msgs Messages) SysGpu() string {
+	return Catalog.Format(msgs.locale, "sysGpu", nil)
+}
+
+// SysCpuUsage says "CPU usage"
+// in the language the app shows.
+func SysCpuUsage() string { return In(i18n.Locale()).SysCpuUsage() }
+
+// SysCpuUsage says "CPU usage"
+// in the language of msgs.
+func (msgs Messages) SysCpuUsage() string {
+	return Catalog.Format(msgs.locale, "sysCpuUsage", nil)
+}
+
+// SysNetwork says "Network interfaces"
+// in the language the app shows.
+func SysNetwork() string { return In(i18n.Locale()).SysNetwork() }
+
+// SysNetwork says "Network interfaces"
+// in the language of msgs.
+func (msgs Messages) SysNetwork() string {
+	return Catalog.Format(msgs.locale, "sysNetwork", nil)
+}
+
+// SysFilesystems says "Filesystems"
+// in the language the app shows.
+func SysFilesystems() string { return In(i18n.Locale()).SysFilesystems() }
+
+// SysFilesystems says "Filesystems"
+// in the language of msgs.
+func (msgs Messages) SysFilesystems() string {
+	return Catalog.Format(msgs.locale, "sysFilesystems", nil)
+}
+
+// SysNoData says "No data"
+// in the language the app shows.
+func SysNoData() string { return In(i18n.Locale()).SysNoData() }
+
+// SysNoData says "No data"
+// in the language of msgs.
+func (msgs Messages) SysNoData() string {
+	return Catalog.Format(msgs.locale, "sysNoData", nil)
+}
+
+// SysColName says "Name"
+// in the language the app shows.
+func SysColName() string { return In(i18n.Locale()).SysColName() }
+
+// SysColName says "Name"
+// in the language of msgs.
+func (msgs Messages) SysColName() string {
+	return Catalog.Format(msgs.locale, "sysColName", nil)
+}
+
+// SysColCores says "Cores"
+// in the language the app shows.
+func SysColCores() string { return In(i18n.Locale()).SysColCores() }
+
+// SysColCores says "Cores"
+// in the language of msgs.
+func (msgs Messages) SysColCores() string {
+	return Catalog.Format(msgs.locale, "sysColCores", nil)
+}
+
+// SysColFreq says "Frequency"
+// in the language the app shows.
+func SysColFreq() string { return In(i18n.Locale()).SysColFreq() }
+
+// SysColFreq says "Frequency"
+// in the language of msgs.
+func (msgs Messages) SysColFreq() string {
+	return Catalog.Format(msgs.locale, "sysColFreq", nil)
+}
+
+// SysColCache says "Cache"
+// in the language the app shows.
+func SysColCache() string { return In(i18n.Locale()).SysColCache() }
+
+// SysColCache says "Cache"
+// in the language of msgs.
+func (msgs Messages) SysColCache() string {
+	return Catalog.Format(msgs.locale, "sysColCache", nil)
+}
+
+// SysColBogo says "BogoMips"
+// in the language the app shows.
+func SysColBogo() string { return In(i18n.Locale()).SysColBogo() }
+
+// SysColBogo says "BogoMips"
+// in the language of msgs.
+func (msgs Messages) SysColBogo() string {
+	return Catalog.Format(msgs.locale, "sysColBogo", nil)
+}
+
+// SysColVendor says "Vendor"
+// in the language the app shows.
+func SysColVendor() string { return In(i18n.Locale()).SysColVendor() }
+
+// SysColVendor says "Vendor"
+// in the language of msgs.
+func (msgs Messages) SysColVendor() string {
+	return Catalog.Format(msgs.locale, "sysColVendor", nil)
+}
+
+// SysColDriver says "Driver"
+// in the language the app shows.
+func SysColDriver() string { return In(i18n.Locale()).SysColDriver() }
+
+// SysColDriver says "Driver"
+// in the language of msgs.
+func (msgs Messages) SysColDriver() string {
+	return Catalog.Format(msgs.locale, "sysColDriver", nil)
+}
+
+// SysColMemory says "Memory"
+// in the language the app shows.
+func SysColMemory() string { return In(i18n.Locale()).SysColMemory() }
+
+// SysColMemory says "Memory"
+// in the language of msgs.
+func (msgs Messages) SysColMemory() string {
+	return Catalog.Format(msgs.locale, "sysColMemory", nil)
+}
+
+// SysColTotal says "Total"
+// in the language the app shows.
+func SysColTotal() string { return In(i18n.Locale()).SysColTotal() }
+
+// SysColTotal says "Total"
+// in the language of msgs.
+func (msgs Messages) SysColTotal() string {
+	return Catalog.Format(msgs.locale, "sysColTotal", nil)
+}
+
+// SysColUsed says "Used"
+// in the language the app shows.
+func SysColUsed() string { return In(i18n.Locale()).SysColUsed() }
+
+// SysColUsed says "Used"
+// in the language of msgs.
+func (msgs Messages) SysColUsed() string {
+	return Catalog.Format(msgs.locale, "sysColUsed", nil)
+}
+
+// SysColFree says "Free"
+// in the language the app shows.
+func SysColFree() string { return In(i18n.Locale()).SysColFree() }
+
+// SysColFree says "Free"
+// in the language of msgs.
+func (msgs Messages) SysColFree() string {
+	return Catalog.Format(msgs.locale, "sysColFree", nil)
+}
+
+// SysColUsage says "Usage"
+// in the language the app shows.
+func SysColUsage() string { return In(i18n.Locale()).SysColUsage() }
+
+// SysColUsage says "Usage"
+// in the language of msgs.
+func (msgs Messages) SysColUsage() string {
+	return Catalog.Format(msgs.locale, "sysColUsage", nil)
+}
+
+// SysColUser says "User"
+// in the language the app shows.
+func SysColUser() string { return In(i18n.Locale()).SysColUser() }
+
+// SysColUser says "User"
+// in the language of msgs.
+func (msgs Messages) SysColUser() string {
+	return Catalog.Format(msgs.locale, "sysColUser", nil)
+}
+
+// SysColSystem says "System"
+// in the language the app shows.
+func SysColSystem() string { return In(i18n.Locale()).SysColSystem() }
+
+// SysColSystem says "System"
+// in the language of msgs.
+func (msgs Messages) SysColSystem() string {
+	return Catalog.Format(msgs.locale, "sysColSystem", nil)
+}
+
+// SysColNice says "Nice"
+// in the language the app shows.
+func SysColNice() string { return In(i18n.Locale()).SysColNice() }
+
+// SysColNice says "Nice"
+// in the language of msgs.
+func (msgs Messages) SysColNice() string {
+	return Catalog.Format(msgs.locale, "sysColNice", nil)
+}
+
+// SysColIdle says "Idle"
+// in the language the app shows.
+func SysColIdle() string { return In(i18n.Locale()).SysColIdle() }
+
+// SysColIdle says "Idle"
+// in the language of msgs.
+func (msgs Messages) SysColIdle() string {
+	return Catalog.Format(msgs.locale, "sysColIdle", nil)
+}
+
+// SysColOther says "IO / IRQ / SoftIRQ / Steal"
+// in the language the app shows.
+func SysColOther() string { return In(i18n.Locale()).SysColOther() }
+
+// SysColOther says "IO / IRQ / SoftIRQ / Steal"
+// in the language of msgs.
+func (msgs Messages) SysColOther() string {
+	return Catalog.Format(msgs.locale, "sysColOther", nil)
+}
+
+// SysColSent says "Sent"
+// in the language the app shows.
+func SysColSent() string { return In(i18n.Locale()).SysColSent() }
+
+// SysColSent says "Sent"
+// in the language of msgs.
+func (msgs Messages) SysColSent() string {
+	return Catalog.Format(msgs.locale, "sysColSent", nil)
+}
+
+// SysColRecv says "Received"
+// in the language the app shows.
+func SysColRecv() string { return In(i18n.Locale()).SysColRecv() }
+
+// SysColRecv says "Received"
+// in the language of msgs.
+func (msgs Messages) SysColRecv() string {
+	return Catalog.Format(msgs.locale, "sysColRecv", nil)
+}
+
+// SysColSentRate says "Send rate"
+// in the language the app shows.
+func SysColSentRate() string { return In(i18n.Locale()).SysColSentRate() }
+
+// SysColSentRate says "Send rate"
+// in the language of msgs.
+func (msgs Messages) SysColSentRate() string {
+	return Catalog.Format(msgs.locale, "sysColSentRate", nil)
+}
+
+// SysColRecvRate says "Receive rate"
+// in the language the app shows.
+func SysColRecvRate() string { return In(i18n.Locale()).SysColRecvRate() }
+
+// SysColRecvRate says "Receive rate"
+// in the language of msgs.
+func (msgs Messages) SysColRecvRate() string {
+	return Catalog.Format(msgs.locale, "sysColRecvRate", nil)
+}
+
+// SysColSize says "Size"
+// in the language the app shows.
+func SysColSize() string { return In(i18n.Locale()).SysColSize() }
+
+// SysColSize says "Size"
+// in the language of msgs.
+func (msgs Messages) SysColSize() string {
+	return Catalog.Format(msgs.locale, "sysColSize", nil)
+}
+
+// SysColAvail says "Available"
+// in the language the app shows.
+func SysColAvail() string { return In(i18n.Locale()).SysColAvail() }
+
+// SysColAvail says "Available"
+// in the language of msgs.
+func (msgs Messages) SysColAvail() string {
+	return Catalog.Format(msgs.locale, "sysColAvail", nil)
+}
+
+// SysColMount says "Mounted on"
+// in the language the app shows.
+func SysColMount() string { return In(i18n.Locale()).SysColMount() }
+
+// SysColMount says "Mounted on"
+// in the language of msgs.
+func (msgs Messages) SysColMount() string {
+	return Catalog.Format(msgs.locale, "sysColMount", nil)
+}
+
+// SysClose says "Close"
+// in the language the app shows.
+func SysClose() string { return In(i18n.Locale()).SysClose() }
+
+// SysClose says "Close"
+// in the language of msgs.
+func (msgs Messages) SysClose() string {
+	return Catalog.Format(msgs.locale, "sysClose", nil)
+}
+
 // Retry says "Retry"
 // in the language the app shows.
 func Retry() string { return In(i18n.Locale()).Retry() }
@@ -2178,6 +2508,16 @@ func MonitorPartDisks() string { return In(i18n.Locale()).MonitorPartDisks() }
 // in the language of msgs.
 func (msgs Messages) MonitorPartDisks() string {
 	return Catalog.Format(msgs.locale, "monitorPartDisks", nil)
+}
+
+// LocalNet says "Local traffic"
+// in the language the app shows.
+func LocalNet() string { return In(i18n.Locale()).LocalNet() }
+
+// LocalNet says "Local traffic"
+// in the language of msgs.
+func (msgs Messages) LocalNet() string {
+	return Catalog.Format(msgs.locale, "localNet", nil)
 }
 
 // MonitorPartsHint says "Right-click to choose what shows"
@@ -9304,11 +9644,11 @@ func (msgs Messages) OptionsAbout() string {
 	return Catalog.Format(msgs.locale, "optionsAbout", nil)
 }
 
-// AboutIntro says "XTerm is a secondary development based on the open source project FinalShell: the layout, the code and the documentat…"
+// AboutIntro says "XTerm is a secondary development based on the open source project FinallyShell: the layout, the code and the document…"
 // in the language the app shows.
 func AboutIntro() string { return In(i18n.Locale()).AboutIntro() }
 
-// AboutIntro says "XTerm is a secondary development based on the open source project FinalShell: the layout, the code and the documentat…"
+// AboutIntro says "XTerm is a secondary development based on the open source project FinallyShell: the layout, the code and the document…"
 // in the language of msgs.
 func (msgs Messages) AboutIntro() string {
 	return Catalog.Format(msgs.locale, "aboutIntro", nil)

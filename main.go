@@ -78,7 +78,11 @@ func (p *platform) OpenWindow(spec app.WindowSpec, view func(c *ui.Context), clo
 		Parent:          parent,
 		Modal:           spec.Modal,
 		DisableMinimize: true,
-		Content:         ui.View(view),
+		// As the main window: the view draws the title bar, so that the
+		// app's background shows behind the window's buttons too
+		// (titlebar.go and openWindow in internal/app).
+		TitleBarStyle: mygo.TitleBarHidden,
+		Content:       ui.View(view),
 	})
 	child := &childWindow{win: win, title: spec.Title}
 	p.windows[spec.Kind] = child
@@ -323,6 +327,9 @@ func main() {
 		}
 		plat := &platform{windows: map[app.WindowKind]*childWindow{}}
 		a := app.New(plat)
+		// This computer's traffic, which the monitor shows beside the
+		// server's (localtraffic.go).
+		a.WatchLocalTraffic()
 		plat.closeAction, plat.setCloseAction = a.CloseAction, a.SetCloseAction
 		a.NewTab() // it starts on the start page
 		plat.win = mygo.NewWindow(mygo.WindowOptions{
@@ -332,7 +339,7 @@ func main() {
 			MinWidth:  900,
 			MinHeight: 560,
 			// The view draws the title bar under the window's buttons, so
-			// that the sky and the wallpaper show behind them too
+			// that the app's background shows behind them too
 			// (internal/app/titlebar.go).
 			TitleBarStyle: mygo.TitleBarHidden,
 			Content:       ui.View(a.View),

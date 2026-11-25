@@ -3,7 +3,7 @@
 </h1>
 
 <p align="center">
-  XTerm 是在开源项目 [FinalShell](https://github.com/TooonyChen/finallyshell) 的基础上进行**二次开发**的版本。
+  XTerm 是在开源项目 [FinallyShell](https://github.com/TooonyChen/finallyshell) 的基础上进行**二次开发**的版本。
 </p>
 
 <p align="center">
@@ -16,9 +16,9 @@
 
 ## 关于本仓库
 
-XTerm 是在开源项目 [FinalShell](https://github.com/TooonyChen/finallyshell)
+XTerm 是在开源项目 [FinallyShell](https://github.com/TooonyChen/finallyshell)
 的基础上进行**二次开发**的版本：界面布局、代码和文档都来自该项目，本仓库在其之上修改和新增。
-原作品的著作权归 Tony Chen 和 FinalShell 的贡献者所有。[LICENSE](LICENSE) 中的许可证仍然适用：非商业用途使用 PolyForm Noncommercial License 1.0.0，单位内部业务使用 PolyForm Internal Use License 1.0.0。本仓库的问题请提到本仓库的 issue 里，不要提到上游项目的 issue 里。
+原作品的著作权归 Tony Chen 和 FinallyShell 的贡献者所有。[LICENSE](LICENSE) 中的许可证仍然适用：非商业用途使用 PolyForm Noncommercial License 1.0.0，单位内部业务使用 PolyForm Internal Use License 1.0.0。本仓库的问题请提到本仓库的 issue 里，不要提到上游项目的 issue 里。
 
 XTerm 有自己的版本号，从 **0.0.1** 开始；上游项目的版本独立演进，仍在[它的仓库](https://github.com/TooonyChen/finallyshell/releases)发布。
 

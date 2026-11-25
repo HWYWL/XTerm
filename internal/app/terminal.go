@@ -16,10 +16,10 @@ func (a *App) terminalArea(c *ui.Context) {
 	}
 	colors := a.termColors()
 	termText := colors.Foreground
-	// The night glass shows the sky through the terminal, as through the
-	// panes around it: its theme's background, a little transparent. In the
-	// day the terminal keeps its own dark ground, which the light of the
-	// panes would only wash out.
+	// The night glass shows the window's background through the terminal, as
+	// through the panes around it: its theme's background, a little
+	// transparent. In the day the terminal keeps its own dark ground, which
+	// the light of the panes would only wash out.
 	bg := colors.Background
 	if theme.Dark {
 		bg.A = 176

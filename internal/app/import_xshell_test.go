@@ -121,9 +121,9 @@ func TestImportXshellExport(t *testing.T) {
 	a.importKind = importer.Xshell
 	findXshell(a, func() string { return "" })
 	_, tt := openImport(t, a, p)
-	picks := p.folderPicks()
-	if len(picks) != 1 || picks[0].parent != WindowImport || picks[0].title != locales.ChooseXshellFolder() {
-		t.Fatalf("picks %+v", picks)
+	// The window comes up alone: its button opens the chooser.
+	if picks := p.folderPicks(); len(picks) != 0 {
+		t.Fatalf("the chooser opened with the window: %+v", picks)
 	}
 	if !tt.HasText(locales.XshellNotFound()) {
 		t.Fatalf("texts %q", tt.Texts())
@@ -144,6 +144,9 @@ func TestImportXshellExport(t *testing.T) {
 	}
 	p.until(t, "the folder read", func() bool { return !a.imp.busy && a.imp.src != nil })
 	tt.Frame()
+	if picks := p.folderPicks(); len(picks) != 1 || picks[0].parent != WindowImport || picks[0].title != locales.ChooseXshellFolder() {
+		t.Fatalf("picks %+v", picks)
+	}
 	for _, s := range []string{"stage-web", "Staging / Web", "测试机", "测试", locales.ImportCount(3), locales.ImportProblems(0, 1),
 		locales.ProblemLine("sessions.xts/Staging/rlogin.xsh", locales.ProblemNotSSH())} {
 		if !tt.HasText(s) {

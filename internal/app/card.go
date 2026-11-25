@@ -21,8 +21,8 @@ func glassTone() (top, bottom ui.Color) {
 	return ui.RGBA(255, 255, 255, 0.74), ui.RGBA(255, 255, 255, 0.52)
 }
 
-// card puts what fn builds in a pane of glass over the sky the window
-// shows: bg fills it where it is not transparent, else the light of glass.
+// card puts what fn builds in a pane of glass over the window's background:
+// bg fills it where it is not transparent, else the light of glass.
 //
 // The pane keeps cardGap from the panes and the edge around it, which the
 // splits of the window count in: panes inside it are that much smaller.

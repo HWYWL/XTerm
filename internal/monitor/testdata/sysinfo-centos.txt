@@ -47,9 +47,38 @@ Socket(s):             2
 8
 ---FINALLYSHELL:meminfo---
 MemTotal:       16330708 kB
+MemAvailable:   15200000 kB
+MemFree:         8000000 kB
+Buffers:          234567 kB
+Cached:          6000000 kB
 SwapTotal:       8191996 kB
+SwapFree:        8091996 kB
 ---FINALLYSHELL:uptime---
 4021.18 31502.77
+---FINALLYSHELL:uptext---
+up 1 hour, 7 minutes
+---FINALLYSHELL:load---
+0.42 0.55 0.61
+---FINALLYSHELL:ips---
+10.10.1.20 10.10.1.21
+---FINALLYSHELL:stat---
+cpu  456789 12345 78901 8765432 4567 12 3456 0
+---FINALLYSHELL:freq---
+cpu MHz		: 2400.000
+---FINALLYSHELL:cache---
+cache size	: 12288 KB
+---FINALLYSHELL:bogo---
+bogomips	: 4800.12
+---FINALLYSHELL:gpu---
+---FINALLYSHELL:netdev---
+Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo:    1824      20    0    0    0     0          0         0     1824      20    0    0    0     0       0          0
+  eth0: 543210987  654321    0    12    0     0          0         0 234567890    9876    0    0    0     0       0          0
+---FINALLYSHELL:df---
+Filesystem     1024-blocks     Used Available Capacity Mounted on
+/dev/sda1        103212320 45678901  51234567      47% /
+/dev/sdb1        524288000 12345678 511942322       3% /data
 ---FINALLYSHELL:addr---
 1: lo    inet 127.0.0.1/8 scope host lo
 2: eth0    inet 10.10.1.20/24 brd 10.10.1.255 scope global eth0

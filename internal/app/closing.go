@@ -3,6 +3,7 @@ package app
 import (
 	"strings"
 
+	"finallyshell/internal/config"
 	"finallyshell/locales"
 )
 
@@ -15,30 +16,90 @@ type Confirmation struct {
 	OK, Cancel string
 }
 
-// The main window's close button and quitting, as the General options say:
+// The main window's close button and quitting, as the General options and
+// the tray's menu say (Settings.CloseAction):
 //
 //	                    close button                 Quit (tray menu, Cmd+Q, ...)
-//	tray on             hide to the tray             ask if sessions are open*
-//	tray off or none    ask if sessions are open*,   ask if sessions are open*,
+//	ask (the first time)  asks: quit, or the tray     ask if sessions are open*
+//	the tray            hide to the tray             ask if sessions are open*
+//	quit                ask if sessions are open*,   ask if sessions are open*,
 //	                    then quit                    then quit
 //
 // * unless "Confirm before closing" is off. A system without a tray (Linux
-// without AppIndicator) closes as with the tray off.
+// without AppIndicator) closes as with quit.
+
+// CloseAction is what closing the main window does now: config.CloseAsk
+// while the app has not been told, else the answer it remembers.
+func (a *App) CloseAction() string {
+	switch a.settings.CloseAction {
+	case config.CloseTray, config.CloseQuit:
+		return a.settings.CloseAction
+	}
+	return config.CloseAsk
+}
+
+// SetCloseAction remembers what closing the window does: config.CloseAsk to
+// ask again, config.CloseTray to keep running in the tray, or
+// config.CloseQuit to quit. The tray's menu and the options set it.
+func (a *App) SetCloseAction(action string) {
+	switch action {
+	case config.CloseTray, config.CloseQuit:
+	default:
+		action = config.CloseAsk
+	}
+	if a.CloseAction() == action {
+		return
+	}
+	a.changeSettings(func() { a.settings.CloseAction = action })
+}
 
 // CloseRequested tells whether the main window may close now, as the user
 // asks with its close button: the platform calls it on the UI thread, and
 // keeps the window open when it returns false. The app then has hidden
-// the window to the tray, or is asking whether to quit, and quits itself
-// if the user says yes.
+// the window to the tray, asked what to do, or asked whether to quit, and
+// quits itself if the user says yes.
 func (a *App) CloseRequested() bool {
 	if a.quitApproved {
 		return true // the quit closes the windows
 	}
-	if a.settings.MinimizeToTray && a.plat.HideToTray() {
-		a.closeWindows()
+	switch a.CloseAction() {
+	case config.CloseTray:
+		if a.hideToTray() {
+			return false
+		}
+		return a.QuitRequested()
+	case config.CloseQuit:
+		return a.QuitRequested()
+	}
+	a.askClose()
+	return false
+}
+
+// hideToTray hides the window behind the tray icon, closing the other
+// windows with it. It reports false, leaving the window as it is, when the
+// system has no tray.
+func (a *App) hideToTray() bool {
+	if !a.plat.HideToTray() {
 		return false
 	}
-	return a.QuitRequested()
+	a.closeWindows()
+	return true
+}
+
+// askClose shows the question over the main window, in the next frame:
+// quitting, or keeping the app in the tray, and whether to remember the
+// answer (closedialog.go).
+func (a *App) askClose() {
+	if a.closeAsk {
+		return
+	}
+	a.post(func() {
+		if a.closeAsk || a.quitApproved {
+			return
+		}
+		a.closeAsk, a.closeAskRemember = true, false
+		a.redraw()
+	})
 }
 
 // QuitRequested tells whether the app may quit now, as the tray's Quit,

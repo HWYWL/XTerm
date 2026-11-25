@@ -22,7 +22,13 @@ import (
 type platform struct {
 	win     *mygo.Window // the main window
 	windows map[app.WindowKind]*childWindow
-	tray    *mygo.Tray // while the main window is hidden in the tray
+	tray    *mygo.Tray // the tray icon, there all the while the app runs
+	trayErr bool       // the system has no tray: no retrying
+	// closeAction tells what closing the window does, as the tray's menu
+	// shows it, and setCloseAction remembers what the menu chooses
+	// (closing.go in internal/app).
+	closeAction    func() string
+	setCloseAction func(string)
 }
 
 // childWindow is an open secondary window.
@@ -317,6 +323,7 @@ func main() {
 		}
 		plat := &platform{windows: map[app.WindowKind]*childWindow{}}
 		a := app.New(plat)
+		plat.closeAction, plat.setCloseAction = a.CloseAction, a.SetCloseAction
 		a.NewTab() // it starts on the start page
 		plat.win = mygo.NewWindow(mygo.WindowOptions{
 			Title:     locales.AppTitle(),
@@ -331,8 +338,11 @@ func main() {
 			Content:       ui.View(a.View),
 		})
 		plat.win.OnLeaveFullScreen(a.WindowLeftFullScreen)
-		// The close button may hide the window to the tray, or ask first;
-		// a quit may ask too (closing.go in internal/app).
+		// The tray icon is there while the app runs: its menu shows the
+		// window again, sets what closing it does, or quits.
+		plat.ensureTray()
+		// The close button may hide the window to the tray, ask first, or
+		// quit; a quit may ask too (closing.go in internal/app).
 		plat.win.OnClose(func(e *mygo.CloseEvent) {
 			if !a.CloseRequested() {
 				e.PreventDefault()
@@ -345,10 +355,7 @@ func main() {
 		})
 		// Its children close with it, before this runs.
 		plat.win.OnClosed(func() {
-			if plat.tray != nil {
-				plat.tray.Destroy()
-				plat.tray = nil
-			}
+			plat.destroyTray()
 			a.CloseAll()
 		})
 		// The Dock icon (macOS) shows the window hidden in the tray.

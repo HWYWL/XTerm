@@ -103,6 +103,9 @@ type Platform interface {
 	// or quits. It returns false, leaving the window as it is, when the
 	// system has no tray.
 	HideToTray() bool
+	// HasTray tells whether the system has a tray to keep the app in:
+	// Windows and macOS do, and Linux with libayatana-appindicator3.
+	HasTray() bool
 	// Confirm asks q in a message box and tells whether the user chose OK.
 	// It blocks; the app calls it on a goroutine.
 	Confirm(q Confirmation) bool
@@ -257,6 +260,11 @@ type App struct {
 	// Quitting: asking whether to, or told to go ahead.
 	askingQuit, quitApproved bool
 
+	// The question the close button asks the first time: quit, or keep
+	// running in the tray, and whether to remember the answer
+	// (closedialog.go).
+	closeAsk, closeAskRemember bool
+
 	// The question before replacing files.
 	replace *replaceQuestion
 	// The file panel's dialog: a rename, a new folder or file, a delete.
@@ -357,7 +365,7 @@ func (a *App) current() *Session {
 func (a *App) View(c *ui.Context) {
 	defer a.stopUnseenPolls()
 	useTheme(c)
-	a.aurora(c)
+	a.aurora(c, WindowMain)
 	a.showNotices(c)
 	a.shortcuts(c)
 	a.saveLayoutAtRest(c)

@@ -21,6 +21,16 @@ func Dir() string {
 	return filepath.Join(d, "finallyshell")
 }
 
+// What closing the main window does, as Settings.CloseAction says.
+const (
+	// CloseAsk asks the first time, then does as remembered.
+	CloseAsk = ""
+	// CloseTray keeps the app running in the tray, its window hidden.
+	CloseTray = "tray"
+	// CloseQuit quits the app.
+	CloseQuit = "quit"
+)
+
 // Settings are the app's preferences.
 type Settings struct {
 	// Language is the language the user chose, as "en" or "zh-Hans", or ""
@@ -98,8 +108,12 @@ type Settings struct {
 	// NoAutoSelectTab opens new sessions in the background, keeping the
 	// selected one; by default a new session is selected.
 	NoAutoSelectTab bool `json:"noAutoSelectTab,omitempty"`
-	// MinimizeToTray hides the main window to a tray icon when it is
-	// closed, rather than quitting.
+	// CloseAction is what the window's close button does: CloseAsk, to
+	// ask and remember, CloseTray, to keep the app in the tray, or
+	// CloseQuit, to quit. The tray's menu sets it, as the options do.
+	CloseAction string `json:"closeAction,omitempty"`
+	// MinimizeToTray is how CloseAction was saved before the app asked:
+	// LoadSettings reads it as CloseTray, and this version writes no more.
 	MinimizeToTray bool `json:"minimizeToTray,omitempty"`
 	// NoConfirmClose quits without asking while sessions are open; by
 	// default closing the window, or quitting, asks first.
@@ -391,6 +405,15 @@ func LoadSettings() Settings {
 	var s Settings
 	if data, err := os.ReadFile(settingsPath()); err == nil {
 		json.Unmarshal(data, &s)
+	}
+	// A file saved before the app asked on closing keeps its answer.
+	if s.CloseAction == "" && s.MinimizeToTray {
+		s.CloseAction, s.MinimizeToTray = CloseTray, false
+	}
+	switch s.CloseAction {
+	case CloseTray, CloseQuit:
+	default:
+		s.CloseAction = CloseAsk
 	}
 	return s
 }

@@ -85,7 +85,7 @@ func (s SyncSettings) Remote() string {
 var (
 	syncedSettings = []string{
 		"language", "appearance",
-		"noAutoSelectTab", "minimizeToTray", "noConfirmClose", "keepAliveSeconds",
+		"noAutoSelectTab", "closeAction", "minimizeToTray", "noConfirmClose", "keepAliveSeconds",
 		"copyOnSelect", "rightClick", "noLinkClick", "wheelLines",
 		"shortcuts", "optionAsAlt",
 		"termBackspace", "termDelete", "termEncoding",

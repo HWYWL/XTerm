@@ -589,7 +589,7 @@ func TestFileEditorMacKeysAndTray(t *testing.T) {
 		t.Fatalf("Cmd+W: %d tabs", len(a.fe.tabs))
 	}
 
-	a.settings.MinimizeToTray = true
+	a.settings.CloseAction = config.CloseTray
 	w.Frame()
 	w.Type("x")
 	if a.CloseRequested() || !p.inTray || !a.windowOpen(WindowFileEditor) {

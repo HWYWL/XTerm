@@ -9,6 +9,7 @@ import (
 	"runtime"
 
 	"finallyshell/internal/app"
+	"finallyshell/internal/config"
 	"finallyshell/locales"
 
 	"github.com/egoist/mygo"
@@ -16,46 +17,103 @@ import (
 	"github.com/egoist/mygo/ui"
 )
 
-// HideToTray hides the main window behind a tray icon, which is there
-// only while the window is hidden: its menu shows the window again,
-// checks for updates or quits. On macOS the Dock icon stays, and clicking
-// it shows the window too (OnActivate in main).
-func (p *platform) HideToTray() bool {
-	if p.tray == nil {
-		tray, err := mygo.NewTray(mygo.TrayOptions{
-			ID:             "main",
-			Icon:           trayIcon(),
-			IconIsTemplate: runtime.GOOS != "linux",
-			ToolTip:        locales.AppTitle(),
-			Menu: mygo.NewMenu([]*mygo.MenuItem{
-				{Label: locales.TrayShow(), Click: func(*mygo.MenuItem, *mygo.Window) { p.showMain() }},
-				updater.MenuItem(), // its window says why when this copy cannot update
-				mygo.Separator(),
-				{Label: locales.TrayQuit(), Click: func(*mygo.MenuItem, *mygo.Window) { p.Quit() }},
-			}),
-		})
-		if err != nil {
-			// Linux without libayatana-appindicator3: the window stays,
-			// as there would be no way back to it.
-			log.Println("tray:", err)
-			return false
+// ensureTray creates the tray icon when it is not there, and returns it: it
+// is there all the while the app runs, so that its menu shows the window
+// again, sets what closing does, or quits. It returns nil, leaving the
+// window as it is, when the system has no tray (Linux without
+// libayatana-appindicator3), where there would be no way back to the window.
+func (p *platform) ensureTray() *mygo.Tray {
+	if p.tray != nil {
+		return p.tray
+	}
+	if p.trayErr {
+		return nil
+	}
+	tray, err := mygo.NewTray(mygo.TrayOptions{
+		ID:             "main",
+		Icon:           trayIcon(),
+		IconIsTemplate: runtime.GOOS != "linux",
+		ToolTip:        locales.AppTitle(),
+		Menu:           p.trayMenu(),
+	})
+	if err != nil {
+		log.Println("tray:", err)
+		p.trayErr = true
+		return nil
+	}
+	tray.OnClick(p.showMain) // a double click on Linux, where a click opens the menu
+	p.tray = tray
+	return tray
+}
+
+// updateMenuItem is the tray menu's Check for Updates…, replaced by tests:
+// the updater is used only once the app runs.
+var updateMenuItem = updater.MenuItem
+
+// trayMenu is the tray's menu: the window, the updates, what closing the
+// window does, and quitting.
+func (p *platform) trayMenu() *mygo.Menu {
+	action := ""
+	if p.closeAction != nil {
+		action = p.closeAction()
+	}
+	choose := func(choice string) func(*mygo.MenuItem, *mygo.Window) {
+		return func(*mygo.MenuItem, *mygo.Window) {
+			if p.setCloseAction != nil {
+				p.setCloseAction(choice)
+			}
+			p.refreshTrayMenu()
 		}
-		tray.OnClick(p.showMain) // a double click on Linux, where a click opens the menu
-		p.tray = tray
+	}
+	radio := func(choice, label string) *mygo.MenuItem {
+		return &mygo.MenuItem{
+			Type:    mygo.MenuItemRadio,
+			Label:   label,
+			Checked: action == choice,
+			Click:   choose(choice),
+		}
+	}
+	return mygo.NewMenu([]*mygo.MenuItem{
+		{Label: locales.TrayShow(), Click: func(*mygo.MenuItem, *mygo.Window) { p.showMain() }},
+		updateMenuItem(), // its window says why when this copy cannot update
+		mygo.Separator(),
+		{Label: locales.TrayCloseAction(), Type: mygo.MenuItemSubmenu, Submenu: []*mygo.MenuItem{
+			radio(config.CloseAsk, locales.OptionCloseAsk()),
+			radio(config.CloseTray, locales.OptionCloseTray()),
+			radio(config.CloseQuit, locales.OptionCloseQuit()),
+		}},
+		mygo.Separator(),
+		{Label: locales.TrayQuit(), Click: func(*mygo.MenuItem, *mygo.Window) { p.Quit() }},
+	})
+}
+
+// refreshTrayMenu shows the tray's menu again, with the answer the app now
+// remembers checked.
+func (p *platform) refreshTrayMenu() {
+	if p.tray != nil {
+		p.tray.SetMenu(p.trayMenu())
+	}
+}
+
+// HideToTray hides the main window behind the tray icon. It returns false,
+// leaving the window as it is, when the system has no tray.
+func (p *platform) HideToTray() bool {
+	if p.ensureTray() == nil {
+		return false
 	}
 	p.win.Hide()
 	return true
 }
 
-// showMain shows the main window hidden in the tray, and takes the tray
-// icon away.
+// HasTray tells whether the system has a tray to keep the app in.
+func (p *platform) HasTray() bool { return p.ensureTray() != nil }
+
+// showMain shows the main window, out of the tray too. On macOS the Dock
+// icon stays, and clicking it shows the window too (OnActivate in main).
 func (p *platform) showMain() {
-	if p.tray == nil {
-		return
-	}
-	p.tray.Destroy()
-	p.tray = nil
 	p.win.Show()
+	p.win.Restore()
+	p.win.Focus()
 	mygo.App.Focus()
 }
 
@@ -65,12 +123,15 @@ func (p *platform) showMain() {
 // passed on: its activation token on Wayland, AllowSetForegroundWindow on
 // Windows.
 func (p *platform) raise() {
+	p.showMain()
+}
+
+// destroyTray takes the tray icon away, as the app quits.
+func (p *platform) destroyTray() {
 	if p.tray != nil {
-		p.showMain()
-		return
+		p.tray.Destroy()
+		p.tray = nil
 	}
-	p.win.Restore()
-	p.win.Focus()
 }
 
 func (p *platform) Confirm(q app.Confirmation) bool {

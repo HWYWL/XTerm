@@ -5896,14 +5896,44 @@ func (msgs Messages) OptionAutoSelectTab() string {
 	return Catalog.Format(msgs.locale, "optionAutoSelectTab", nil)
 }
 
-// OptionMinimizeToTray says "Minimize to tray when closed"
+// OptionCloseAction says "When the window is closed"
 // in the language the app shows.
-func OptionMinimizeToTray() string { return In(i18n.Locale()).OptionMinimizeToTray() }
+func OptionCloseAction() string { return In(i18n.Locale()).OptionCloseAction() }
 
-// OptionMinimizeToTray says "Minimize to tray when closed"
+// OptionCloseAction says "When the window is closed"
 // in the language of msgs.
-func (msgs Messages) OptionMinimizeToTray() string {
-	return Catalog.Format(msgs.locale, "optionMinimizeToTray", nil)
+func (msgs Messages) OptionCloseAction() string {
+	return Catalog.Format(msgs.locale, "optionCloseAction", nil)
+}
+
+// OptionCloseAsk says "Ask every time"
+// in the language the app shows.
+func OptionCloseAsk() string { return In(i18n.Locale()).OptionCloseAsk() }
+
+// OptionCloseAsk says "Ask every time"
+// in the language of msgs.
+func (msgs Messages) OptionCloseAsk() string {
+	return Catalog.Format(msgs.locale, "optionCloseAsk", nil)
+}
+
+// OptionCloseTray says "Keep running in the background"
+// in the language the app shows.
+func OptionCloseTray() string { return In(i18n.Locale()).OptionCloseTray() }
+
+// OptionCloseTray says "Keep running in the background"
+// in the language of msgs.
+func (msgs Messages) OptionCloseTray() string {
+	return Catalog.Format(msgs.locale, "optionCloseTray", nil)
+}
+
+// OptionCloseQuit says "Quit the app"
+// in the language the app shows.
+func OptionCloseQuit() string { return In(i18n.Locale()).OptionCloseQuit() }
+
+// OptionCloseQuit says "Quit the app"
+// in the language of msgs.
+func (msgs Messages) OptionCloseQuit() string {
+	return Catalog.Format(msgs.locale, "optionCloseQuit", nil)
 }
 
 // OptionConfirmClose says "Confirm before closing the window"
@@ -6576,6 +6606,66 @@ func (msgs Messages) ConfirmQuitOK() string {
 	return Catalog.Format(msgs.locale, "confirmQuitOK", nil)
 }
 
+// CloseAskTitle says "Close XTerm?"
+// in the language the app shows.
+func CloseAskTitle() string { return In(i18n.Locale()).CloseAskTitle() }
+
+// CloseAskTitle says "Close XTerm?"
+// in the language of msgs.
+func (msgs Messages) CloseAskTitle() string {
+	return Catalog.Format(msgs.locale, "closeAskTitle", nil)
+}
+
+// CloseAskBody says "Quit the app, or keep it running in the background with your sessions?"
+// in the language the app shows.
+func CloseAskBody() string { return In(i18n.Locale()).CloseAskBody() }
+
+// CloseAskBody says "Quit the app, or keep it running in the background with your sessions?"
+// in the language of msgs.
+func (msgs Messages) CloseAskBody() string {
+	return Catalog.Format(msgs.locale, "closeAskBody", nil)
+}
+
+// CloseAskTray says "Run in Background"
+// in the language the app shows.
+func CloseAskTray() string { return In(i18n.Locale()).CloseAskTray() }
+
+// CloseAskTray says "Run in Background"
+// in the language of msgs.
+func (msgs Messages) CloseAskTray() string {
+	return Catalog.Format(msgs.locale, "closeAskTray", nil)
+}
+
+// CloseAskQuit says "Quit"
+// in the language the app shows.
+func CloseAskQuit() string { return In(i18n.Locale()).CloseAskQuit() }
+
+// CloseAskQuit says "Quit"
+// in the language of msgs.
+func (msgs Messages) CloseAskQuit() string {
+	return Catalog.Format(msgs.locale, "closeAskQuit", nil)
+}
+
+// CloseAskRemember says "Remember my choice"
+// in the language the app shows.
+func CloseAskRemember() string { return In(i18n.Locale()).CloseAskRemember() }
+
+// CloseAskRemember says "Remember my choice"
+// in the language of msgs.
+func (msgs Messages) CloseAskRemember() string {
+	return Catalog.Format(msgs.locale, "closeAskRemember", nil)
+}
+
+// CloseAskNote says "You can change it later from the tray icon's menu."
+// in the language the app shows.
+func CloseAskNote() string { return In(i18n.Locale()).CloseAskNote() }
+
+// CloseAskNote says "You can change it later from the tray icon's menu."
+// in the language of msgs.
+func (msgs Messages) CloseAskNote() string {
+	return Catalog.Format(msgs.locale, "closeAskNote", nil)
+}
+
 // ConfirmQuitUnsaved says "{count, plural, one {# file in the editor has unsaved changes. Quitting discards them.} other {# files in the editor …"
 // in the language the app shows.
 func ConfirmQuitUnsaved(count int) string { return In(i18n.Locale()).ConfirmQuitUnsaved(count) }
@@ -7064,6 +7154,16 @@ func TrayShow() string { return In(i18n.Locale()).TrayShow() }
 // in the language of msgs.
 func (msgs Messages) TrayShow() string {
 	return Catalog.Format(msgs.locale, "trayShow", nil)
+}
+
+// TrayCloseAction says "When the Window Is Closed"
+// in the language the app shows.
+func TrayCloseAction() string { return In(i18n.Locale()).TrayCloseAction() }
+
+// TrayCloseAction says "When the Window Is Closed"
+// in the language of msgs.
+func (msgs Messages) TrayCloseAction() string {
+	return Catalog.Format(msgs.locale, "trayCloseAction", nil)
 }
 
 // TrayQuit says "Quit"

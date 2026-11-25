@@ -29,6 +29,8 @@ func (p *fakeSystem) HideToTray() bool {
 	return true
 }
 
+func (p *fakeSystem) HasTray() bool { return !p.noTray }
+
 func (p *fakeSystem) Confirm(q Confirmation) bool {
 	p.mu.Lock()
 	defer p.mu.Unlock()
@@ -56,7 +58,7 @@ func TestOptionsPages(t *testing.T) {
 			t.Errorf("no entry %q; texts %q", pg.title(), tt.Texts())
 		}
 	}
-	for _, s := range []string{locales.OptionAutoSelectTab(), locales.OptionMinimizeToTray(), locales.OptionConfirmClose(), locales.FollowSystem()} {
+	for _, s := range []string{locales.OptionAutoSelectTab(), locales.OptionCloseAction(), locales.OptionCloseAsk(), locales.OptionCloseTray(), locales.OptionCloseQuit(), locales.OptionConfirmClose(), locales.FollowSystem()} {
 		if !tt.HasText(s) {
 			t.Errorf("the General page has no %q", s)
 		}
@@ -97,7 +99,7 @@ func TestOptionsPages(t *testing.T) {
 	if err := tt.Click("常规"); err != nil {
 		t.Fatal(err)
 	}
-	for _, s := range []string{"自动选中标签", "关闭时最小化到托盘", "关闭窗口前确认", "界面语言"} {
+	for _, s := range []string{"自动选中标签", "关闭窗口时", "每次询问", "在后台运行", "退出应用", "关闭窗口前确认", "界面语言"} {
 		if !tt.HasText(s) {
 			t.Errorf("no %q in Chinese; texts %q", s, tt.Texts())
 		}
@@ -116,12 +118,12 @@ func TestGeneralOptionsPersist(t *testing.T) {
 	}
 	a.openOptions()
 	tt := p.show(t, WindowOptions)
-	for _, label := range []string{locales.OptionAutoSelectTab(), locales.OptionMinimizeToTray(), locales.OptionConfirmClose()} {
+	for _, label := range []string{locales.OptionAutoSelectTab(), locales.OptionCloseTray(), locales.OptionConfirmClose()} {
 		if err := tt.Click(label); err != nil {
 			t.Fatal(err)
 		}
 	}
-	want := config.Settings{NoAutoSelectTab: true, MinimizeToTray: true, NoConfirmClose: true}
+	want := config.Settings{NoAutoSelectTab: true, CloseAction: config.CloseTray, NoConfirmClose: true}
 	if a.settings != want || config.LoadSettings() != want {
 		t.Fatalf("settings %+v, saved %+v", a.settings, config.LoadSettings())
 	}
@@ -131,7 +133,7 @@ func TestGeneralOptionsPersist(t *testing.T) {
 	if b.settings != want {
 		t.Fatalf("read back %+v", b.settings)
 	}
-	for _, label := range []string{locales.OptionAutoSelectTab(), locales.OptionMinimizeToTray(), locales.OptionConfirmClose()} {
+	for _, label := range []string{locales.OptionAutoSelectTab(), locales.OptionCloseAsk(), locales.OptionConfirmClose()} {
 		if err := tt.Click(label); err != nil {
 			t.Fatal(err)
 		}
@@ -224,29 +226,32 @@ func TestCloseAndQuit(t *testing.T) {
 		asked    bool
 		quits    bool // the app quit after the answer
 		hides    bool
+		asks     bool // the window asked quit or the tray
 		sessions int
 	}
 	for _, tc := range []struct {
-		name            string
-		tray, noConfirm bool
-		noTray          bool
+		name        string
+		closeAction string
+		noConfirm   bool
+		noTray      bool
 		step
 	}{
-		{name: "close, no sessions", step: step{allowed: true}},
-		{name: "close, sessions, yes", step: step{sessions: 1, answer: true, asked: true, quits: true}},
-		{name: "close, sessions, no", step: step{sessions: 2, asked: true}},
-		{name: "close, sessions, no confirm", noConfirm: true, step: step{sessions: 1, allowed: true}},
-		{name: "close to tray", tray: true, step: step{sessions: 1, hides: true}},
-		{name: "close to tray, no sessions", tray: true, step: step{hides: true}},
-		{name: "close, tray on but none", tray: true, noTray: true, step: step{sessions: 1, asked: true, answer: true, quits: true}},
-		{name: "quit, no sessions", tray: true, step: step{quit: true, allowed: true}},
-		{name: "quit, sessions, yes", tray: true, step: step{quit: true, sessions: 1, answer: true, asked: true, quits: true}},
-		{name: "quit, sessions, no", tray: true, step: step{quit: true, sessions: 1, asked: true}},
-		{name: "quit, sessions, no confirm", tray: true, noConfirm: true, step: step{quit: true, sessions: 1, allowed: true}},
+		{name: "close, no answer yet", step: step{asks: true}},
+		{name: "close, quit, no sessions", closeAction: config.CloseQuit, step: step{allowed: true}},
+		{name: "close, quit, sessions, yes", closeAction: config.CloseQuit, step: step{sessions: 1, answer: true, asked: true, quits: true}},
+		{name: "close, quit, sessions, no", closeAction: config.CloseQuit, step: step{sessions: 2, asked: true}},
+		{name: "close, quit, sessions, no confirm", closeAction: config.CloseQuit, noConfirm: true, step: step{sessions: 1, allowed: true}},
+		{name: "close to tray", closeAction: config.CloseTray, step: step{sessions: 1, hides: true}},
+		{name: "close to tray, no sessions", closeAction: config.CloseTray, step: step{hides: true}},
+		{name: "close, tray on but none", closeAction: config.CloseTray, noTray: true, step: step{sessions: 1, asked: true, answer: true, quits: true}},
+		{name: "quit, no sessions", closeAction: config.CloseTray, step: step{quit: true, allowed: true}},
+		{name: "quit, sessions, yes", closeAction: config.CloseTray, step: step{quit: true, sessions: 1, answer: true, asked: true, quits: true}},
+		{name: "quit, sessions, no", closeAction: config.CloseTray, step: step{quit: true, sessions: 1, asked: true}},
+		{name: "quit, sessions, no confirm", closeAction: config.CloseTray, noConfirm: true, step: step{quit: true, sessions: 1, allowed: true}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			a, p := testApp(t)
-			a.settings.MinimizeToTray, a.settings.NoConfirmClose = tc.tray, tc.noConfirm
+			a.settings.CloseAction, a.settings.NoConfirmClose = tc.closeAction, tc.noConfirm
 			p.noTray, p.answer = tc.noTray, tc.answer
 			for range tc.sessions {
 				demoSession(a, "web", "10.0.0.1")
@@ -275,6 +280,9 @@ func TestCloseAndQuit(t *testing.T) {
 			if got := p.quits > 0; got != tc.quits {
 				t.Errorf("quit %v", got)
 			}
+			if a.closeAsk != tc.asks {
+				t.Errorf("asking in the window %v", a.closeAsk)
+			}
 			if p.inTray != tc.hides {
 				t.Errorf("in the tray %v", p.inTray)
 			}
@@ -296,6 +304,7 @@ func TestCloseAndQuit(t *testing.T) {
 // A second close while the question shows asks no second question.
 func TestCloseAsksOnce(t *testing.T) {
 	a, p := testApp(t)
+	a.settings.CloseAction = config.CloseQuit // the close button asks about the sessions
 	demoSession(a, "web", "10.0.0.1")
 	block := make(chan struct{})
 	p.answer = false

@@ -756,7 +756,10 @@
   "optionsComingLater": "These options are coming in a later version.",
   "optionsTabsAndWindow": "Tabs and window",
   "optionAutoSelectTab": "Select new tabs automatically",
-  "optionMinimizeToTray": "Minimize to tray when closed",
+  "optionCloseAction": "When the window is closed",
+  "optionCloseAsk": "Ask every time",
+  "optionCloseTray": "Keep running in the background",
+  "optionCloseQuit": "Quit the app",
   "optionConfirmClose": "Confirm before closing the window",
   "optionConfirmCloseNote": "Asks only while sessions are connected or connecting.",
   "optionsConnections": "Connections",
@@ -838,6 +841,12 @@
     }
   },
   "confirmQuitOK": "Quit",
+  "closeAskTitle": "Close XTerm?",
+  "closeAskBody": "Quit the app, or keep it running in the background with your sessions?",
+  "closeAskTray": "Run in Background",
+  "closeAskQuit": "Quit",
+  "closeAskRemember": "Remember my choice",
+  "closeAskNote": "You can change it later from the tray icon's menu.",
   "confirmQuitUnsaved": "{count, plural, one {# file in the editor has unsaved changes. Quitting discards them.} other {# files in the editor have unsaved changes. Quitting discards them.}}",
   "@confirmQuitUnsaved": {
     "placeholders": {
@@ -917,6 +926,7 @@
   "editorConflictGone": "{name} was removed from the server",
   "editorConflictBody": "It changed after you opened it. Overwrite it with your text, or reload it from the server? Undo brings your text back after a reload.",
   "trayShow": "Show XTerm",
+  "trayCloseAction": "When the Window Is Closed",
   "trayQuit": "Quit",
   "optionsUpdates": "Updates",
   "updatesVersion": "Current version: {version}",

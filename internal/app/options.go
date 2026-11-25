@@ -159,9 +159,15 @@ func (a *App) generalPage(c *ui.Context) {
 		if ui.Checkbox(c, &autoSelect, locales.OptionAutoSelectTab()).Changed() {
 			a.changeSettings(func() { a.settings.NoAutoSelectTab = !autoSelect })
 		}
-		tray := a.settings.MinimizeToTray
-		if ui.Checkbox(c, &tray, locales.OptionMinimizeToTray()).Changed() {
-			a.changeSettings(func() { a.settings.MinimizeToTray = tray })
+		// What closing the window does, as the tray's menu sets it too.
+		closeNow := a.CloseAction()
+		ui.RadioGroup(c, func() {
+			ui.Radio(c, &closeNow, config.CloseAsk, locales.OptionCloseAsk())
+			ui.Radio(c, &closeNow, config.CloseTray, locales.OptionCloseTray())
+			ui.Radio(c, &closeNow, config.CloseQuit, locales.OptionCloseQuit())
+		}).Row().Gap(16).Label(locales.OptionCloseAction())
+		if closeNow != a.CloseAction() {
+			a.changeSettings(func() { a.settings.CloseAction = closeNow })
 		}
 		confirm := !a.settings.NoConfirmClose
 		if ui.Checkbox(c, &confirm, locales.OptionConfirmClose()).Changed() {

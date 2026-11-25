@@ -16,7 +16,7 @@ func TestSettings(t *testing.T) {
 	t.Setenv("FINALLYSHELL_DIR", t.TempDir())
 	want := Settings{
 		Language: "zh-Hans", SidebarWidth: 312.5, MonitorPercent: 48, TerminalPercent: 70.25, TreeWidth: 180,
-		NoAutoSelectTab: true, MinimizeToTray: true, NoConfirmClose: true,
+		NoAutoSelectTab: true, CloseAction: CloseTray, NoConfirmClose: true,
 		CopyOnSelect: true, RightClick: RightClickCopyOrPaste, NoLinkClick: true, WheelLines: 5, KeepManagerOpen: true,
 		DownloadDir: "/srv/incoming", AskDownloadDir: true,
 		TermBackspace: BackspaceCtrlH, TermDelete: DeleteDEL, TermEncoding: EncodingGBK,
@@ -38,6 +38,14 @@ func TestSettings(t *testing.T) {
 	}
 	if s := LoadSettings(); s != (Settings{Language: "en", SidebarWidth: 300}) {
 		t.Errorf("old file: %+v", s)
+	}
+	// A file saved before the app asked about closing keeps its answer:
+	// the tray.
+	if err := os.WriteFile(filepath.Join(Dir(), "settings.json"), []byte(`{"minimizeToTray": true}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if s := LoadSettings(); s.CloseAction != CloseTray || s.MinimizeToTray {
+		t.Errorf("the old setting: %+v", s)
 	}
 	// The defaults are written as nothing.
 	if err := SaveSettings(Settings{}); err != nil {

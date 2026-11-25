@@ -385,9 +385,12 @@ const (
 
 // The defaults of the terminal's look, which Settings leaves zero.
 const (
-	DefaultTermFontFamily    = "JetBrains Mono, Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace"
-	DefaultTermFontSize      = 13.5
-	DefaultTermTheme         = "Tomorrow Night"
+	DefaultTermFontFamily = "JetBrains Mono, Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace"
+	DefaultTermFontSize   = 13.5
+	// The color scheme when the settings choose none, one for the window's
+	// light appearance and one for its dark.
+	DefaultTermTheme         = "Electron Highlighter Day"
+	DefaultTermThemeDark     = "Abernathy"
 	DefaultBackgroundOpacity = 30
 )
 

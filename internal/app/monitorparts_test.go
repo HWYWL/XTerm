@@ -164,14 +164,19 @@ func TestMonitorDonuts(t *testing.T) {
 			t.Errorf("%q shows %d times, want the bar and the ring", label, got)
 		}
 	}
-	// The disks have no bar, only a ring.
-	if countText(tt, locales.SysDisks()) != 1 {
-		t.Errorf("%q shows %d times, want the ring", locales.SysDisks(), countText(tt, locales.SysDisks()))
+	// The disks have a bar, a ring and their section's title.
+	if countText(tt, locales.SysDisks()) != 3 {
+		t.Errorf("%q shows %d times, want the bar, the ring and the title", locales.SysDisks(), countText(tt, locales.SysDisks()))
+	}
+	// The cards under the rings: the sensor, the processes, the users.
+	if !tt.HasText("42℃") || !tt.HasText("186") || !tt.HasText(locales.CpuTemp()) || !tt.HasText(locales.Users()) {
+		t.Errorf("no cards; texts %q", tt.Texts())
 	}
 	a.settings.MonitorHidden = config.NewNames(partCPU)
 	tt.Frame()
-	if tt.HasText(locales.SysDisks()) || tt.HasText(locales.Swap()) {
-		t.Errorf("rings or bars with the CPU part hidden: texts %q", tt.Texts())
+	// The disks' own section keeps its title; the bar and the ring go.
+	if got := countText(tt, locales.SysDisks()); got != 1 || tt.HasText(locales.Swap()) {
+		t.Errorf("rings or bars with the CPU part hidden: disks %d, texts %q", got, tt.Texts())
 	}
 }
 

@@ -119,7 +119,10 @@ func demoSession(a *App, name, addr string) *Session {
 		Procs: []monitor.Proc{{RSS: 1_930_000_000, CPU: 3.3, Name: "java"}, {RSS: 118_000_000, CPU: 1.7, Name: "mysqld"}, {RSS: 467_000_000, CPU: 0.3, Name: "syncthing"}},
 		Iface: "eth0", RxRate: 126_000, TxRate: 66_000, RxHist: hist(90_000), TxHist: hist(40_000),
 		Latency: 254 * time.Millisecond, LatHist: hist(250),
-		Disks: []monitor.Disk{{Mount: "/", Avail: 4_700_000_000, Size: 25_000_000_000}},
+		Disks:     []monitor.Disk{{Mount: "/", Avail: 4_700_000_000, Size: 25_000_000_000}},
+		TempC:     42,
+		ProcTotal: 186,
+		Users:     5,
 	}
 	f := &s.files
 	f.cwd, f.pathEdit = "/lib64", "/lib64"

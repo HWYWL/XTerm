@@ -100,14 +100,13 @@ type palette struct {
 	rowLine ui.Color
 	// frame outlines the side panel's tables and divides its halves.
 	frame ui.Color
-	// procTable and diskTable fill the side panel's tables; procHead
-	// and procHeadText are the process table's header.
-	procTable, diskTable   ui.Color
-	procHead, procHeadText ui.Color
+	// procHeadText is the process table's header's text: the tables keep
+	// no background, only their border.
+	procHeadText ui.Color
 	// cpu, mem and swap fill the side panel's usage bars, with the
 	// theme's text over them. cpuRing, memRing and diskRing stroke the
 	// monitor's ring gauges, which need a color that reads on its own.
-	cpu, mem, swap         ui.Color
+	cpu, mem, swap, disk    ui.Color
 	cpuRing, memRing, diskRing ui.Color
 	// tx and rx are the upload and download speeds.
 	tx, rx ui.Color
@@ -130,9 +129,6 @@ var lightColors = palette{
 	line:          ui.RGBA(13, 23, 40, 0.07),
 	rowLine:       ui.RGBA(13, 23, 40, 0.04),
 	frame:         ui.RGBA(13, 23, 40, 0.10),
-	procTable:     ui.RGBA(255, 255, 255, 0.45),
-	diskTable:     ui.RGBA(255, 255, 255, 0.55),
-	procHead:      ui.RGBA(10, 124, 255, 0.16),
 	procHeadText:  ui.Hex("#0d1728"),
 	cpu:           ui.RGBA(18, 168, 120, 0.45),
 	mem:           ui.RGBA(184, 121, 10, 0.35),
@@ -140,6 +136,7 @@ var lightColors = palette{
 	cpuRing:       ui.Hex("#12a878"),
 	memRing:       ui.Hex("#b8790a"),
 	diskRing:      ui.Hex("#0a7cff"),
+	disk:          ui.RGBA(139, 92, 246, 0.35),
 	tx:            ui.Hex("#c2580a"),
 	rx:            ui.Hex("#0b8256"),
 	tableHead:     ui.RGBA(255, 255, 255, 0.60),
@@ -160,9 +157,6 @@ var darkColors = palette{
 	line:          ui.RGBA(255, 255, 255, 0.060),
 	rowLine:       ui.RGBA(255, 255, 255, 0.035),
 	frame:         ui.RGBA(255, 255, 255, 0.115),
-	procTable:     ui.RGBA(255, 255, 255, 0.030),
-	diskTable:     ui.RGBA(255, 255, 255, 0.030),
-	procHead:      ui.RGBA(99, 200, 255, 0.20),
 	procHeadText:  ui.Hex("#e9eefb"),
 	cpu:           ui.RGBA(61, 220, 151, 0.55),
 	mem:           ui.RGBA(255, 200, 97, 0.55),
@@ -170,6 +164,7 @@ var darkColors = palette{
 	cpuRing:       ui.Hex("#3ddc97"),
 	memRing:       ui.Hex("#ffc861"),
 	diskRing:      ui.Hex("#63c8ff"),
+	disk:          ui.RGBA(167, 139, 250, 0.55),
 	tx:            ui.Hex("#ffb37a"),
 	rx:            ui.Hex("#7ee0c0"),
 	tableHead:     ui.RGBA(255, 255, 255, 0.045),

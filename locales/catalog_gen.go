@@ -2520,6 +2520,86 @@ func (msgs Messages) LocalNet() string {
 	return Catalog.Format(msgs.locale, "localNet", nil)
 }
 
+// RemoteNet says "Remote traffic"
+// in the language the app shows.
+func RemoteNet() string { return In(i18n.Locale()).RemoteNet() }
+
+// RemoteNet says "Remote traffic"
+// in the language of msgs.
+func (msgs Messages) RemoteNet() string {
+	return Catalog.Format(msgs.locale, "remoteNet", nil)
+}
+
+// CpuTemp says "CPU temp"
+// in the language the app shows.
+func CpuTemp() string { return In(i18n.Locale()).CpuTemp() }
+
+// CpuTemp says "CPU temp"
+// in the language of msgs.
+func (msgs Messages) CpuTemp() string {
+	return Catalog.Format(msgs.locale, "cpuTemp", nil)
+}
+
+// Users says "Users"
+// in the language the app shows.
+func Users() string { return In(i18n.Locale()).Users() }
+
+// Users says "Users"
+// in the language of msgs.
+func (msgs Messages) Users() string {
+	return Catalog.Format(msgs.locale, "users", nil)
+}
+
+// Resources says "Resources"
+// in the language the app shows.
+func Resources() string { return In(i18n.Locale()).Resources() }
+
+// Resources says "Resources"
+// in the language of msgs.
+func (msgs Messages) Resources() string {
+	return Catalog.Format(msgs.locale, "resources", nil)
+}
+
+// TopProcesses says "Top 5 processes"
+// in the language the app shows.
+func TopProcesses() string { return In(i18n.Locale()).TopProcesses() }
+
+// TopProcesses says "Top 5 processes"
+// in the language of msgs.
+func (msgs Messages) TopProcesses() string {
+	return Catalog.Format(msgs.locale, "topProcesses", nil)
+}
+
+// ByMemory says "By memory"
+// in the language the app shows.
+func ByMemory() string { return In(i18n.Locale()).ByMemory() }
+
+// ByMemory says "By memory"
+// in the language of msgs.
+func (msgs Messages) ByMemory() string {
+	return Catalog.Format(msgs.locale, "byMemory", nil)
+}
+
+// ViewAllProcesses says "View all %d processes →"
+// in the language the app shows.
+func ViewAllProcesses() string { return In(i18n.Locale()).ViewAllProcesses() }
+
+// ViewAllProcesses says "View all %d processes →"
+// in the language of msgs.
+func (msgs Messages) ViewAllProcesses() string {
+	return Catalog.Format(msgs.locale, "viewAllProcesses", nil)
+}
+
+// Mounts says "%d mounts"
+// in the language the app shows.
+func Mounts() string { return In(i18n.Locale()).Mounts() }
+
+// Mounts says "%d mounts"
+// in the language of msgs.
+func (msgs Messages) Mounts() string {
+	return Catalog.Format(msgs.locale, "mounts", nil)
+}
+
 // MonitorPartsHint says "Right-click to choose what shows"
 // in the language the app shows.
 func MonitorPartsHint() string { return In(i18n.Locale()).MonitorPartsHint() }

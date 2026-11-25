@@ -23,7 +23,9 @@ import (
 // appearance is the state of the terminal's look beyond termFont and
 // termTheme, and of the pages that set it.
 type appearance struct {
-	themeName string // the theme termTheme is, "" before it is loaded
+	// The themes termTheme and termThemeDark are, "" before they are
+	// loaded: the light and the dark one.
+	themeName, themeDark string
 
 	// The background image: the copy it is, or is to be, read from, and
 	// once read, its pixels or why it does not show. It is read on a
@@ -81,33 +83,61 @@ func sameFont(a, b terminal.Font) bool {
 		a.LineHeight == b.LineHeight && a.Thicken == b.Thicken
 }
 
-// themeName is the name of the color scheme the settings choose.
-func themeName(s config.Settings) string {
-	if s.TermTheme == "" {
-		return config.DefaultTermTheme
+// themeNames are the color schemes the settings choose: the one chosen
+// for both appearances, or, when none is, the default of each — a light
+// one and a dark one, as Ghostty's theme = light:…,dark:… does.
+func themeNames(s config.Settings) (light, dark string) {
+	if s.TermTheme != "" {
+		return s.TermTheme, s.TermTheme
 	}
-	return s.TermTheme
+	return config.DefaultTermTheme, config.DefaultTermThemeDark
 }
 
-// loadTheme is the theme of Ghostty's called name, else the default
-// one, else nil, for which the terminal follows the window.
-func loadTheme(name string) *terminal.Theme {
+// loadTheme is the theme of Ghostty's called name, else the default def,
+// else nil, for which the terminal follows the window.
+func loadTheme(name, def string) *terminal.Theme {
 	if t, err := terminal.GhosttyTheme(name); err == nil {
 		return t
 	}
-	if t, err := terminal.GhosttyTheme(config.DefaultTermTheme); err == nil {
+	if t, err := terminal.GhosttyTheme(def); err == nil {
 		return t
 	}
 	return nil
 }
 
-// termColors is the terminal's theme, never nil: the colors the area
-// around a terminal shows.
+// defaultTheme is the color scheme of the window's appearance when the
+// settings choose none.
+func (a *App) defaultTheme() string {
+	if a.dark {
+		return config.DefaultTermThemeDark
+	}
+	return config.DefaultTermTheme
+}
+
+// currentTheme is the color scheme the settings choose for the window's
+// appearance now: the one chosen, or the default of that appearance.
+func (a *App) currentTheme() string {
+	light, dark := themeNames(a.settings)
+	if a.dark {
+		return dark
+	}
+	return light
+}
+
+// termColors is the terminal's theme of the window's appearance now, for
+// the colors the area around a terminal shows: never nil, and the same
+// theme the terminals themselves have.
 func (a *App) termColors() *terminal.Theme {
+	if a.dark {
+		if a.termThemeDark != nil {
+			return a.termThemeDark
+		}
+		return terminal.DarkTheme()
+	}
 	if a.termTheme != nil {
 		return a.termTheme
 	}
-	return terminal.DarkTheme()
+	return terminal.LightTheme()
 }
 
 // appearanceOptions sets the options of a new terminal that the Font,
@@ -115,7 +145,7 @@ func (a *App) termColors() *terminal.Theme {
 // no background of its own, as the app draws it under the terminal.
 func (a *App) appearanceOptions(o *terminal.Options) {
 	o.Font = a.termFont
-	o.Theme, o.DarkTheme = a.termTheme, a.termTheme
+	o.Theme, o.DarkTheme = a.termTheme, a.termThemeDark
 	o.Transparent = true
 }
 
@@ -129,8 +159,10 @@ func (a *App) loadAppearance() lookChange {
 	font := termFontOf(a.settings)
 	ch.font = !sameFont(font, a.termFont)
 	a.termFont = font
-	if name := themeName(a.settings); name != a.look.themeName {
-		a.termTheme, a.look.themeName, ch.theme = loadTheme(name), name, true
+	if light, dark := themeNames(a.settings); light != a.look.themeName || dark != a.look.themeDark {
+		a.termTheme = loadTheme(light, config.DefaultTermTheme)
+		a.termThemeDark = loadTheme(dark, config.DefaultTermThemeDark)
+		a.look.themeName, a.look.themeDark, ch.theme = light, dark, true
 	}
 	if name := a.settings.TermBackground; name != a.look.background {
 		// Read once something shows it, as startup reads nothing.
@@ -149,7 +181,7 @@ func (a *App) applyAppearance(t *terminal.Terminal, ch lookChange) {
 		t.SetFont(a.termFont)
 	}
 	if ch.theme {
-		t.SetTheme(a.termTheme, a.termTheme)
+		t.SetTheme(a.termTheme, a.termThemeDark)
 	}
 }
 
@@ -159,8 +191,8 @@ func (a *App) updateTerminal(term *terminal.Terminal, opts terminal.Options) {
 	if !sameFont(opts.Font, a.termFont) {
 		term.SetFont(a.termFont)
 	}
-	if opts.Theme != a.termTheme {
-		term.SetTheme(a.termTheme, a.termTheme)
+	if opts.Theme != a.termTheme || opts.DarkTheme != a.termThemeDark {
+		term.SetTheme(a.termTheme, a.termThemeDark)
 	}
 }
 

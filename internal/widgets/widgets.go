@@ -69,21 +69,22 @@ func Muted(c *ui.Context, s string) ui.Element {
 // chartColors are the colors of the bars and charts around what they
 // show, for the window's theme: the track and the outline of a bar, and
 // the outline of a chart, which is filled with the theme's background.
-func chartColors(t *ui.Theme) (track, barBorder, chartBorder ui.Color) {
+// chartBorder outlines the bars and the graphs: they keep no background of
+// their own, so the panel behind them shows through, as the tables do.
+func chartBorder(t *ui.Theme) ui.Color {
 	if t.Dark {
-		return ui.Hex("#2a2a2f"), ui.Hex("#3f3f46"), ui.Hex("#2e2e33")
+		return ui.Hex("#3f3f46")
 	}
-	return ui.Hex("#e5e7eb"), ui.Hex("#d1d5db"), ui.Hex("#e5e7eb")
+	return ui.Hex("#d1d5db")
 }
 
 // UsageBar is a labeled bar filled to frac, from 0 to 1, with text over
 // it, as FinalShell's CPU and memory bars.
 func UsageBar(c *ui.Context, label string, frac float64, text string, fill ui.Color) {
 	frac = math.Max(0, math.Min(1, frac))
-	track, border, _ := chartColors(c.Theme())
 	ui.Row(c).Gap(6).Children(func() {
 		ui.Text(c, label).Width(34).Shrink(0).SingleLine()
-		ui.Box(c).Grow(1).Height(18).Background(track).Border(1, border).Clip().Children(func() {
+		ui.Box(c).Grow(1).Height(18).Radius(6).Border(1, chartBorder(c.Theme())).Clip().Children(func() {
 			ui.Box(c).Absolute().Top(0).Left(0).Bottom(0).WidthPercent(float32(frac * 100)).Background(fill)
 			ui.Row(c).Fill().PaddingX(6).AlignItems(ui.Center).ZIndex(1).Children(func() {
 				ui.Text(c, text).FontSize(12).SingleLine()
@@ -102,8 +103,7 @@ func Sparkline(c *ui.Context, n int, series [][]float64, colors []ui.Color, form
 		}
 	}
 	t := c.Theme()
-	_, _, border := chartColors(t)
-	ui.Box(c).Height(46).Background(t.Background).Border(1, border).Draw(func(p *ui.Painter, r ui.Rect) {
+	ui.Box(c).Height(46).Radius(6).Border(1, chartBorder(t)).Clip().Draw(func(p *ui.Painter, r ui.Rect) {
 		if peak <= 0 {
 			return
 		}
@@ -126,15 +126,16 @@ func Sparkline(c *ui.Context, n int, series [][]float64, colors []ui.Color, form
 	})
 }
 
-// Donut is a ring gauge: the track round, then the part of it filled to
-// frac, from the top round clockwise, the text in the middle and the
-// label under it. Three of them share a row, the sides equal.
+// Donut is a ring gauge: the track round in the border's color, the part
+// of it filled to frac from the top round clockwise, the text in the
+// middle and the label under it. Three of them share a row, the sides
+// equal.
 func Donut(c *ui.Context, label string, frac float64, text string, color ui.Color) {
 	t := c.Theme()
 	frac = math.Max(0, math.Min(1, frac))
 	ui.Column(c).Grow(1).Shrink(1).MinWidth(0).Gap(2).AlignItems(ui.Center).Children(func() {
 		ui.Box(c).Size(46, 46).Shrink(0).Center().Draw(func(p *ui.Painter, r ui.Rect) {
-			drawDonut(p, r, frac, color, t.TextMuted.Alpha(0.22))
+			drawDonut(p, r, frac, color, chartBorder(t))
 		}).Children(func() {
 			ui.Text(c, text).FontSize(11).TextColor(color).SingleLine()
 		})
@@ -142,8 +143,9 @@ func Donut(c *ui.Context, label string, frac float64, text string, color ui.Colo
 	})
 }
 
-// drawDonut strokes the ring: the track all the way round, then the part
-// of it filled, whose arc is drawn a segment at a time from the top.
+// drawDonut strokes the ring: its track all the way round, as the bars'
+// border goes all the way round, then the part of it filled, a segment at
+// a time from the top.
 func drawDonut(p *ui.Painter, r ui.Rect, frac float64, color, track ui.Color) {
 	cx, cy := r.X+r.W/2, r.Y+r.H/2
 	rad := min(r.W, r.H)/2 - 3

@@ -112,6 +112,7 @@ func (a *App) openWindow(spec WindowSpec, view func(c *ui.Context)) {
 	kind, title, sheet, ownKeys, closed := spec.Kind, spec.Title, spec.Modal && sheets, spec.OwnKeys, spec.Closed
 	a.plat.OpenWindow(spec, func(c *ui.Context) {
 		useTheme(c)
+		a.dark = c.Theme().Dark
 		// The window's own background, as the main window's: without it the
 		// dialog shows the system's, not the app's.
 		a.backdrop(c, kind)

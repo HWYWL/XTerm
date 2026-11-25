@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 
-	"finallyshell/internal/config"
 	"finallyshell/internal/widgets"
 	"finallyshell/locales"
 
@@ -36,7 +35,7 @@ func matchingThemes(query string) []string {
 // choose from, each with its colors, over a preview of the one chosen.
 func (a *App) colorsPage(c *ui.Context) {
 	st := &a.look
-	current := themeName(a.settings)
+	current := a.currentTheme()
 	ui.SearchField(c, &st.themeQuery).Placeholder(locales.SearchThemes()).Label(locales.SearchThemes()).Width(280)
 	names := matchingThemes(st.themeQuery)
 	row := slices.Index(names, current)
@@ -58,7 +57,7 @@ func (a *App) colorsPage(c *ui.Context) {
 	})
 	if row >= 0 && row < len(names) && names[row] != current {
 		name := names[row]
-		a.changeTerminalSettings(func() { a.settings.TermTheme = orZero(name, config.DefaultTermTheme) })
+		a.changeTerminalSettings(func() { a.settings.TermTheme = orZero(name, a.defaultTheme()) })
 	}
 	a.lookPreview(c, true)
 	a.lookFooter(c, locales.ThemesSource(), func() { a.settings.TermTheme = "" }, a.settings.TermTheme == "")
@@ -73,7 +72,7 @@ func (a *App) themeRow(c *ui.Context, name string, chosen bool) {
 	}
 	ui.Row(c).Gap(10).Padding(4, 8).AlignItems(ui.Center).Children(func() {
 		ui.Text(c, name).SingleLine().TextColor(color).Grow(1).MinWidth(0)
-		if name == config.DefaultTermTheme {
+		if name == a.defaultTheme() {
 			ui.Text(c, locales.ThemeDefault()).FontSize(11).TextColor(color.Alpha(0.75))
 		}
 		th := a.cachedTheme(name)

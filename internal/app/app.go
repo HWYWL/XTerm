@@ -167,7 +167,13 @@ type App struct {
 	bottomTab   int // tabFiles, tabTransfers, …
 	termFont    terminal.Font
 	termTheme   *terminal.Theme
-	look        appearance // the rest of the terminal's look
+	// termThemeDark is the terminal's theme in dark windows, which the
+	// settings choose with the light one, or default to on their own.
+	termThemeDark *terminal.Theme
+	look          appearance // the rest of the terminal's look
+	// dark is the window's appearance, as the last frame had it: the
+	// theme's colors around the terminals, and the pages that set them.
+	dark bool
 
 	// sideHidden hides the whole left side, the monitor over the session
 	// list, and the terminal takes the width (sidebarhide.go).
@@ -369,6 +375,7 @@ func (a *App) current() *Session {
 func (a *App) View(c *ui.Context) {
 	defer a.stopUnseenPolls()
 	useTheme(c)
+	a.dark = c.Theme().Dark
 	a.backdrop(c, WindowMain)
 	a.showNotices(c)
 	a.shortcuts(c)

@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"math"
+	"strconv"
 	"time"
 
 	"finallyshell/internal/icons"
@@ -106,15 +107,20 @@ func serverStats(c *ui.Context, st *monitor.Stats, hidden hiddenParts, net netPi
 			ui.Text(c, locales.LoadAverage("-"))
 		}
 		if hidden.shows(partCPU) {
+			section(c, locales.Resources(), nil)
 			widgets.UsageBar(c, locales.Cpu(), 0, "0%", colors.cpu)
 			widgets.UsageBar(c, locales.Memory(), 0, "0%", colors.mem)
 			widgets.UsageBar(c, locales.Swap(), 0, "0%", colors.swap)
+			widgets.UsageBar(c, locales.SysDisks(), 0, "0%", colors.disk)
 			donutRow(c, nil)
+			statCards(c, nil)
 		}
 		if hidden.shows(partProcesses) {
+			section(c, locales.TopProcesses(), func() { widgets.Muted(c, locales.ByMemory()) })
 			procTable(c, nil, 0, nil)
 		}
 		if hidden.shows(partNetwork) {
+			section(c, locales.RemoteNet(), nil)
 			netRow(c, 0, 0, "", "", nil)
 			widgets.Sparkline(c, monitor.HistoryLen, nil, nil, formatBytes)
 		}
@@ -122,10 +128,11 @@ func serverStats(c *ui.Context, st *monitor.Stats, hidden hiddenParts, net netPi
 			localNetGraph(c, nil)
 		}
 		if hidden.shows(partLatency) {
-			latencyRow(c, "-")
+			section(c, locales.Latency(), func() { ui.Text(c, "-").TextColor(theme.Accent) })
 			widgets.Sparkline(c, monitor.HistoryLen, nil, nil, formatMillis)
 		}
 		if hidden.shows(partDisks) {
+			section(c, locales.MonitorPartDisks(), nil)
 			diskTable(c, nil)
 		}
 		return
@@ -135,25 +142,37 @@ func serverStats(c *ui.Context, st *monitor.Stats, hidden hiddenParts, net netPi
 		ui.Text(c, locales.LoadAverage(fmt.Sprintf("%.2f, %.2f, %.2f", st.Load[0], st.Load[1], st.Load[2])))
 	}
 	if hidden.shows(partCPU) {
+		section(c, locales.Resources(), nil)
 		widgets.UsageBar(c, locales.Cpu(), st.CPU/100, fmt.Sprintf("%.0f%%", st.CPU), colors.cpu)
 		widgets.UsageBar(c, locales.Memory(), ratio(st.MemUsed, st.MemTotal), usage(st.MemUsed, st.MemTotal), colors.mem)
 		widgets.UsageBar(c, locales.Swap(), ratio(st.SwapUsed, st.SwapTotal), usage(st.SwapUsed, st.SwapTotal), colors.swap)
+		diskUsed, diskTotal := diskUsage(st.Disks)
+		widgets.UsageBar(c, locales.SysDisks(), ratio(diskUsed, diskTotal), usage(diskUsed, diskTotal), colors.disk)
 		donutRow(c, st)
+		statCards(c, st)
 	}
 	if hidden.shows(partProcesses) {
+		section(c, locales.TopProcesses(), func() { widgets.Muted(c, locales.ByMemory()) })
 		procTable(c, st.Procs, st.MemTotal, openProcs)
+		procFooter(c, openProcs, st.ProcTotal)
 	}
 	if hidden.shows(partNetwork) {
+		section(c, locales.RemoteNet(), nil)
 		netGraph(c, st, net)
 	}
 	if hidden.shows(partLocalNet) {
 		localNetGraph(c, local)
 	}
 	if hidden.shows(partLatency) {
-		latencyRow(c, formatLatency(st.Latency))
+		section(c, locales.Latency(), func() {
+			ui.Text(c, formatLatency(st.Latency)).TextColor(theme.Accent)
+		})
 		widgets.Sparkline(c, monitor.HistoryLen, [][]float64{st.LatHist}, []ui.Color{latencyChart}, formatMillis)
 	}
 	if hidden.shows(partDisks) {
+		section(c, locales.MonitorPartDisks(), func() {
+			widgets.Muted(c, fmt.Sprintf(locales.Mounts(), len(st.Disks)))
+		})
 		diskTable(c, st.Disks)
 	}
 }
@@ -175,11 +194,32 @@ func netRow(c *ui.Context, tx, rx float64, label, tip string, menu func(m *ui.Me
 	})
 }
 
-func latencyRow(c *ui.Context, latency string) {
-	ui.Row(c).Gap(8).Margin(4, 0, 0, 0).Children(func() {
-		ui.Text(c, latency).TextColor(theme.Accent)
+// section is one category of the panel: its title, the hint at its right
+// when there is one, and the line under them that keeps the categories
+// apart — the resources from the network from the processes.
+func section(c *ui.Context, title string, hint func()) {
+	ui.Row(c).Height(20).Gap(6).Margin(6, 0, 0, 0).AlignItems(ui.Center).Children(func() {
+		ui.Text(c, title).FontSize(12).FontWeight(600).SingleLine()
 		ui.Spacer(c)
-		widgets.Muted(c, locales.Latency())
+		if hint != nil {
+			hint()
+		}
+	})
+	ui.Box(c).Height(1).Margin(0, 0, 2, 0).Background(colors.frame)
+}
+
+// procFooter is the way from the few processes listed to all of them.
+func procFooter(c *ui.Context, open func(), total int) {
+	if open == nil {
+		return
+	}
+	link := ui.Row(c).Margin(4, 0, 0, 0).Cursor(ui.CursorPointer).Role(ui.RoleButton).
+		Tooltip(locales.OpenProcesses()).Label(locales.OpenProcesses())
+	if link.Clicked() {
+		open()
+	}
+	link.Children(func() {
+		ui.Text(c, fmt.Sprintf(locales.ViewAllProcesses(), total)).FontSize(12).TextColor(theme.Accent).SingleLine()
 	})
 }
 
@@ -216,24 +256,62 @@ func percentText(frac float64) string {
 	return fmt.Sprintf("%.0f%%", math.Max(0, math.Min(1, frac))*100)
 }
 
-// diskUsedRatio is how much of the disks is used, their partitions
-// summed: the ring shows them as one disk, as the bars show one server.
-func diskUsedRatio(disks []monitor.Disk) float64 {
-	var used, total uint64
+// diskUsage is how much of the disks is used, their partitions summed:
+// the bar and the ring show them as one disk, as the others show one
+// server.
+func diskUsage(disks []monitor.Disk) (used, total uint64) {
 	for _, d := range disks {
 		if d.Size > d.Avail {
 			used += d.Size - d.Avail
 		}
 		total += d.Size
 	}
+	return used, total
+}
+
+// diskUsedRatio is how much of the disks is used, from 0 to 1.
+func diskUsedRatio(disks []monitor.Disk) float64 {
+	used, total := diskUsage(disks)
 	if total == 0 {
 		return 0
 	}
 	return float64(used) / float64(total)
 }
 
+// statCards are the three numbers under the rings: the hottest sensor, the
+// processes and those logged in — what the bars and the rings leave out.
+func statCards(c *ui.Context, st *monitor.Stats) {
+	temp, procs, users := "—", "—", "—"
+	if st != nil {
+		if st.TempC > 0 {
+			temp = fmt.Sprintf("%.0f℃", st.TempC)
+		}
+		if st.ProcTotal > 0 {
+			procs = strconv.Itoa(st.ProcTotal)
+		}
+		if st.Users > 0 {
+			users = strconv.Itoa(st.Users)
+		}
+	}
+	ui.Row(c).Gap(6).Margin(0, 2, 0, 0).Children(func() {
+		monitorCard(c, locales.CpuTemp(), temp)
+		monitorCard(c, locales.MonitorPartProcesses(), procs)
+		monitorCard(c, locales.Users(), users)
+	})
+}
+
+// monitorCard is one of them: its label over its number, small enough for
+// the side panel, unlike the reports' statCard.
+func monitorCard(c *ui.Context, label, value string) {
+	ui.Column(c).Basis(0).Grow(1).Shrink(1).MinWidth(0).Gap(2).Padding(6).Radius(6).
+		Border(1, colors.frame).Children(func() {
+		ui.Text(c, label).FontSize(11).TextColor(theme.TextMuted).SingleLine()
+		ui.Text(c, value).FontSize(15).FontWeight(600).SingleLine().Ellipsis("…")
+	})
+}
+
 // localNetGraph is this computer's traffic, under the server's: the
-// speeds, then the graph of both directions, as the server's is.
+// speeds at the section's right, then the graph of both directions.
 func localNetGraph(c *ui.Context, lt *localTraffic) {
 	up, down := 0.0, 0.0
 	var upHist, downHist []float64
@@ -241,11 +319,9 @@ func localNetGraph(c *ui.Context, lt *localTraffic) {
 		up, down = lt.up, lt.down
 		upHist, downHist = lt.upHist, lt.downHist
 	}
-	ui.Row(c).Gap(8).Margin(4, 0, 0, 0).Children(func() {
+	section(c, locales.LocalNet(), func() {
 		ui.Text(c, "↑"+formatBytes(up)).TextColor(colors.tx).Shrink(0)
-		ui.Text(c, "↓"+formatBytes(down)).TextColor(colors.rx).Shrink(0)
-		ui.Spacer(c)
-		widgets.Muted(c, locales.LocalNet())
+		ui.Text(c, "  ↓"+formatBytes(down)).TextColor(colors.rx).Shrink(0)
 	})
 	widgets.Sparkline(c, monitor.HistoryLen, [][]float64{upHist, downHist}, []ui.Color{txChart, rxChart}, formatBytes)
 }
@@ -256,7 +332,9 @@ func localNetGraph(c *ui.Context, lt *localTraffic) {
 // wide as the CPU share, as QuickTerm's list has them.
 func procTable(c *ui.Context, procs []monitor.Proc, memTotal uint64, open func()) {
 	headText := colors.procHeadText
-	table := ui.Column(c).Border(1, colors.frame).Background(colors.procTable)
+	// The tables keep their border and nothing else, as the bars and the
+	// graphs: the panel's own color shows through all of them.
+	table := ui.Column(c).Radius(6).Border(1, colors.frame).Clip()
 	if open != nil {
 		table.Cursor(ui.CursorPointer).Tooltip(locales.OpenProcesses()).Role(ui.RoleButton).Label(locales.OpenProcesses())
 		if table.Clicked() {
@@ -264,7 +342,7 @@ func procTable(c *ui.Context, procs []monitor.Proc, memTotal uint64, open func()
 		}
 	}
 	table.Children(func() {
-		ui.Row(c).Background(colors.procHead).PaddingX(6).Height(20).Children(func() {
+		ui.Row(c).PaddingX(6).Height(20).Children(func() {
 			ui.Text(c, locales.Cpu()+"%").Width(44).TextColor(headText).FontSize(12)
 			ui.Text(c, locales.Memory()+"%").Width(44).TextColor(headText).FontSize(12)
 			ui.Text(c, locales.Command()).TextColor(headText).FontSize(12)
@@ -293,7 +371,7 @@ func procMemShare(p monitor.Proc, memTotal uint64) float64 {
 }
 
 func diskTable(c *ui.Context, disks []monitor.Disk) {
-	ui.Column(c).Margin(6, 0, 0, 0).Border(1, colors.frame).Background(colors.diskTable).Children(func() {
+	ui.Column(c).Margin(6, 0, 0, 0).Radius(6).Border(1, colors.frame).Clip().Children(func() {
 		ui.Row(c).PaddingX(6).Height(20).BorderWidth(0, 0, 1, 0).BorderColor(colors.line).Children(func() {
 			ui.Text(c, locales.DiskPath()).Grow(1).FontSize(12)
 			ui.Text(c, locales.DiskFreeSize()).FontSize(12)

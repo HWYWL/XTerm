@@ -162,10 +162,36 @@ func TestTerminalOptionsFromSettings(t *testing.T) {
 	}
 
 	// A theme that is gone, as a file of the user's deleted, is the
-	// default one.
+	// default one of the window's appearance.
 	a.changeTerminalSettings(func() { a.settings.TermTheme = "No Such Theme" })
-	if a.termTheme == nil || a.termTheme.Background != mustTheme(t, "Tomorrow Night").Background {
+	if a.termTheme == nil || a.termTheme.Background != mustTheme(t, config.DefaultTermTheme).Background {
 		t.Errorf("missing theme gave %+v", a.termTheme)
+	}
+}
+
+// The color scheme when none is chosen: the one of the light appearance
+// for light windows, another for dark ones, and the terminals, which
+// follow the window, get both.
+func TestTermThemeDefaults(t *testing.T) {
+	a, _ := testApp(t)
+	if a.look.themeName != config.DefaultTermTheme || a.look.themeDark != config.DefaultTermThemeDark {
+		t.Fatalf("defaults %q, %q", a.look.themeName, a.look.themeDark)
+	}
+	var o terminal.Options
+	a.appearanceOptions(&o)
+	if o.Theme == nil || o.Theme.Background != mustTheme(t, config.DefaultTermTheme).Background {
+		t.Errorf("light theme %+v", o.Theme)
+	}
+	if o.DarkTheme == nil || o.DarkTheme.Background != mustTheme(t, config.DefaultTermThemeDark).Background {
+		t.Errorf("dark theme %+v", o.DarkTheme)
+	}
+	a.dark = true
+	if got := a.termColors().Background; got != mustTheme(t, config.DefaultTermThemeDark).Background {
+		t.Errorf("dark window colors %v", got)
+	}
+	a.dark = false
+	if got := a.termColors().Background; got != mustTheme(t, config.DefaultTermTheme).Background {
+		t.Errorf("light window colors %v", got)
 	}
 }
 
@@ -180,10 +206,10 @@ func TestLookAppliesToOpenTerminals(t *testing.T) {
 	a.active = 0
 	tt := ui.NewTester(a.View, 1280, 820)
 	p.tt = tt
-	tomorrow := mustTheme(t, "Tomorrow Night").Background
+	light := mustTheme(t, config.DefaultTermTheme).Background
 	until(t, tt, "the first look", func() bool {
 		bg, h := conn.told()
-		return bg == tomorrow && h > 0
+		return bg == light && h > 0
 	})
 	_, cellH := conn.told()
 
@@ -300,7 +326,7 @@ func TestColorsPage(t *testing.T) {
 	a.openOptions()
 	tt := p.show(t, WindowOptions)
 	tt.Frame()
-	for _, s := range []string{"Tomorrow Night", locales.ThemeDefault(), locales.ThemesSource(), "tester@web-1"} {
+	for _, s := range []string{config.DefaultTermTheme, locales.ThemeDefault(), locales.ThemesSource(), "tester@web-1"} {
 		if !tt.HasText(s) {
 			t.Errorf("no %q; texts %q", s, tt.Texts())
 		}
@@ -309,7 +335,7 @@ func TestColorsPage(t *testing.T) {
 
 	a.look.themeQuery = "dracula"
 	tt.Frame()
-	if !tt.HasText("Dracula") || tt.HasText("Tomorrow Night") {
+	if !tt.HasText("Dracula") || tt.HasText(config.DefaultTermTheme) {
 		t.Fatalf("the search shows %q", tt.Texts())
 	}
 	if a.settings.TermTheme != "" {
@@ -334,8 +360,8 @@ func TestColorsPage(t *testing.T) {
 	if err := tt.Click(locales.LookRestoreDefaults()); err != nil {
 		t.Fatal(err)
 	}
-	if a.settings.TermTheme != "" || a.look.themeName != config.DefaultTermTheme {
-		t.Errorf("default: %q, %q", a.settings.TermTheme, a.look.themeName)
+	if a.settings.TermTheme != "" || a.look.themeName != config.DefaultTermTheme || a.look.themeDark != config.DefaultTermThemeDark {
+		t.Errorf("default: %q, %q, %q", a.settings.TermTheme, a.look.themeName, a.look.themeDark)
 	}
 }
 
@@ -358,7 +384,7 @@ func TestLookPagesInChinese(t *testing.T) {
 		shot  string
 	}{
 		{"字体", []string{"字体名称", "字号", "行高", "粗细", "连字", "预览", "恢复默认"}, "options-font-zh.png"},
-		{"配色", []string{"Tomorrow Night", "默认", "预览"}, "options-colors-zh.png"},
+		{"配色", []string{config.DefaultTermTheme, "默认", "预览"}, "options-colors-zh.png"},
 		{"背景图片", []string{"图片", "选择…", "移除", "填充方式", "铺满", "完整显示", "平铺", "不透明度"}, "options-background-zh.png"},
 	} {
 		if err := tt.Click(pg.title); err != nil {

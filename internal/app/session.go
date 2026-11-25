@@ -337,7 +337,7 @@ func (a *App) keepAlive() sshx.KeepAliveConfig {
 // settings have them; connect adds the shell and its hooks. It reads the
 // settings, so it runs on the UI thread.
 func (a *App) terminalOptions(h *config.Host) terminal.Options {
-	o := terminal.Options{Font: a.termFont, Theme: a.termTheme, DarkTheme: a.termTheme}
+	o := terminal.Options{Font: a.termFont, Theme: a.termTheme, DarkTheme: a.termThemeDark}
 	a.mouseOptions(&o)
 	a.keyOptions(&o)
 	a.appearanceOptions(&o)

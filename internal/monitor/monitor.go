@@ -37,6 +37,13 @@ type Stats struct {
 	LatHist   []float64 // milliseconds
 	Disks     []Disk
 
+	// TempC is the hottest sensor, in Celsius, 0 when the server has none;
+	// ProcTotal is every process, not only those listed; Users are those
+	// logged in.
+	TempC     float64
+	ProcTotal int
+	Users     int
+
 	// Ifaces are every network interface, the loopback last; Net sums
 	// those chosen. Iface and its rates and history are the busiest.
 	Ifaces []Iface
@@ -56,8 +63,8 @@ type Disk struct {
 
 const sep = "---FINALLYSHELL---"
 
-// statsScript reads everything in one round trip. It needs only /proc,
-// df and ps, as on any Linux server.
+// statsScript reads everything in one round trip. It needs only /proc, df,
+// ps, who and the sensors of /sys, as on any Linux server.
 const statsScript = `export LC_ALL=C
 cat /proc/uptime; echo ` + sep + `
 cat /proc/loadavg; echo ` + sep + `
@@ -65,7 +72,10 @@ head -1 /proc/stat; echo ` + sep + `
 grep -E '^(MemTotal|MemAvailable|SwapTotal|SwapFree):' /proc/meminfo; echo ` + sep + `
 cat /proc/net/dev; echo ` + sep + `
 df -kP -x tmpfs -x devtmpfs -x overlay -x squashfs 2>/dev/null || df -kP; echo ` + sep + `
-ps -eo rss=,pcpu=,comm= --sort=-rss 2>/dev/null | head -5
+ps -eo rss=,pcpu=,comm= --sort=-rss 2>/dev/null | head -5; echo ` + sep + `
+for f in /sys/class/thermal/thermal_zone*/temp /sys/class/hwmon/hwmon*/temp*_input; do cat "$f" 2>/dev/null; echo; done; echo ` + sep + `
+ls -d /proc/[0-9]* 2>/dev/null | wc -l; echo ` + sep + `
+who 2>/dev/null | wc -l
 `
 
 // scriptTimeout is how long a read of the stats waits for the server:
@@ -112,6 +122,17 @@ func run(ctx context.Context, client *ssh.Client, interval, timeout time.Duratio
 				net.update(&st, parts[4], time.Now())
 				st.Disks = parseDisks(parts[5])
 				st.Procs = parseProcs(parts[6])
+				// The rest came with a later version of the script: a
+				// server still answering the older one leaves them zero.
+				if len(parts) > 7 {
+					st.TempC = parseTempC(parts[7])
+				}
+				if len(parts) > 8 {
+					st.ProcTotal = parseCount(parts[8])
+				}
+				if len(parts) > 9 {
+					st.Users = parseCount(parts[9])
+				}
 			}
 		}
 		publish(cloneStats(st))
@@ -269,6 +290,38 @@ func parseDisks(s string) []Disk {
 		disks = append(disks, Disk{Mount: strings.Join(f[5:], " "), Avail: avail * 1024, Size: size * 1024})
 	}
 	return disks
+}
+
+// parseTempC reads the sensors, in millidegrees or degrees, and returns
+// the hottest in Celsius: 0 when there is none, or nothing sensible.
+func parseTempC(s string) float64 {
+	best := 0.0
+	for _, f := range strings.Fields(s) {
+		v, err := strconv.ParseFloat(f, 64)
+		if err != nil {
+			continue
+		}
+		if v >= 1000 { // millidegrees, as thermal zones report them
+			v /= 1000
+		}
+		if v > best && v <= 200 {
+			best = v
+		}
+	}
+	return best
+}
+
+// parseCount reads a count as wc -l prints it.
+func parseCount(s string) int {
+	f := strings.Fields(s)
+	if len(f) == 0 {
+		return 0
+	}
+	n, err := strconv.Atoi(f[0])
+	if err != nil || n < 0 {
+		return 0
+	}
+	return n
 }
 
 func parseProcs(s string) []Proc {

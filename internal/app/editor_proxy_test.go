@@ -245,3 +245,70 @@ func TestEditorProxyKeepsUnknownKeys(t *testing.T) {
 		t.Errorf("saved %s", *saved)
 	}
 }
+
+// TestEditorJumpPage chooses the jump host on its own page, without the
+// Proxy page's kinds: a saved host, or none.
+func TestEditorJumpPage(t *testing.T) {
+	a, p := testApp(t)
+	h := proxyEditorHosts(a)
+	a.editConnection(h)
+	tt := editorWindow(t, a, p)
+	if !tt.HasText(locales.EditorPageJumpHost()) {
+		t.Fatalf("no Jump host page; texts %q", tt.Texts())
+	}
+	a.editor.nav.Page = editorJump
+	tt.Frame()
+	if !tt.HasText(locales.JumpHostIntro()) || !tt.HasText(locales.JumpHostNone()) {
+		t.Fatalf("texts %q", tt.Texts())
+	}
+	saveShot(t, tt, "editor-jump-page-en.png")
+
+	// A saved host: the same proxy the Proxy page's jump kind makes.
+	choose(t, tt, locales.FieldJumpHost(), "bastion (jump@203.0.113.5)")
+	if a.editor.proxy.kind != config.ProxyJump || a.editor.proxy.jump != "bastion" {
+		t.Fatalf("chosen %+v", a.editor.proxy)
+	}
+	// None: directly again.
+	choose(t, tt, locales.FieldJumpHost(), locales.JumpHostNone())
+	if a.editor.proxy.kind != config.ProxyNone || a.editor.proxy.jump != "" {
+		t.Fatalf("none %+v", a.editor.proxy)
+	}
+
+	// OK saves it as the Proxy page would.
+	choose(t, tt, locales.FieldJumpHost(), "root@10.0.1.30")
+	if err := tt.Click(locales.Ok()); err != nil {
+		t.Fatal(err)
+	}
+	if want := (&config.ProxyConfig{Kind: config.ProxyJump, JumpHost: "db"}); !reflect.DeepEqual(h.Proxy, want) || a.windowOpen(WindowEditor) {
+		t.Fatalf("saved %+v", h.Proxy)
+	}
+}
+
+// A jump host replaces a SOCKS5 or HTTP proxy, and choosing none leaves
+// the proxy alone.
+func TestJumpHostReplacesTheProxy(t *testing.T) {
+	pf := proxyFields{kind: config.ProxyNone}
+	pf.setJump("jump-1")
+	if pf.kind != config.ProxyJump || pf.jump != "jump-1" {
+		t.Fatalf("a jump host: kind %q, host %q", pf.kind, pf.jump)
+	}
+	pf.setJump("")
+	if pf.kind != config.ProxyNone || pf.jump != "" {
+		t.Fatalf("no jump host: kind %q, host %q", pf.kind, pf.jump)
+	}
+
+	// A SOCKS5 proxy goes, its usual port with it.
+	pf = proxyFields{kind: config.ProxySOCKS5, addr: "127.0.0.1", port: "1080"}
+	pf.setJump("jump-1")
+	if pf.kind != config.ProxyJump || pf.jump != "jump-1" || pf.port != "" {
+		t.Fatalf("a jump host over SOCKS5: kind %q, host %q, port %q", pf.kind, pf.jump, pf.port)
+	}
+
+	// Choosing none on the Jump host page says nothing about a proxy set
+	// on the Proxy page.
+	pf = proxyFields{kind: config.ProxyHTTP, addr: "proxy", port: "3128"}
+	pf.setJump("")
+	if pf.kind != config.ProxyHTTP || pf.jump != "" || pf.port != "3128" {
+		t.Fatalf("no jump host over HTTP: kind %q, host %q, port %q", pf.kind, pf.jump, pf.port)
+	}
+}

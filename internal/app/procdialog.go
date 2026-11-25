@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"slices"
 	"strconv"
+	"time"
 
 	"finallyshell/internal/monitor"
 	"finallyshell/internal/widgets"
@@ -14,12 +15,20 @@ import (
 )
 
 // procDetailDialog is the process details as a dialog, opened by a double
-// click on a row, as QuickTerm shows them: what the process is, its
-// command line and paths, and what may be done with it.
+// click on a row, as QuickTerm shows them: what the process is, its causal
+// chain, its command line and paths, and what may be done with it.
 type procDetailDialog struct {
 	s   *Session
 	p   monitor.Process // the row's values: the CPU and memory of the list
 	tab *procTab        // what reads the details, as the tab below the list
+
+	// The causal chain, read apart from the details so the tab below the
+	// list does not pay for it.
+	chain        monitor.Causality
+	chainLoading bool
+	chainErr     error
+	chainGen     int
+	chainCancel  context.CancelFunc
 
 	msg  string // the last action's receipt
 	fail bool
@@ -32,14 +41,50 @@ func (a *App) openProcDialog(s *Session, p monitor.Process) {
 	d := &procDetailDialog{s: s, p: p, tab: &procTab{pid: p.PID, name: p.Name, start: p.Start, envRow: -1}}
 	a.processes.detail = d
 	a.readProcTab(s, d.tab)
+	a.readProcChain(d)
 }
 
-// closeProcDialog closes the dialog, stopping its read.
+// closeProcDialog closes the dialog, stopping its reads.
 func (a *App) closeProcDialog() {
-	if d := a.processes.detail; d != nil && d.tab.cancel != nil {
-		d.tab.cancel()
+	if d := a.processes.detail; d != nil {
+		if d.tab.cancel != nil {
+			d.tab.cancel()
+		}
+		if d.chainCancel != nil {
+			d.chainCancel()
+		}
 	}
 	a.processes.detail = nil
+}
+
+// readProcChain traces d's process on a goroutine: the processes that
+// started it, from init down.
+func (a *App) readProcChain(d *procDetailDialog) {
+	if d.chainCancel != nil {
+		d.chainCancel()
+	}
+	d.chainGen++
+	if d.s.status != statusConnected {
+		d.chainLoading, d.chainErr, d.chainCancel = false, errNoClient, nil
+		return
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), procTimeout)
+	gen, client, api := d.chainGen, d.s.client, a.procAPI()
+	d.chainLoading, d.chainErr, d.chainCancel = true, nil, cancel
+	go func() {
+		chain, err := api.causality(ctx, client, d.p.PID)
+		if ctx.Err() == context.DeadlineExceeded {
+			err = context.DeadlineExceeded
+		}
+		cancel()
+		a.post(func() {
+			if d.chainGen != gen {
+				return
+			}
+			d.chainLoading, d.chainCancel = false, nil
+			d.chain, d.chainErr = chain, err
+		})
+	}()
 }
 
 // procDetailDialogs draws the details dialog while it is open.
@@ -81,6 +126,32 @@ func (a *App) procDetailDialogView(c *ui.Context, d *procDetailDialog, open *boo
 					procDialogField(c, locales.ColProcCPU(), fmt.Sprintf("%.1f%%", p.CPU))
 					procDialogField(c, locales.ColProcMemory(), formatSize(int64(p.RSS)))
 					procDialogField(c, locales.ProcDialogState(), procStateText(t.d.State))
+				})
+				procDialogSection(c, locales.ProcDialogChain(), func() {
+					switch {
+					case d.chainLoading:
+						ui.Row(c).Gap(8).AlignItems(ui.Center).Children(func() {
+							ui.Spinner(c).Label(locales.ProcChainReading())
+							widgets.Muted(c, locales.ProcChainReading())
+						})
+					case d.chainErr != nil:
+						ui.Text(c, describeProcError(d.chainErr)).TextColor(theme.Danger).FontSize(12).Wrap()
+					case !d.chain.Found:
+						ui.Text(c, procChainReason(d.chain.Reason)).FontSize(12).TextColor(theme.TextMuted).Wrap()
+					default:
+						ui.Column(c).Gap(5).Children(func() {
+							for i, n := range d.chain.Nodes {
+								procChainNode(c, n, i)
+							}
+						})
+						if len(d.chain.Warnings) > 0 {
+							ui.Column(c).Gap(3).Children(func() {
+								for _, w := range d.chain.Warnings {
+									procChainWarning(c, w)
+								}
+							})
+						}
+					}
 				})
 				procDialogSection(c, locales.ProcDialogCommand(), func() {
 					ui.Text(c, orDash(p.Args)).Selectable().FontSize(12.5).Wrap()
@@ -180,6 +251,126 @@ func procStateText(state byte) string {
 		return locales.ProcStateStopped()
 	}
 	return "-"
+}
+
+// procChainNode is a process on the causal chain: its PID, where it came
+// from, who runs it and how long it has run, and its command, indented by
+// its depth under the root.
+func procChainNode(c *ui.Context, n monitor.CausalityNode, depth int) {
+	marker, color := "·", theme.TextMuted
+	if n.IsTarget {
+		marker, color = "▸", theme.Accent
+	}
+	ui.Column(c).Gap(1).PaddingStart(float32(depth) * 10).Children(func() {
+		ui.Row(c).Gap(8).AlignItems(ui.Center).Children(func() {
+			ui.Text(c, marker).FontSize(11).TextColor(color).Shrink(0)
+			ui.Text(c, strconv.Itoa(n.PID)).FontSize(12).Bold().TextColor(color).Shrink(0)
+			widgets.Muted(c, procChainKind(n.Kind)).FontSize(11).Shrink(0)
+			ui.Spacer(c)
+			ui.Text(c, procChainFacts(n)).FontSize(11).TextColor(theme.TextMuted).Shrink(1).SingleLine()
+		})
+		ui.Text(c, orDash(n.Command)).FontSize(12).PaddingStart(20).SingleLine()
+	})
+}
+
+// procChainFacts is a node's owner, state, age and memory, on one line.
+func procChainFacts(n monitor.CausalityNode) string {
+	return n.User + " · " + procStateText(n.State) + " · " + procChainAge(n.Age) + " · " + procChainRSS(n.RSS)
+}
+
+func procChainAge(seconds uint64) string {
+	if seconds == 0 {
+		return "-"
+	}
+	return formatUptime(time.Duration(seconds) * time.Second)
+}
+
+func procChainRSS(rss uint64) string {
+	if rss == 0 {
+		return "-"
+	}
+	return formatSize(int64(rss))
+}
+
+// procChainWarning is what the chain says of the target, in the color of
+// how much it matters.
+func procChainWarning(c *ui.Context, w monitor.CausalityWarning) {
+	color := theme.TextMuted
+	switch w.Level {
+	case "danger":
+		color = theme.Danger
+	case "warn":
+		color = theme.Warning
+	}
+	ui.Row(c).Gap(8).Children(func() {
+		ui.Text(c, "·").FontSize(11).TextColor(color).Shrink(0)
+		ui.Text(c, procChainWarningText(w)).FontSize(11.5).TextColor(color).Grow(1).MinWidth(0).Wrap()
+	})
+}
+
+// procChainKind says where a process on the chain came from.
+func procChainKind(kind string) string {
+	switch kind {
+	case "init":
+		return locales.ProcChainKindInit()
+	case "ssh":
+		return locales.ProcChainKindSSH()
+	case "cron":
+		return locales.ProcChainKindCron()
+	case "container":
+		return locales.ProcChainKindContainer()
+	case "multiplexer":
+		return locales.ProcChainKindMultiplexer()
+	case "shell":
+		return locales.ProcChainKindShell()
+	case "orphan":
+		return locales.ProcChainKindOrphan()
+	}
+	return locales.ProcChainKindProc()
+}
+
+// procChainWarningText is a warning of the chain, in words.
+func procChainWarningText(w monitor.CausalityWarning) string {
+	switch w.Code {
+	case "zombie":
+		return locales.ProcChainWarnZombie()
+	case "stopped":
+		return locales.ProcChainWarnStopped()
+	case "uninterruptible":
+		return locales.ProcChainWarnUninterruptible()
+	case "root":
+		return locales.ProcChainWarnRoot()
+	case "long-running":
+		return locales.ProcChainWarnLongRunning(w.Arg)
+	case "big-rss":
+		return locales.ProcChainWarnBigRSS(w.Arg)
+	case "container":
+		return locales.ProcChainWarnContainer()
+	case "ssh":
+		return locales.ProcChainWarnSSH()
+	case "adopted":
+		return locales.ProcChainWarnAdopted()
+	case "no-init":
+		return locales.ProcChainWarnNoInit()
+	case "non-root":
+		return locales.ProcChainWarnNonRoot()
+	case "no-cwd":
+		return locales.ProcChainWarnNoCwd()
+	case "injected":
+		return locales.ProcChainWarnInjected(w.Arg)
+	}
+	return w.Code
+}
+
+// procChainReason says why there is no chain.
+func procChainReason(reason string) string {
+	switch reason {
+	case "gone":
+		return locales.ProcChainReasonGone()
+	case "not-linux":
+		return locales.ProcChainReasonNotLinux()
+	}
+	return locales.ProcChainReasonNoData()
 }
 
 // reniceProcess raises d's process's nice value on a goroutine, so it

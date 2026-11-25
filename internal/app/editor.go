@@ -46,6 +46,7 @@ const (
 	editorTerminal = "terminal"
 	editorProxy    = "proxy"
 	editorTunnels  = "tunnels"
+	editorJump     = "jump"
 )
 
 // editorField names a field of the editor that can be wrong.
@@ -64,6 +65,8 @@ func (f editorField) page() string {
 	switch {
 	case f == fieldTermType:
 		return editorTerminal
+	case f == fieldJumpHost:
+		return editorJump
 	case slices.Contains(proxyFieldOrder, f):
 		return editorProxy
 	}
@@ -313,6 +316,7 @@ func (a *App) editorView(c *ui.Context) {
 		{ID: editorTerminal, Title: locales.EditorPageTerminal, View: func(c *ui.Context) { a.terminalPage(c, ed, errs, input) }},
 		{ID: editorProxy, Title: locales.EditorPageProxy, View: func(c *ui.Context) { a.proxyPage(c, ed, errs, input) }},
 		{ID: editorTunnels, Title: locales.EditorPageTunnels, View: func(c *ui.Context) { a.tunnelsPage(c, ed) }},
+		{ID: editorJump, Title: locales.EditorPageJumpHost, View: func(c *ui.Context) { a.jumpPage(c, ed, errs) }},
 	}
 	ui.Column(c).Fill().Children(func() {
 		widgets.NavPages(c, &ed.nav, pages).Grow(1).MinHeight(0)

@@ -4798,6 +4798,16 @@ func (msgs Messages) EditorPageTunnels() string {
 	return Catalog.Format(msgs.locale, "editorPageTunnels", nil)
 }
 
+// EditorPageJumpHost says "Jump host"
+// in the language the app shows.
+func EditorPageJumpHost() string { return In(i18n.Locale()).EditorPageJumpHost() }
+
+// EditorPageJumpHost says "Jump host"
+// in the language of msgs.
+func (msgs Messages) EditorPageJumpHost() string {
+	return Catalog.Format(msgs.locale, "editorPageJumpHost", nil)
+}
+
 // SectionGeneral says "General"
 // in the language the app shows.
 func SectionGeneral() string { return In(i18n.Locale()).SectionGeneral() }
@@ -5056,6 +5066,36 @@ func JumpHostNote() string { return In(i18n.Locale()).JumpHostNote() }
 // in the language of msgs.
 func (msgs Messages) JumpHostNote() string {
 	return Catalog.Format(msgs.locale, "jumpHostNote", nil)
+}
+
+// JumpHostIntro says "Connect through another saved connection, as OpenSSH's ProxyJump: its SSH server opens the connection to this host."
+// in the language the app shows.
+func JumpHostIntro() string { return In(i18n.Locale()).JumpHostIntro() }
+
+// JumpHostIntro says "Connect through another saved connection, as OpenSSH's ProxyJump: its SSH server opens the connection to this host."
+// in the language of msgs.
+func (msgs Messages) JumpHostIntro() string {
+	return Catalog.Format(msgs.locale, "jumpHostIntro", nil)
+}
+
+// JumpHostNone says "No jump host"
+// in the language the app shows.
+func JumpHostNone() string { return In(i18n.Locale()).JumpHostNone() }
+
+// JumpHostNone says "No jump host"
+// in the language of msgs.
+func (msgs Messages) JumpHostNone() string {
+	return Catalog.Format(msgs.locale, "jumpHostNone", nil)
+}
+
+// JumpHostProxySet says "The Proxy page has a SOCKS5 or HTTP proxy: choosing a jump host replaces it."
+// in the language the app shows.
+func JumpHostProxySet() string { return In(i18n.Locale()).JumpHostProxySet() }
+
+// JumpHostProxySet says "The Proxy page has a SOCKS5 or HTTP proxy: choosing a jump host replaces it."
+// in the language of msgs.
+func (msgs Messages) JumpHostProxySet() string {
+	return Catalog.Format(msgs.locale, "jumpHostProxySet", nil)
 }
 
 // ErrJumpHostRequired says "Choose the jump host"
@@ -5944,6 +5984,268 @@ func ProcDialogCommand() string { return In(i18n.Locale()).ProcDialogCommand() }
 // in the language of msgs.
 func (msgs Messages) ProcDialogCommand() string {
 	return Catalog.Format(msgs.locale, "procDialogCommand", nil)
+}
+
+// ProcDialogChain says "Causal chain"
+// in the language the app shows.
+func ProcDialogChain() string { return In(i18n.Locale()).ProcDialogChain() }
+
+// ProcDialogChain says "Causal chain"
+// in the language of msgs.
+func (msgs Messages) ProcDialogChain() string {
+	return Catalog.Format(msgs.locale, "procDialogChain", nil)
+}
+
+// ProcChainReading says "Tracing the parents (reading /proc)…"
+// in the language the app shows.
+func ProcChainReading() string { return In(i18n.Locale()).ProcChainReading() }
+
+// ProcChainReading says "Tracing the parents (reading /proc)…"
+// in the language of msgs.
+func (msgs Messages) ProcChainReading() string {
+	return Catalog.Format(msgs.locale, "procChainReading", nil)
+}
+
+// ProcChainReasonGone says "The process is gone, or its PID is another process's now."
+// in the language the app shows.
+func ProcChainReasonGone() string { return In(i18n.Locale()).ProcChainReasonGone() }
+
+// ProcChainReasonGone says "The process is gone, or its PID is another process's now."
+// in the language of msgs.
+func (msgs Messages) ProcChainReasonGone() string {
+	return Catalog.Format(msgs.locale, "procChainReasonGone", nil)
+}
+
+// ProcChainReasonNotLinux says "The chain is read from /proc, which only Linux has."
+// in the language the app shows.
+func ProcChainReasonNotLinux() string { return In(i18n.Locale()).ProcChainReasonNotLinux() }
+
+// ProcChainReasonNotLinux says "The chain is read from /proc, which only Linux has."
+// in the language of msgs.
+func (msgs Messages) ProcChainReasonNotLinux() string {
+	return Catalog.Format(msgs.locale, "procChainReasonNotLinux", nil)
+}
+
+// ProcChainReasonNoData says "The server returned no chain: it may lack /proc, or the process may have exited."
+// in the language the app shows.
+func ProcChainReasonNoData() string { return In(i18n.Locale()).ProcChainReasonNoData() }
+
+// ProcChainReasonNoData says "The server returned no chain: it may lack /proc, or the process may have exited."
+// in the language of msgs.
+func (msgs Messages) ProcChainReasonNoData() string {
+	return Catalog.Format(msgs.locale, "procChainReasonNoData", nil)
+}
+
+// ProcChainKindInit says "system init"
+// in the language the app shows.
+func ProcChainKindInit() string { return In(i18n.Locale()).ProcChainKindInit() }
+
+// ProcChainKindInit says "system init"
+// in the language of msgs.
+func (msgs Messages) ProcChainKindInit() string {
+	return Catalog.Format(msgs.locale, "procChainKindInit", nil)
+}
+
+// ProcChainKindSSH says "SSH login"
+// in the language the app shows.
+func ProcChainKindSSH() string { return In(i18n.Locale()).ProcChainKindSSH() }
+
+// ProcChainKindSSH says "SSH login"
+// in the language of msgs.
+func (msgs Messages) ProcChainKindSSH() string {
+	return Catalog.Format(msgs.locale, "procChainKindSSH", nil)
+}
+
+// ProcChainKindCron says "cron job"
+// in the language the app shows.
+func ProcChainKindCron() string { return In(i18n.Locale()).ProcChainKindCron() }
+
+// ProcChainKindCron says "cron job"
+// in the language of msgs.
+func (msgs Messages) ProcChainKindCron() string {
+	return Catalog.Format(msgs.locale, "procChainKindCron", nil)
+}
+
+// ProcChainKindContainer says "container"
+// in the language the app shows.
+func ProcChainKindContainer() string { return In(i18n.Locale()).ProcChainKindContainer() }
+
+// ProcChainKindContainer says "container"
+// in the language of msgs.
+func (msgs Messages) ProcChainKindContainer() string {
+	return Catalog.Format(msgs.locale, "procChainKindContainer", nil)
+}
+
+// ProcChainKindMultiplexer says "terminal multiplexer"
+// in the language the app shows.
+func ProcChainKindMultiplexer() string { return In(i18n.Locale()).ProcChainKindMultiplexer() }
+
+// ProcChainKindMultiplexer says "terminal multiplexer"
+// in the language of msgs.
+func (msgs Messages) ProcChainKindMultiplexer() string {
+	return Catalog.Format(msgs.locale, "procChainKindMultiplexer", nil)
+}
+
+// ProcChainKindShell says "shell"
+// in the language the app shows.
+func ProcChainKindShell() string { return In(i18n.Locale()).ProcChainKindShell() }
+
+// ProcChainKindShell says "shell"
+// in the language of msgs.
+func (msgs Messages) ProcChainKindShell() string {
+	return Catalog.Format(msgs.locale, "procChainKindShell", nil)
+}
+
+// ProcChainKindOrphan says "orphaned"
+// in the language the app shows.
+func ProcChainKindOrphan() string { return In(i18n.Locale()).ProcChainKindOrphan() }
+
+// ProcChainKindOrphan says "orphaned"
+// in the language of msgs.
+func (msgs Messages) ProcChainKindOrphan() string {
+	return Catalog.Format(msgs.locale, "procChainKindOrphan", nil)
+}
+
+// ProcChainKindProc says "process"
+// in the language the app shows.
+func ProcChainKindProc() string { return In(i18n.Locale()).ProcChainKindProc() }
+
+// ProcChainKindProc says "process"
+// in the language of msgs.
+func (msgs Messages) ProcChainKindProc() string {
+	return Catalog.Format(msgs.locale, "procChainKindProc", nil)
+}
+
+// ProcChainWarnZombie says "Exited, and its parent has not reaped it: only the PID is still taken."
+// in the language the app shows.
+func ProcChainWarnZombie() string { return In(i18n.Locale()).ProcChainWarnZombie() }
+
+// ProcChainWarnZombie says "Exited, and its parent has not reaped it: only the PID is still taken."
+// in the language of msgs.
+func (msgs Messages) ProcChainWarnZombie() string {
+	return Catalog.Format(msgs.locale, "procChainWarnZombie", nil)
+}
+
+// ProcChainWarnStopped says "Stopped (T): it is not scheduled."
+// in the language the app shows.
+func ProcChainWarnStopped() string { return In(i18n.Locale()).ProcChainWarnStopped() }
+
+// ProcChainWarnStopped says "Stopped (T): it is not scheduled."
+// in the language of msgs.
+func (msgs Messages) ProcChainWarnStopped() string {
+	return Catalog.Format(msgs.locale, "procChainWarnStopped", nil)
+}
+
+// ProcChainWarnUninterruptible says "Uninterruptible sleep (D): usually blocked on disk or network I/O."
+// in the language the app shows.
+func ProcChainWarnUninterruptible() string { return In(i18n.Locale()).ProcChainWarnUninterruptible() }
+
+// ProcChainWarnUninterruptible says "Uninterruptible sleep (D): usually blocked on disk or network I/O."
+// in the language of msgs.
+func (msgs Messages) ProcChainWarnUninterruptible() string {
+	return Catalog.Format(msgs.locale, "procChainWarnUninterruptible", nil)
+}
+
+// ProcChainWarnRoot says "Runs as root, with more rights than it needs."
+// in the language the app shows.
+func ProcChainWarnRoot() string { return In(i18n.Locale()).ProcChainWarnRoot() }
+
+// ProcChainWarnRoot says "Runs as root, with more rights than it needs."
+// in the language of msgs.
+func (msgs Messages) ProcChainWarnRoot() string {
+	return Catalog.Format(msgs.locale, "procChainWarnRoot", nil)
+}
+
+// ProcChainWarnLongRunning says "Has run for {days} days, far longer than the kernel and configuration it started with."
+// in the language the app shows.
+func ProcChainWarnLongRunning(days string) string {
+	return In(i18n.Locale()).ProcChainWarnLongRunning(days)
+}
+
+// ProcChainWarnLongRunning says "Has run for {days} days, far longer than the kernel and configuration it started with."
+// in the language of msgs.
+func (msgs Messages) ProcChainWarnLongRunning(days string) string {
+	return Catalog.Format(msgs.locale, "procChainWarnLongRunning", map[string]any{"days": days})
+}
+
+// ProcChainWarnBigRSS says "Its resident memory has reached {mb} MB."
+// in the language the app shows.
+func ProcChainWarnBigRSS(mb string) string { return In(i18n.Locale()).ProcChainWarnBigRSS(mb) }
+
+// ProcChainWarnBigRSS says "Its resident memory has reached {mb} MB."
+// in the language of msgs.
+func (msgs Messages) ProcChainWarnBigRSS(mb string) string {
+	return Catalog.Format(msgs.locale, "procChainWarnBigRSS", map[string]any{"mb": mb})
+}
+
+// ProcChainWarnContainer says "The process is in a container: the whole chain is on its host."
+// in the language the app shows.
+func ProcChainWarnContainer() string { return In(i18n.Locale()).ProcChainWarnContainer() }
+
+// ProcChainWarnContainer says "The process is in a container: the whole chain is on its host."
+// in the language of msgs.
+func (msgs Messages) ProcChainWarnContainer() string {
+	return Catalog.Format(msgs.locale, "procChainWarnContainer", nil)
+}
+
+// ProcChainWarnSSH says "The chain holds sshd: the process came from an SSH login."
+// in the language the app shows.
+func ProcChainWarnSSH() string { return In(i18n.Locale()).ProcChainWarnSSH() }
+
+// ProcChainWarnSSH says "The chain holds sshd: the process came from an SSH login."
+// in the language of msgs.
+func (msgs Messages) ProcChainWarnSSH() string {
+	return Catalog.Format(msgs.locale, "procChainWarnSSH", nil)
+}
+
+// ProcChainWarnAdopted says "Its parent exited and init adopted it: the original starter is off the chain."
+// in the language the app shows.
+func ProcChainWarnAdopted() string { return In(i18n.Locale()).ProcChainWarnAdopted() }
+
+// ProcChainWarnAdopted says "Its parent exited and init adopted it: the original starter is off the chain."
+// in the language of msgs.
+func (msgs Messages) ProcChainWarnAdopted() string {
+	return Catalog.Format(msgs.locale, "procChainWarnAdopted", nil)
+}
+
+// ProcChainWarnNoInit says "The chain did not reach init: it may be in a container or a PID namespace."
+// in the language the app shows.
+func ProcChainWarnNoInit() string { return In(i18n.Locale()).ProcChainWarnNoInit() }
+
+// ProcChainWarnNoInit says "The chain did not reach init: it may be in a container or a PID namespace."
+// in the language of msgs.
+func (msgs Messages) ProcChainWarnNoInit() string {
+	return Catalog.Format(msgs.locale, "procChainWarnNoInit", nil)
+}
+
+// ProcChainWarnNonRoot says "Not root: other users' working directories and environments are not visible."
+// in the language the app shows.
+func ProcChainWarnNonRoot() string { return In(i18n.Locale()).ProcChainWarnNonRoot() }
+
+// ProcChainWarnNonRoot says "Not root: other users' working directories and environments are not visible."
+// in the language of msgs.
+func (msgs Messages) ProcChainWarnNonRoot() string {
+	return Catalog.Format(msgs.locale, "procChainWarnNonRoot", nil)
+}
+
+// ProcChainWarnNoCwd says "The working directory cannot be read (permission denied)."
+// in the language the app shows.
+func ProcChainWarnNoCwd() string { return In(i18n.Locale()).ProcChainWarnNoCwd() }
+
+// ProcChainWarnNoCwd says "The working directory cannot be read (permission denied)."
+// in the language of msgs.
+func (msgs Messages) ProcChainWarnNoCwd() string {
+	return Catalog.Format(msgs.locale, "procChainWarnNoCwd", nil)
+}
+
+// ProcChainWarnInjected says "The environment holds a library injection: {env}"
+// in the language the app shows.
+func ProcChainWarnInjected(env string) string { return In(i18n.Locale()).ProcChainWarnInjected(env) }
+
+// ProcChainWarnInjected says "The environment holds a library injection: {env}"
+// in the language of msgs.
+func (msgs Messages) ProcChainWarnInjected(env string) string {
+	return Catalog.Format(msgs.locale, "procChainWarnInjected", map[string]any{"env": env})
 }
 
 // ProcDialogPaths says "Paths"
@@ -9360,6 +9662,60 @@ func Import() string { return In(i18n.Locale()).Import() }
 // in the language of msgs.
 func (msgs Messages) Import() string {
 	return Catalog.Format(msgs.locale, "import", nil)
+}
+
+// ExportConnections says "Export connections…"
+// in the language the app shows.
+func ExportConnections() string { return In(i18n.Locale()).ExportConnections() }
+
+// ExportConnections says "Export connections…"
+// in the language of msgs.
+func (msgs Messages) ExportConnections() string {
+	return Catalog.Format(msgs.locale, "exportConnections", nil)
+}
+
+// ExportConnectionsTitle says "Export connections"
+// in the language the app shows.
+func ExportConnectionsTitle() string { return In(i18n.Locale()).ExportConnectionsTitle() }
+
+// ExportConnectionsTitle says "Export connections"
+// in the language of msgs.
+func (msgs Messages) ExportConnectionsTitle() string {
+	return Catalog.Format(msgs.locale, "exportConnectionsTitle", nil)
+}
+
+// JsonFiles says "JSON files"
+// in the language the app shows.
+func JsonFiles() string { return In(i18n.Locale()).JsonFiles() }
+
+// JsonFiles says "JSON files"
+// in the language of msgs.
+func (msgs Messages) JsonFiles() string {
+	return Catalog.Format(msgs.locale, "jsonFiles", nil)
+}
+
+// Exported says "Connections saved to {path}"
+// in the language the app shows.
+//
+// The connections were exported to path.
+func Exported(path string) string { return In(i18n.Locale()).Exported(path) }
+
+// Exported says "Connections saved to {path}"
+// in the language of msgs.
+//
+// The connections were exported to path.
+func (msgs Messages) Exported(path string) string {
+	return Catalog.Format(msgs.locale, "exported", map[string]any{"path": path})
+}
+
+// ExportFailed says "Could not export the connections: {error}"
+// in the language the app shows.
+func ExportFailed(error string) string { return In(i18n.Locale()).ExportFailed(error) }
+
+// ExportFailed says "Could not export the connections: {error}"
+// in the language of msgs.
+func (msgs Messages) ExportFailed(error string) string {
+	return Catalog.Format(msgs.locale, "exportFailed", map[string]any{"error": error})
 }
 
 // ImportTitle says "Import connections"

@@ -26,6 +26,9 @@ type fakeProcesses struct {
 	signals []string     // "TERM 7267@3000": the signal, the PID and the start time, as sent
 	ended   map[int]bool // processes that ended: signals to them are not sent
 	sigErr  error
+
+	chains   map[int]monitor.Causality // the causal chains laid out for the dialogs
+	chainErr error
 	// alive is the processes still running after a signal.
 	alive map[int]bool
 }
@@ -48,6 +51,20 @@ func (f *fakeProcesses) details(ctx context.Context, client *ssh.Client, pid int
 		return d, monitor.ErrNoProcess
 	}
 	return d, nil
+}
+
+func (f *fakeProcesses) causality(ctx context.Context, client *ssh.Client, pid int) (monitor.Causality, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	if f.chainErr != nil {
+		return monitor.Causality{}, f.chainErr
+	}
+	c, ok := f.chains[pid]
+	if !ok {
+		return monitor.Causality{PID: pid, Reason: "gone"}, nil
+	}
+	c.PID = pid
+	return c, nil
 }
 
 func (f *fakeProcesses) signal(ctx context.Context, client *ssh.Client, pid int, start uint64, sig string) error {
@@ -114,6 +131,23 @@ func demoProcesses() *fakeProcesses {
 		},
 		alive: map[int]bool{},
 		ended: map[int]bool{},
+		chains: map[int]monitor.Causality{
+			// java's chain: the session that started it, from init down.
+			7267: {
+				Found: true,
+				Nodes: []monitor.CausalityNode{
+					{PID: 1, User: "root", State: 'S', Age: 88_000, RSS: 12_300_000, Kind: "init", Command: "/sbin/init splash"},
+					{PID: 1290, PPID: 1, User: "root", State: 'S', Age: 80_000, RSS: 9_800_000, Kind: "ssh", Command: "sshd: /usr/sbin/sshd -D"},
+					{PID: 4021, PPID: 1290, User: "deploy", State: 'S', Age: 50_000, RSS: 5_200_000, Kind: "shell", Command: "-bash"},
+					{PID: 4090, PPID: 4021, User: "deploy", State: 'S', Age: 49_000, RSS: 3_100_000, Kind: "multiplexer", Command: "tmux new -s main"},
+					{PID: 7267, PPID: 4090, User: "tomcat", State: 'S', Age: 3_000, RSS: 1_930_000_000, Kind: "proc", Command: "/usr/bin/java -Xmx2g -jar /opt/app/app.jar", IsTarget: true},
+				},
+				Warnings: []monitor.CausalityWarning{
+					{Level: "warn", Code: "big-rss", Arg: "1884"},
+					{Level: "info", Code: "ssh"},
+				},
+			},
+		},
 	}
 }
 

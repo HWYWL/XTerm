@@ -667,7 +667,8 @@ func (a *App) managerTable(c *ui.Context, later *[]func()) {
 }
 
 // newItemsMenu is the context menu of the room past a tree's rows: a new
-// host or folder in folder.
+// host or folder in folder, the import window, and the connections
+// exported to a file (export.go).
 func (a *App) newItemsMenu(e ui.Element, m *managerState, folder string, later *[]func()) {
 	e.ContextMenu(func(menu *ui.Menu) {
 		if menu.Item(locales.NewConnection()).Chosen() {
@@ -675,6 +676,13 @@ func (a *App) newItemsMenu(e ui.Element, m *managerState, folder string, later *
 		}
 		if menu.Item(locales.NewFolder()).Chosen() {
 			*later = append(*later, func() { a.newFolderIn(m, folder) })
+		}
+		menu.Separator()
+		if menu.Item(locales.Import()).Chosen() {
+			*later = append(*later, func() { a.openImport() })
+		}
+		if menu.Item(locales.ExportConnections()).Chosen() {
+			*later = append(*later, func() { a.exportConnections(m.win) })
 		}
 	})
 }

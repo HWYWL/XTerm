@@ -52,6 +52,8 @@ type processAPI interface {
 	// list reads the processes; l keeps the CPU times between reads.
 	list(ctx context.Context, client *ssh.Client, l *monitor.ProcessLister) ([]monitor.Process, error)
 	details(ctx context.Context, client *ssh.Client, pid int) (monitor.ProcessDetails, error)
+	// causality traces pid's parents: the processes that started it.
+	causality(ctx context.Context, client *ssh.Client, pid int) (monitor.Causality, error)
 	signal(ctx context.Context, client *ssh.Client, pid int, start uint64, sig string) error
 	// running tells whether pid, started at start, is still there.
 	running(ctx context.Context, client *ssh.Client, pid int, start uint64) (bool, error)
@@ -66,6 +68,10 @@ func (serverProcesses) list(ctx context.Context, client *ssh.Client, l *monitor.
 
 func (serverProcesses) details(ctx context.Context, client *ssh.Client, pid int) (monitor.ProcessDetails, error) {
 	return monitor.ReadProcessDetails(ctx, client, pid)
+}
+
+func (serverProcesses) causality(ctx context.Context, client *ssh.Client, pid int) (monitor.Causality, error) {
+	return monitor.ReadCausality(ctx, client, pid)
 }
 
 func (serverProcesses) signal(ctx context.Context, client *ssh.Client, pid int, start uint64, sig string) error {

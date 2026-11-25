@@ -600,6 +600,7 @@
   "editorPageTerminal": "Terminal",
   "editorPageProxy": "Proxy",
   "editorPageTunnels": "Tunnels",
+  "editorPageJumpHost": "Jump host",
   "sectionGeneral": "General",
   "sectionAuth": "Authentication",
   "sectionAdvanced": "Advanced",
@@ -626,6 +627,9 @@
   "fieldJumpHost": "Jump host",
   "noJumpHosts": "There is no other saved connection to use as the jump host.",
   "jumpHostNote": "Its host key, login and password are its own, as when connecting to it.",
+  "jumpHostIntro": "Connect through another saved connection, as OpenSSH's ProxyJump: its SSH server opens the connection to this host.",
+  "jumpHostNone": "No jump host",
+  "jumpHostProxySet": "The Proxy page has a SOCKS5 or HTTP proxy: choosing a jump host replaces it.",
   "errJumpHostRequired": "Choose the jump host",
   "errJumpLoop": "The jump hosts form a loop: {hosts}",
   "errJumpHostMissing": "The jump host of {host} was deleted",
@@ -738,6 +742,53 @@
   "procDialogTitle": "Process Details",
   "procDialogSection": "Process",
   "procDialogCommand": "Command line",
+  "procDialogChain": "Causal chain",
+  "procChainReading": "Tracing the parents (reading /proc)…",
+  "procChainReasonGone": "The process is gone, or its PID is another process's now.",
+  "procChainReasonNotLinux": "The chain is read from /proc, which only Linux has.",
+  "procChainReasonNoData": "The server returned no chain: it may lack /proc, or the process may have exited.",
+  "procChainKindInit": "system init",
+  "procChainKindSSH": "SSH login",
+  "procChainKindCron": "cron job",
+  "procChainKindContainer": "container",
+  "procChainKindMultiplexer": "terminal multiplexer",
+  "procChainKindShell": "shell",
+  "procChainKindOrphan": "orphaned",
+  "procChainKindProc": "process",
+  "procChainWarnZombie": "Exited, and its parent has not reaped it: only the PID is still taken.",
+  "procChainWarnStopped": "Stopped (T): it is not scheduled.",
+  "procChainWarnUninterruptible": "Uninterruptible sleep (D): usually blocked on disk or network I/O.",
+  "procChainWarnRoot": "Runs as root, with more rights than it needs.",
+  "procChainWarnLongRunning": "Has run for {days} days, far longer than the kernel and configuration it started with.",
+  "@procChainWarnLongRunning": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "procChainWarnBigRSS": "Its resident memory has reached {mb} MB.",
+  "@procChainWarnBigRSS": {
+    "placeholders": {
+      "mb": {
+        "type": "String"
+      }
+    }
+  },
+  "procChainWarnContainer": "The process is in a container: the whole chain is on its host.",
+  "procChainWarnSSH": "The chain holds sshd: the process came from an SSH login.",
+  "procChainWarnAdopted": "Its parent exited and init adopted it: the original starter is off the chain.",
+  "procChainWarnNoInit": "The chain did not reach init: it may be in a container or a PID namespace.",
+  "procChainWarnNonRoot": "Not root: other users' working directories and environments are not visible.",
+  "procChainWarnNoCwd": "The working directory cannot be read (permission denied).",
+  "procChainWarnInjected": "The environment holds a library injection: {env}",
+  "@procChainWarnInjected": {
+    "placeholders": {
+      "env": {
+        "type": "String"
+      }
+    }
+  },
   "procDialogPaths": "Paths",
   "procDialogActions": "Actions",
   "procDialogState": "State",
@@ -1232,6 +1283,26 @@
   },
   "listSeparator": ", ",
   "import": "Import",
+  "exportConnections": "Export connections…",
+  "exportConnectionsTitle": "Export connections",
+  "jsonFiles": "JSON files",
+  "exported": "Connections saved to {path}",
+  "@exported": {
+    "description": "The connections were exported to path.",
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "exportFailed": "Could not export the connections: {error}",
+  "@exportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "importTitle": "Import connections",
   "importFrom": "Import from",
   "importSourceFinalShell": "FinalShell",

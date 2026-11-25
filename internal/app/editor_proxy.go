@@ -1,8 +1,9 @@
 package app
 
 // The connection editor's Proxy page: connect directly, through a SOCKS5
-// or HTTP proxy, or through another saved host, a jump host. Connecting
-// through them is in proxy.go and internal/sshx/proxy.go.
+// or HTTP proxy, or through another saved host, a jump host; and its Jump
+// host page, which chooses that host alone. Connecting through them is in
+// proxy.go and internal/sshx/proxy.go.
 
 import (
 	"errors"
@@ -66,6 +67,21 @@ func (pf *proxyFields) setKind(k config.ProxyKind) {
 		}
 	}
 	pf.kind = k
+}
+
+// setJump makes the host connect through the saved host id, or directly
+// when id is "". A jump host replaces a SOCKS5 or HTTP proxy: a host has
+// one way of connecting.
+func (pf *proxyFields) setJump(id string) {
+	if id == "" {
+		pf.jump = ""
+		if pf.kind == config.ProxyJump {
+			pf.setKind(config.ProxyNone)
+		}
+		return
+	}
+	pf.jump = id
+	pf.setKind(config.ProxyJump)
 }
 
 // proxyProblems adds to errs what is wrong with the Proxy page.
@@ -232,6 +248,45 @@ func (a *App) proxyPage(c *ui.Context, ed *connEditor, errs map[editorField]stri
 			}).Error(errs[fieldJumpHost]).Description(locales.JumpHostNote())
 		}
 	})
+}
+
+// jumpPage is the editor's Jump host page: another saved host to connect
+// through, as OpenSSH's ProxyJump. It is the Proxy page's jump kind alone,
+// so that the host is chosen without the other kinds there.
+func (a *App) jumpPage(c *ui.Context, ed *connEditor, errs map[editorField]string) {
+	pf := &ed.proxy
+	widgets.Muted(c, locales.JumpHostIntro()).FontSize(12)
+	ui.Form(c, func() {
+		ui.Field(c, locales.FieldJumpHost(), func() {
+			choices := jumpChoices(pf.hosts, ed.id)
+			if len(choices) == 0 {
+				widgets.Muted(c, locales.NoJumpHosts())
+				return
+			}
+			none := locales.JumpHostNone()
+			labels := make([]string, 0, len(choices)+1)
+			labels = append(labels, none)
+			chosen := none
+			for _, ch := range choices {
+				labels = append(labels, ch.label)
+				if pf.kind == config.ProxyJump && ch.id == pf.jump {
+					chosen = ch.label
+				}
+			}
+			if ui.Select(c, &chosen, labels).Width(320).Changed() {
+				id := ""
+				for _, ch := range choices {
+					if ch.label == chosen {
+						id = ch.id
+					}
+				}
+				pf.setJump(id)
+			}
+		}).Error(errs[fieldJumpHost]).Description(locales.JumpHostNote())
+	})
+	if pf.kind == config.ProxySOCKS5 || pf.kind == config.ProxyHTTP {
+		widgets.Muted(c, locales.JumpHostProxySet()).FontSize(12)
+	}
 }
 
 // proxyKindHint says what the kind of proxy does.

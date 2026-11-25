@@ -11,9 +11,11 @@ var (
 	dayBottom = ui.Hex("#e2f6fb")
 )
 
-// aurora paints the window's backdrop, behind everything else it builds.
-func (a *App) aurora(c *ui.Context) {
-	w, h := a.plat.WindowSize(WindowMain)
+// aurora paints the backdrop of the window of kind, behind everything else
+// it builds: the main window's, and every secondary window's, so that a
+// dialog is the app's own color and not the system's.
+func (a *App) aurora(c *ui.Context, kind WindowKind) {
+	w, h := a.plat.WindowSize(kind)
 	if w <= 0 || h <= 0 {
 		return
 	}

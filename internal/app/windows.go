@@ -112,6 +112,9 @@ func (a *App) openWindow(spec WindowSpec, view func(c *ui.Context)) {
 	kind, title, sheet, ownKeys, closed := spec.Kind, spec.Title, spec.Modal && sheets, spec.OwnKeys, spec.Closed
 	a.plat.OpenWindow(spec, func(c *ui.Context) {
 		useTheme(c)
+		// The window's own sky, as the main window's: without it the dialog
+		// shows the system's background, not the app's.
+		a.aurora(c, kind)
 		if !ownKeys && (c.Shortcut(0, ui.KeyEscape) || a.closeWindowShortcut(c)) {
 			a.closeWindow(kind)
 		}

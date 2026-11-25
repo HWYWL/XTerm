@@ -9,6 +9,38 @@ Each version's notes, newest first, in English and Simplified Chinese. A
 release's notes on GitHub and in the app's update window are its section
 here; see [发布](docs/zh-CN/development.md#发布).
 
+## 0.2.1
+
+### English
+
+- An AI assistant answers questions about the server. Options › AI chooses an OpenAI-compatible service (DeepSeek, OpenAI, Kimi, GLM, SiliconFlow and Ollama are set up), the model and its API key, and what the assistant may do.
+- Each session has its own AI tab in the bottom panel, after Commands: every tab and host keeps its own conversation, so different servers never mix.
+- Answers stream in with the model's reasoning, and can be copied, regenerated, or inserted into the terminal to run.
+- With commands allowed, the assistant runs read-only commands on the session's host, and reads the monitor's snapshot and the file panel's folder; by default each command waits for your confirmation, and it runs on a channel of its own without touching the terminal.
+- The question box sends with Enter, breaks the line with Ctrl+Enter, and keeps its send button at the end of the box.
+- A session's menu records its transcript, or Options › Recording records every session as it connects; the recordings are listed there to open or delete.
+- A session's menu also diagnoses the connection: the round trip, the ports this computer can reach, and what the server's own DNS and route say.
+- The connection editor gives jump hosts a page of their own, showing the chain a connection goes through.
+- The manager's menu exports the saved connections as JSON, folders and hosts, without passwords.
+- A process's details show the chain that started it, from init down to the process, with each step's command.
+- A terminal that lost its connection keeps its screen and history instead of going blank, ready to reconnect.
+- The files' columns sort by a click on their headers.
+
+### 简体中文
+
+- 新增 AI 助手，回答服务器相关的问题。“选项 › AI”里选择 OpenAI 兼容的服务（已内置 DeepSeek、OpenAI、Kimi、GLM、SiliconFlow 和 Ollama）、模型和 API Key，以及助手能做什么。
+- 每个会话在底部面板“命令”之后都有自己的 AI 标签页：每个标签、每台服务器各有一份对话，互不混杂。
+- 回答边生成边显示，连同模型的思考过程；可以复制、重新生成，或插入终端执行。
+- 允许执行命令时，助手会在会话的主机上运行只读命令，读取监控快照和文件面板当前目录；默认每条命令都要确认，并且在独立通道执行，不打扰终端。
+- 输入框按 Enter 发送，按 Ctrl+Enter 换行，发送按钮就在输入框末尾。
+- 会话右键菜单可以录制终端记录，“选项 › 录制”可以让每个会话连接时自动开始；录制文件在选项里打开或删除。
+- 会话右键菜单还能诊断连接：往返延迟、本机可达的端口，以及服务器自己的 DNS 和路由结果。
+- 连接编辑器里跳板机有了独立页面，显示连接经过的跳转链。
+- 连接管理器的菜单可以把保存的连接导出为 JSON，包含文件夹和主机，不含密码。
+- 进程详情显示它的来源链：从 init 一路到该进程，每一步的命令。
+- 断线的终端会保留最后的画面和历史，而不是变成空白，随时可以重连。
+- 文件列表的列可以点表头排序。
+
 ## 0.1.1
 
 ### English

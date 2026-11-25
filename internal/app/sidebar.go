@@ -463,7 +463,15 @@ func (a *App) sessionRow(c *ui.Context, s *Session, active bool) (closed bool) {
 		if m.Item(locales.Disconnect()).Disabled(s.status != statusConnected && s.status != statusConnecting).Chosen() {
 			a.disconnectSession(s)
 		}
+		if m.Item(locales.DiagTitle()).Disabled(s.status != statusConnected || s.isLocal()).Chosen() &&
+			s.status == statusConnected && !s.isLocal() {
+			a.openDiag(s)
+		}
+		if m.Item(locales.RecordFiles()).Chosen() {
+			a.openRecFiles()
+		}
 		m.Separator()
+		a.recordMenu(m, s)
 		a.paneMenu(m, s)
 		m.Separator()
 		a.renameMenu(m, s)
@@ -491,6 +499,7 @@ func (a *App) sessionRow(c *ui.Context, s *Session, active bool) (closed bool) {
 		case s.isLocal() && s.programTitle() != "":
 			sub = s.programTitle() // the program's own, as a terminal app's tab
 		}
+		sub += a.recordSub(s)
 		name := func() { a.sessionName(c, s, active) }
 		if renaming {
 			name = func() { a.renameField(c, active) }

@@ -222,6 +222,7 @@ func (a *App) connect(s *Session, secret string) {
 			s.status, s.err = statusConnected, nil
 			a.assetLogin(true)
 			a.noteConnected(s.Host)
+			a.autoRecord(s)
 			a.showMonitorOfConnection()
 			a.startTunnels(s, h.Tunnels)
 		})
@@ -289,7 +290,9 @@ func (a *App) openPaneShell(s *Session, p *pane, client *ssh.Client, spec shellS
 		return nil, &stepError{"shell", err}
 	}
 	topts := spec.topts
-	topts.Conn = termenc.Wrap(shell, spec.enc)
+	// The transcript reads what the terminal reads, and is looked up each
+	// time: recording starts and stops without a new connection.
+	topts.Conn = &recordConn{ReadWriteCloser: termenc.Wrap(shell, spec.enc), app: a, s: s}
 	keys := keySequences(spec.bs, spec.del, func() *terminal.Terminal { return p.term })
 	topts.OnKey = func(mods ui.Modifiers, key ui.Key) bool {
 		if a.dangerKey(s, p, mods, key) {

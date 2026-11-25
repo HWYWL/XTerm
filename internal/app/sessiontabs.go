@@ -248,6 +248,7 @@ func (a *App) connectTabs(tabs []*Session) {
 // session list does, and leaves the tab to reconnect.
 func (a *App) disconnectSession(s *Session) {
 	a.transfers.cancelSession(s)
+	a.stopRecording(s, locales.RecordSessionEnded())
 	s.disconnect()
 	s.status, s.err = statusClosed, nil
 }

@@ -2620,6 +2620,468 @@ func (msgs Messages) NetLinkSpeed() string {
 	return Catalog.Format(msgs.locale, "netLinkSpeed", nil)
 }
 
+// RecordStart says "Start Recording"
+// in the language the app shows.
+func RecordStart() string { return In(i18n.Locale()).RecordStart() }
+
+// RecordStart says "Start Recording"
+// in the language of msgs.
+func (msgs Messages) RecordStart() string {
+	return Catalog.Format(msgs.locale, "recordStart", nil)
+}
+
+// RecordStop says "Stop Recording"
+// in the language the app shows.
+func RecordStop() string { return In(i18n.Locale()).RecordStop() }
+
+// RecordStop says "Stop Recording"
+// in the language of msgs.
+func (msgs Messages) RecordStop() string {
+	return Catalog.Format(msgs.locale, "recordStop", nil)
+}
+
+// RecordFiles says "Recordings"
+// in the language the app shows.
+func RecordFiles() string { return In(i18n.Locale()).RecordFiles() }
+
+// RecordFiles says "Recordings"
+// in the language of msgs.
+func (msgs Messages) RecordFiles() string {
+	return Catalog.Format(msgs.locale, "recordFiles", nil)
+}
+
+// RecordingNow says "Recording"
+// in the language the app shows.
+func RecordingNow() string { return In(i18n.Locale()).RecordingNow() }
+
+// RecordingNow says "Recording"
+// in the language of msgs.
+func (msgs Messages) RecordingNow() string {
+	return Catalog.Format(msgs.locale, "recordingNow", nil)
+}
+
+// RecordAuto says "Record sessions automatically"
+// in the language the app shows.
+func RecordAuto() string { return In(i18n.Locale()).RecordAuto() }
+
+// RecordAuto says "Record sessions automatically"
+// in the language of msgs.
+func (msgs Messages) RecordAuto() string {
+	return Catalog.Format(msgs.locale, "recordAuto", nil)
+}
+
+// RecordAutoNote says "A session is recorded as it connects, and the recording stops when it disconnects."
+// in the language the app shows.
+func RecordAutoNote() string { return In(i18n.Locale()).RecordAutoNote() }
+
+// RecordAutoNote says "A session is recorded as it connects, and the recording stops when it disconnects."
+// in the language of msgs.
+func (msgs Messages) RecordAutoNote() string {
+	return Catalog.Format(msgs.locale, "recordAutoNote", nil)
+}
+
+// RecordFolder says "Saved in"
+// in the language the app shows.
+func RecordFolder() string { return In(i18n.Locale()).RecordFolder() }
+
+// RecordFolder says "Saved in"
+// in the language of msgs.
+func (msgs Messages) RecordFolder() string {
+	return Catalog.Format(msgs.locale, "recordFolder", nil)
+}
+
+// RecordFolderNote says "Each line carries its time and kind: OUTPUT is what the server sent, COMMAND what was submitted, SYSTEM what the app …"
+// in the language the app shows.
+func RecordFolderNote() string { return In(i18n.Locale()).RecordFolderNote() }
+
+// RecordFolderNote says "Each line carries its time and kind: OUTPUT is what the server sent, COMMAND what was submitted, SYSTEM what the app …"
+// in the language of msgs.
+func (msgs Messages) RecordFolderNote() string {
+	return Catalog.Format(msgs.locale, "recordFolderNote", nil)
+}
+
+// RecordNone says "No recordings yet."
+// in the language the app shows.
+func RecordNone() string { return In(i18n.Locale()).RecordNone() }
+
+// RecordNone says "No recordings yet."
+// in the language of msgs.
+func (msgs Messages) RecordNone() string {
+	return Catalog.Format(msgs.locale, "recordNone", nil)
+}
+
+// RecordSaved says "Recording saved: {name}"
+// in the language the app shows.
+func RecordSaved(name string) string { return In(i18n.Locale()).RecordSaved(name) }
+
+// RecordSaved says "Recording saved: {name}"
+// in the language of msgs.
+func (msgs Messages) RecordSaved(name string) string {
+	return Catalog.Format(msgs.locale, "recordSaved", map[string]any{"name": name})
+}
+
+// RecordStarted says "Recording: {name}"
+// in the language the app shows.
+func RecordStarted(name string) string { return In(i18n.Locale()).RecordStarted(name) }
+
+// RecordStarted says "Recording: {name}"
+// in the language of msgs.
+func (msgs Messages) RecordStarted(name string) string {
+	return Catalog.Format(msgs.locale, "recordStarted", map[string]any{"name": name})
+}
+
+// RecordFailed says "Could not start recording: {error}"
+// in the language the app shows.
+func RecordFailed(error string) string { return In(i18n.Locale()).RecordFailed(error) }
+
+// RecordFailed says "Could not start recording: {error}"
+// in the language of msgs.
+func (msgs Messages) RecordFailed(error string) string {
+	return Catalog.Format(msgs.locale, "recordFailed", map[string]any{"error": error})
+}
+
+// RecordStoppedByUser says "The user stopped the recording."
+// in the language the app shows.
+func RecordStoppedByUser() string { return In(i18n.Locale()).RecordStoppedByUser() }
+
+// RecordStoppedByUser says "The user stopped the recording."
+// in the language of msgs.
+func (msgs Messages) RecordStoppedByUser() string {
+	return Catalog.Format(msgs.locale, "recordStoppedByUser", nil)
+}
+
+// RecordSessionEnded says "The connection ended, so did the recording."
+// in the language the app shows.
+func RecordSessionEnded() string { return In(i18n.Locale()).RecordSessionEnded() }
+
+// RecordSessionEnded says "The connection ended, so did the recording."
+// in the language of msgs.
+func (msgs Messages) RecordSessionEnded() string {
+	return Catalog.Format(msgs.locale, "recordSessionEnded", nil)
+}
+
+// RecordDeleted says "Deleted."
+// in the language the app shows.
+func RecordDeleted() string { return In(i18n.Locale()).RecordDeleted() }
+
+// RecordDeleted says "Deleted."
+// in the language of msgs.
+func (msgs Messages) RecordDeleted() string {
+	return Catalog.Format(msgs.locale, "recordDeleted", nil)
+}
+
+// DiagTitle says "Connection Diagnostics"
+// in the language the app shows.
+func DiagTitle() string { return In(i18n.Locale()).DiagTitle() }
+
+// DiagTitle says "Connection Diagnostics"
+// in the language of msgs.
+func (msgs Messages) DiagTitle() string {
+	return Catalog.Format(msgs.locale, "diagTitle", nil)
+}
+
+// DiagSession says "Session"
+// in the language the app shows.
+func DiagSession() string { return In(i18n.Locale()).DiagSession() }
+
+// DiagSession says "Session"
+// in the language of msgs.
+func (msgs Messages) DiagSession() string {
+	return Catalog.Format(msgs.locale, "diagSession", nil)
+}
+
+// DiagProtocol says "Protocol"
+// in the language the app shows.
+func DiagProtocol() string { return In(i18n.Locale()).DiagProtocol() }
+
+// DiagProtocol says "Protocol"
+// in the language of msgs.
+func (msgs Messages) DiagProtocol() string {
+	return Catalog.Format(msgs.locale, "diagProtocol", nil)
+}
+
+// DiagAddress says "Address"
+// in the language the app shows.
+func DiagAddress() string { return In(i18n.Locale()).DiagAddress() }
+
+// DiagAddress says "Address"
+// in the language of msgs.
+func (msgs Messages) DiagAddress() string {
+	return Catalog.Format(msgs.locale, "diagAddress", nil)
+}
+
+// DiagUser says "User"
+// in the language the app shows.
+func DiagUser() string { return In(i18n.Locale()).DiagUser() }
+
+// DiagUser says "User"
+// in the language of msgs.
+func (msgs Messages) DiagUser() string {
+	return Catalog.Format(msgs.locale, "diagUser", nil)
+}
+
+// DiagStatus says "Status"
+// in the language the app shows.
+func DiagStatus() string { return In(i18n.Locale()).DiagStatus() }
+
+// DiagStatus says "Status"
+// in the language of msgs.
+func (msgs Messages) DiagStatus() string {
+	return Catalog.Format(msgs.locale, "diagStatus", nil)
+}
+
+// DiagLatency says "Latency"
+// in the language the app shows.
+func DiagLatency() string { return In(i18n.Locale()).DiagLatency() }
+
+// DiagLatency says "Latency"
+// in the language of msgs.
+func (msgs Messages) DiagLatency() string {
+	return Catalog.Format(msgs.locale, "diagLatency", nil)
+}
+
+// DiagLatencyMeasure says "Measure"
+// in the language the app shows.
+func DiagLatencyMeasure() string { return In(i18n.Locale()).DiagLatencyMeasure() }
+
+// DiagLatencyMeasure says "Measure"
+// in the language of msgs.
+func (msgs Messages) DiagLatencyMeasure() string {
+	return Catalog.Format(msgs.locale, "diagLatencyMeasure", nil)
+}
+
+// DiagLatencyNote says "The round trip of one keepalive: the connection itself."
+// in the language the app shows.
+func DiagLatencyNote() string { return In(i18n.Locale()).DiagLatencyNote() }
+
+// DiagLatencyNote says "The round trip of one keepalive: the connection itself."
+// in the language of msgs.
+func (msgs Messages) DiagLatencyNote() string {
+	return Catalog.Format(msgs.locale, "diagLatencyNote", nil)
+}
+
+// DiagLatencyUnmeasured says "Not measured"
+// in the language the app shows.
+func DiagLatencyUnmeasured() string { return In(i18n.Locale()).DiagLatencyUnmeasured() }
+
+// DiagLatencyUnmeasured says "Not measured"
+// in the language of msgs.
+func (msgs Messages) DiagLatencyUnmeasured() string {
+	return Catalog.Format(msgs.locale, "diagLatencyUnmeasured", nil)
+}
+
+// DiagLatencyMeasuring says "Measuring…"
+// in the language the app shows.
+func DiagLatencyMeasuring() string { return In(i18n.Locale()).DiagLatencyMeasuring() }
+
+// DiagLatencyMeasuring says "Measuring…"
+// in the language of msgs.
+func (msgs Messages) DiagLatencyMeasuring() string {
+	return Catalog.Format(msgs.locale, "diagLatencyMeasuring", nil)
+}
+
+// DiagPorts says "Ports"
+// in the language the app shows.
+func DiagPorts() string { return In(i18n.Locale()).DiagPorts() }
+
+// DiagPorts says "Ports"
+// in the language of msgs.
+func (msgs Messages) DiagPorts() string {
+	return Catalog.Format(msgs.locale, "diagPorts", nil)
+}
+
+// DiagPortsCheck says "Check"
+// in the language the app shows.
+func DiagPortsCheck() string { return In(i18n.Locale()).DiagPortsCheck() }
+
+// DiagPortsCheck says "Check"
+// in the language of msgs.
+func (msgs Messages) DiagPortsCheck() string {
+	return Catalog.Format(msgs.locale, "diagPortsCheck", nil)
+}
+
+// DiagPortsNone says "Not checked"
+// in the language the app shows.
+func DiagPortsNone() string { return In(i18n.Locale()).DiagPortsNone() }
+
+// DiagPortsNone says "Not checked"
+// in the language of msgs.
+func (msgs Messages) DiagPortsNone() string {
+	return Catalog.Format(msgs.locale, "diagPortsNone", nil)
+}
+
+// DiagPortsSummary says "{ok} of {total} ports connect"
+// in the language the app shows.
+func DiagPortsSummary(ok string, total string) string {
+	return In(i18n.Locale()).DiagPortsSummary(ok, total)
+}
+
+// DiagPortsSummary says "{ok} of {total} ports connect"
+// in the language of msgs.
+func (msgs Messages) DiagPortsSummary(ok string, total string) string {
+	return Catalog.Format(msgs.locale, "diagPortsSummary", map[string]any{"ok": ok, "total": total})
+}
+
+// DiagPortClosed says "Unreachable or refused"
+// in the language the app shows.
+func DiagPortClosed() string { return In(i18n.Locale()).DiagPortClosed() }
+
+// DiagPortClosed says "Unreachable or refused"
+// in the language of msgs.
+func (msgs Messages) DiagPortClosed() string {
+	return Catalog.Format(msgs.locale, "diagPortClosed", nil)
+}
+
+// DiagPortSession says "This session's port"
+// in the language the app shows.
+func DiagPortSession() string { return In(i18n.Locale()).DiagPortSession() }
+
+// DiagPortSession says "This session's port"
+// in the language of msgs.
+func (msgs Messages) DiagPortSession() string {
+	return Catalog.Format(msgs.locale, "diagPortSession", nil)
+}
+
+// DiagDNS says "Remote DNS"
+// in the language the app shows.
+func DiagDNS() string { return In(i18n.Locale()).DiagDNS() }
+
+// DiagDNS says "Remote DNS"
+// in the language of msgs.
+func (msgs Messages) DiagDNS() string {
+	return Catalog.Format(msgs.locale, "diagDNS", nil)
+}
+
+// DiagDNSRun says "Resolve"
+// in the language the app shows.
+func DiagDNSRun() string { return In(i18n.Locale()).DiagDNSRun() }
+
+// DiagDNSRun says "Resolve"
+// in the language of msgs.
+func (msgs Messages) DiagDNSRun() string {
+	return Catalog.Format(msgs.locale, "diagDNSRun", nil)
+}
+
+// DiagDNSNone says "The server has no getent / nslookup / host, or the name does not resolve"
+// in the language the app shows.
+func DiagDNSNone() string { return In(i18n.Locale()).DiagDNSNone() }
+
+// DiagDNSNone says "The server has no getent / nslookup / host, or the name does not resolve"
+// in the language of msgs.
+func (msgs Messages) DiagDNSNone() string {
+	return Catalog.Format(msgs.locale, "diagDNSNone", nil)
+}
+
+// DiagHops says "Remote route"
+// in the language the app shows.
+func DiagHops() string { return In(i18n.Locale()).DiagHops() }
+
+// DiagHops says "Remote route"
+// in the language of msgs.
+func (msgs Messages) DiagHops() string {
+	return Catalog.Format(msgs.locale, "diagHops", nil)
+}
+
+// DiagHopsRun says "Start"
+// in the language the app shows.
+func DiagHopsRun() string { return In(i18n.Locale()).DiagHopsRun() }
+
+// DiagHopsRun says "Start"
+// in the language of msgs.
+func (msgs Messages) DiagHopsRun() string {
+	return Catalog.Format(msgs.locale, "diagHopsRun", nil)
+}
+
+// DiagHopsNone says "The server has neither mtr nor traceroute"
+// in the language the app shows.
+func DiagHopsNone() string { return In(i18n.Locale()).DiagHopsNone() }
+
+// DiagHopsNone says "The server has neither mtr nor traceroute"
+// in the language of msgs.
+func (msgs Messages) DiagHopsNone() string {
+	return Catalog.Format(msgs.locale, "diagHopsNone", nil)
+}
+
+// DiagAll says "Run All"
+// in the language the app shows.
+func DiagAll() string { return In(i18n.Locale()).DiagAll() }
+
+// DiagAll says "Run All"
+// in the language of msgs.
+func (msgs Messages) DiagAll() string {
+	return Catalog.Format(msgs.locale, "diagAll", nil)
+}
+
+// DiagAllNote says "In the order above: this computer first, then the server."
+// in the language the app shows.
+func DiagAllNote() string { return In(i18n.Locale()).DiagAllNote() }
+
+// DiagAllNote says "In the order above: this computer first, then the server."
+// in the language of msgs.
+func (msgs Messages) DiagAllNote() string {
+	return Catalog.Format(msgs.locale, "diagAllNote", nil)
+}
+
+// DiagCopy says "Copy Diagnostics"
+// in the language the app shows.
+func DiagCopy() string { return In(i18n.Locale()).DiagCopy() }
+
+// DiagCopy says "Copy Diagnostics"
+// in the language of msgs.
+func (msgs Messages) DiagCopy() string {
+	return Catalog.Format(msgs.locale, "diagCopy", nil)
+}
+
+// DiagCopied says "The diagnostics are on the clipboard."
+// in the language the app shows.
+func DiagCopied() string { return In(i18n.Locale()).DiagCopied() }
+
+// DiagCopied says "The diagnostics are on the clipboard."
+// in the language of msgs.
+func (msgs Messages) DiagCopied() string {
+	return Catalog.Format(msgs.locale, "diagCopied", nil)
+}
+
+// DiagUnavailable says "Connect a session first."
+// in the language the app shows.
+func DiagUnavailable() string { return In(i18n.Locale()).DiagUnavailable() }
+
+// DiagUnavailable says "Connect a session first."
+// in the language of msgs.
+func (msgs Messages) DiagUnavailable() string {
+	return Catalog.Format(msgs.locale, "diagUnavailable", nil)
+}
+
+// DiagTimeout says "Timed out (the command channel's 12 seconds)"
+// in the language the app shows.
+func DiagTimeout() string { return In(i18n.Locale()).DiagTimeout() }
+
+// DiagTimeout says "Timed out (the command channel's 12 seconds)"
+// in the language of msgs.
+func (msgs Messages) DiagTimeout() string {
+	return Catalog.Format(msgs.locale, "diagTimeout", nil)
+}
+
+// DiagFailed says "The probe failed: {error}"
+// in the language the app shows.
+func DiagFailed(error string) string { return In(i18n.Locale()).DiagFailed(error) }
+
+// DiagFailed says "The probe failed: {error}"
+// in the language of msgs.
+func (msgs Messages) DiagFailed(error string) string {
+	return Catalog.Format(msgs.locale, "diagFailed", map[string]any{"error": error})
+}
+
+// DiagRunning says "Running…"
+// in the language the app shows.
+func DiagRunning() string { return In(i18n.Locale()).DiagRunning() }
+
+// DiagRunning says "Running…"
+// in the language of msgs.
+func (msgs Messages) DiagRunning() string {
+	return Catalog.Format(msgs.locale, "diagRunning", nil)
+}
+
 // OptionsTextHighlight says "Text highlighting"
 // in the language the app shows.
 func OptionsTextHighlight() string { return In(i18n.Locale()).OptionsTextHighlight() }

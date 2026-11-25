@@ -128,6 +128,9 @@ type Settings struct {
 	// or on Windows a named pipe, \\.\pipe\<name>. "" for the default:
 	// SSH_AUTH_SOCK, or the Windows OpenSSH agent's pipe.
 	SSHAgent string `json:"sshAgent,omitempty"`
+	// RecordAuto records every session as it connects, and stops the
+	// recording when it disconnects; by default nothing is recorded.
+	RecordAuto bool `json:"recordAuto,omitempty"`
 
 	// The Mouse page of the terminal options, zero by default too.
 	//

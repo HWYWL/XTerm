@@ -235,6 +235,10 @@ type App struct {
 	localWatching bool
 	// The day's traffic bases of the servers' interfaces (netday.go).
 	netDay netDay
+	// This run's session transcripts, and their window (record.go); the
+	// connection diagnostics window (diag.go).
+	records recordState
+	diag    *diagDialog
 	// The terminal's text highlighting rules, the one the editor is on and
 	// whether it is open, and whether it is a new one (options_highlight.go).
 	highlight []config.HighlightRule
@@ -363,6 +367,7 @@ func New(plat Platform) *App {
 	a.assetRange = assetRange7d // the window's first range, a week
 	a.highlight = config.LoadHighlightRules()
 	a.netDay = loadNetDay()
+	a.records.init()
 	a.plugins.load(a.settings.Plugins)
 	a.danger.load()
 	a.loadAppearance()
@@ -631,6 +636,7 @@ func (a *App) closeSession(s *Session) {
 			i = slices.Index(a.sessions, s)
 		}
 		a.transfers.cancelSession(s)
+		a.stopRecording(s, locales.RecordSessionEnded())
 		s.disconnect()
 	}
 	a.sessions = slices.Delete(a.sessions, i, i+1)

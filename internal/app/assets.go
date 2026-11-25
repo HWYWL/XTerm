@@ -246,6 +246,7 @@ func (a *App) assetKey(s *Session, mods ui.Modifiers, key ui.Key) {
 		line := strings.TrimSpace(s.cmdLine)
 		s.cmdLine, s.cmdEdited = "", false
 		if line != "" {
+			a.recordCommand(s, line)
 			a.assetCommand(line)
 		}
 	case mods == ui.Ctrl && (key == ui.KeyC || key == ui.KeyU):

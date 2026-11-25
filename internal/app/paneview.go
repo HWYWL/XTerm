@@ -170,6 +170,7 @@ func (a *App) paneExited(s *Session, p *pane) {
 // connectionLost marks s lost: its connection dropped.
 func (a *App) connectionLost(s *Session) {
 	s.status, s.err = statusClosed, errConnectionLost
+	a.stopRecording(s, locales.RecordSessionEnded())
 	s.stopTunnels()
 }
 

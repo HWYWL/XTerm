@@ -1,6 +1,7 @@
 // Package icons holds the app's SVG icons, from Lucide (ISC license, see
-// svg/LICENSE), and the logos of coding agents, from LobeHub Icons (MIT
-// license, see agents/LICENSE), which are their owners' trademarks.
+// svg/LICENSE), the logos of coding agents, from LobeHub Icons (MIT
+// license, see agents/LICENSE), and the logos of the protocols and clouds
+// it connects to (see brands/LICENSE), which are their owners' trademarks.
 package icons
 
 import (
@@ -10,7 +11,7 @@ import (
 	"github.com/egoist/mygo/ui"
 )
 
-//go:embed svg/*.svg agents/*.svg
+//go:embed svg/*.svg agents/*.svg brands/*.svg
 var files embed.FS
 
 var (
@@ -26,6 +27,12 @@ func Get(name string) *ui.SVG { return get("svg/" + name + ".svg") }
 // agents/ as monitor.Agent's Icon names it, single-colored, to draw as
 // an icon. It panics on a name that has no file.
 func Agent(name string) *ui.SVG { return get("agents/" + name + ".svg") }
+
+// Brand returns the logo of a protocol or a cloud, named after its file in
+// brands/: the distribution's, the server's, or the storage's. It is the
+// owner's trademark, drawn as its owner draws it. It panics on a name that
+// has no file.
+func Brand(name string) *ui.SVG { return get("brands/" + name + ".svg") }
 
 func get(file string) *ui.SVG {
 	mu.Lock()

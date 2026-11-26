@@ -11,6 +11,7 @@ import (
 
 	"finallyshell/internal/config"
 	"finallyshell/internal/monitor"
+	"finallyshell/internal/objectstore"
 	"finallyshell/internal/redis"
 	"finallyshell/internal/remotefs"
 	"finallyshell/internal/sshx"
@@ -70,6 +71,14 @@ type Session struct {
 	redisOutBytes uint64
 	redisNetAt    time.Time
 
+	// object is the storage an object host shows, and objects the state
+	// of its file panel (object_session.go, objectpanel.go).
+	object  objectstore.Store
+	objects objectState
+	// objectMeter is what its System page shows: the calls, the bytes, the
+	// endpoint's answer and the bucket's capacity (objectmetrics.go).
+	objectMeter objectMeter
+
 	tunnels tunnelState // see tunnels.go
 	procs   procState   // the Processes tab, see processes.go
 	net     netState    // the Network tab, see network.go
@@ -126,6 +135,11 @@ func newSession(h *config.Host) *Session {
 // shell (redis_session.go).
 func (s *Session) isRedis() bool { return s != nil && s.Host.IsRedis() }
 
+// isObject tells whether s is an object storage session: its host speaks
+// that protocol, and its tab shows the storage's files instead of a
+// terminal (object_session.go).
+func (s *Session) isObject() bool { return s != nil && s.Host.IsObject() }
+
 // jumpedFrom tells whether a program of s's shell went to another host, as
 // ssh does from a jump host's menu: the terminal then shows a session the
 // app's channels — the exec channel of the monitor, SFTP, the assistant's
@@ -163,6 +177,10 @@ func (s *Session) label() string {
 func (a *App) connect(s *Session, secret string) {
 	if s.isRedis() {
 		a.connectRedis(s, secret)
+		return
+	}
+	if s.isObject() {
+		a.connectObject(s, secret)
 		return
 	}
 	if s.cancel != nil {
@@ -475,6 +493,7 @@ func (s *Session) disconnect() {
 		s.redisStats.Close()
 		s.redisStats = nil
 	}
+	s.object = nil
 	if s.sftp != nil {
 		s.sftp.Close()
 		s.sftp = nil

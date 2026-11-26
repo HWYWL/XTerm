@@ -44,6 +44,7 @@ func editorSpec(editing bool) WindowSpec {
 const (
 	editorSSH      = "ssh"
 	editorRedis    = "redis"
+	editorObject   = "object"
 	editorTerminal = "terminal"
 	editorProxy    = "proxy"
 	editorTunnels  = "tunnels"
@@ -59,7 +60,7 @@ var editorProtocols = []struct {
 }{
 	{editorSSH, func() string { return "SSH" }},
 	{editorRedis, locales.ProtocolRedis},
-	{"s3", func() string { return "S3" }},
+	{editorObject, locales.ProtocolObject},
 	{"rdp", func() string { return "RDP" }},
 	{"vnc", func() string { return "VNC" }},
 	{"serial", locales.ProtocolSerial},
@@ -90,6 +91,8 @@ func (f editorField) page() string {
 		return editorProxy
 	case f == fieldSeeds || f == fieldDB:
 		return editorRedis
+	case f == fieldEndpoint || f == fieldBucket || f == fieldAccessKey || f == fieldLocalPath:
+		return editorObject
 	}
 	return editorSSH
 }
@@ -128,6 +131,19 @@ type connEditor struct {
 	cluster bool
 	seeds   string
 	db      string
+
+	// The object storage page's fields (editor_object.go): the storage's
+	// kind, where it is, the credential's key, the folder it opens on and,
+	// for the local one, the directory. The secret key is password, above.
+	objectProvider string
+	endpoint       string
+	region         string
+	bucket         string
+	accessKey      string
+	objectRoot     string
+	localPath      string
+	pathStyle      bool
+	regionCustom   bool // the region is typed, not one of the cloud's
 
 	// readingSecret is set while the host's saved password, or
 	// passphrase, is read from the credential store into the fields.
@@ -203,6 +219,17 @@ func (a *App) openEditor(h *config.Host, from WindowKind) {
 			}
 			ed.password = a.passwords[h.ID]
 			ed.auth = config.AuthPassword
+		} else if h.IsObject() {
+			p := h.ObjectProvider()
+			ed.objectProvider = p.ID
+			if h.Object != nil {
+				ed.endpoint, ed.region, ed.bucket = h.Object.Endpoint, h.Object.Region, h.Object.Bucket
+				ed.accessKey, ed.objectRoot, ed.localPath = h.Object.AccessKey, h.Object.Root, h.Object.LocalPath
+				ed.pathStyle = h.Object.PathStyle
+			}
+			ed.regionCustom = !slices.Contains(p.Regions, ed.region)
+			ed.password = a.passwords[h.ID]
+			ed.auth = config.AuthPassword
 		} else {
 			ed.port = strconv.Itoa(h.PortOr22())
 			ed.auth, ed.user, ed.keyPath = h.Auth, h.User, h.KeyPath
@@ -243,6 +270,10 @@ func validTermType(s string) bool {
 // problems are what is wrong with the fields, said in the language shown.
 func (ed *connEditor) problems() map[editorField]string {
 	errs := map[editorField]string{}
+	if ed.protocol == editorObject {
+		ed.objectProblems(errs)
+		return errs
+	}
 	if ed.protocol == editorRedis {
 		ed.redisProblems(errs)
 		if !validTermType(strings.TrimSpace(ed.termType)) {
@@ -301,10 +332,13 @@ func (a *App) saveEditor() {
 		a.hosts.Add(h)
 		ed.id = h.ID
 	}
-	if ed.protocol == editorRedis {
+	switch ed.protocol {
+	case editorRedis:
 		a.saveRedis(h, ed)
-	} else {
-		h.Protocol, h.Redis = "", nil
+	case editorObject:
+		a.saveObject(h, ed)
+	default:
+		h.Protocol, h.Redis, h.Object = "", nil, nil
 		port, _ := strconv.Atoi(strings.TrimSpace(ed.port))
 		h.Name, h.Addr, h.Port, h.Notes = strings.TrimSpace(ed.name), strings.TrimSpace(ed.addr), port, ed.notes
 		h.User, h.Auth = strings.TrimSpace(ed.user), ed.auth
@@ -377,7 +411,7 @@ func (a *App) protocolRow(c *ui.Context, ed *connEditor) {
 	ui.Row(c).Padding(10, 14).Gap(6).AlignItems(ui.Center).Justify(ui.Center).Children(func() {
 		for _, p := range editorProtocols {
 			active := p.id == ed.protocol
-			supported := p.id == editorSSH || p.id == editorRedis
+			supported := p.id == editorSSH || p.id == editorRedis || p.id == editorObject
 			pill := ui.Row(c).Height(26).Padding(0, 14).Radius(13).
 				AlignItems(ui.Center).Justify(ui.Center)
 			if active {
@@ -422,6 +456,9 @@ func (a *App) chooseProtocol(ed *connEditor, id string) {
 	if id == editorSSH && strings.TrimSpace(ed.port) == "6379" {
 		ed.port = "22"
 	}
+	if id == editorObject && strings.TrimSpace(ed.endpoint) == "" {
+		ed.setObjectProvider(config.ObjectProviderOf(ed.objectProvider))
+	}
 }
 
 // editorView is the connection editor's window: the pages on the left,
@@ -451,15 +488,22 @@ func (a *App) editorView(c *ui.Context) {
 		ed.nav.Page = ed.protocol
 	}
 	main := widgets.NavPage{ID: editorSSH, Hidden: true, Title: locales.EditorPageSSH, View: func(c *ui.Context) { a.sshPage(c, ed, errs, input) }}
-	if ed.protocol == editorRedis {
+	switch ed.protocol {
+	case editorRedis:
 		main = widgets.NavPage{ID: editorRedis, Hidden: true, Title: locales.EditorPageRedis, View: func(c *ui.Context) { a.redisPage(c, ed, errs, input) }}
+	case editorObject:
+		main = widgets.NavPage{ID: editorObject, Hidden: true, Title: locales.EditorPageObject, View: func(c *ui.Context) { a.objectPage(c, ed, errs, input) }}
 	}
-	pages := []widgets.NavPage{
-		main,
-		{ID: editorTerminal, Title: locales.EditorPageTerminal, View: func(c *ui.Context) { a.terminalPage(c, ed, errs, input) }},
-		{ID: editorProxy, Title: locales.EditorPageProxy, View: func(c *ui.Context) { a.proxyPage(c, ed, errs, input) }},
-		{ID: editorTunnels, Title: locales.EditorPageTunnels, View: func(c *ui.Context) { a.tunnelsPage(c, ed) }},
-		{ID: editorJump, Title: locales.EditorPageJumpHost, View: func(c *ui.Context) { a.jumpPage(c, ed, errs) }},
+	pages := []widgets.NavPage{main}
+	// An object storage has no shell to configure, no proxy of its own and
+	// no SSH connection for tunnels or a jump host.
+	if ed.protocol != editorObject {
+		pages = append(pages,
+			widgets.NavPage{ID: editorTerminal, Title: locales.EditorPageTerminal, View: func(c *ui.Context) { a.terminalPage(c, ed, errs, input) }},
+			widgets.NavPage{ID: editorProxy, Title: locales.EditorPageProxy, View: func(c *ui.Context) { a.proxyPage(c, ed, errs, input) }},
+			widgets.NavPage{ID: editorTunnels, Title: locales.EditorPageTunnels, View: func(c *ui.Context) { a.tunnelsPage(c, ed) }},
+			widgets.NavPage{ID: editorJump, Title: locales.EditorPageJumpHost, View: func(c *ui.Context) { a.jumpPage(c, ed, errs) }},
+		)
 	}
 	ui.Column(c).Fill().Children(func() {
 		a.protocolRow(c, ed)

@@ -288,7 +288,7 @@ func (a *App) quickConnect(c *ui.Context, tab *Session, st *startState) {
 			}
 			row.Children(func() {
 				ui.Row(c).Gap(8).Grow(3).Basis(0).MinWidth(0).AlignItems(ui.Center).Children(func() {
-					ui.Icon(c, icons.Get("server")).FontSize(14).TextColor(color.Alpha(0.7))
+					a.hostIcon(c, h, 14, color)
 					ui.Text(c, h.Title()).SingleLine().TextColor(color).Grow(1).MinWidth(0)
 				})
 				addr := h.Addr

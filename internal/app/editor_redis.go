@@ -92,6 +92,7 @@ func (ed *connEditor) redisProblems(errs map[editorField]string) {
 // host's.
 func (a *App) saveRedis(h *config.Host, ed *connEditor) {
 	h.Protocol = config.ProtocolRedis
+	h.Object = nil
 	if h.Redis == nil {
 		h.Redis = &config.RedisSettings{}
 	}

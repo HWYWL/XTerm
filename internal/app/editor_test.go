@@ -666,13 +666,14 @@ func TestEditorPages(t *testing.T) {
 	}
 }
 
-// The editor offers the protocols at its top: SSH and Redis, which it
-// configures, and the protocols to come, which choose nothing yet.
+// The editor offers the protocols at its top: SSH, Redis and the object
+// storages, which it configures, and the protocols to come, which choose
+// nothing yet.
 func TestEditorProtocols(t *testing.T) {
 	a, p := testApp(t)
 	a.newConnection()
 	tt := editorWindow(t, a, p)
-	for _, want := range []string{"SSH", "Redis", "S3", "RDP", "VNC", locales.ProtocolSerial(), "Telnet"} {
+	for _, want := range []string{"SSH", "Redis", locales.ProtocolObject(), "RDP", "VNC", locales.ProtocolSerial(), "Telnet"} {
 		if !tt.HasText(want) {
 			t.Errorf("%q is not offered; texts %q", want, tt.Texts())
 		}
@@ -683,13 +684,24 @@ func TestEditorProtocols(t *testing.T) {
 	if err := tt.Click(locales.EditorPageTerminal()); err != nil {
 		t.Fatal(err)
 	}
-	for _, pill := range []string{"S3", "RDP", "VNC", locales.ProtocolSerial(), "Telnet"} {
+	for _, pill := range []string{"RDP", "VNC", locales.ProtocolSerial(), "Telnet"} {
 		if err := tt.Click(pill); err != nil {
 			t.Fatal(err)
 		}
 		if a.editor.nav.Page != editorTerminal || a.editor.protocol != editorSSH {
 			t.Errorf("%s chose the page %q, protocol %q", pill, a.editor.nav.Page, a.editor.protocol)
 		}
+	}
+	// An object storage is configured as the other two are: its page opens,
+	// and the pages of a shell go away.
+	if err := tt.Click(locales.ProtocolObject()); err != nil {
+		t.Fatal(err)
+	}
+	if a.editor.nav.Page != editorObject || a.editor.protocol != editorObject {
+		t.Errorf("an object storage: page %q, protocol %q", a.editor.nav.Page, a.editor.protocol)
+	}
+	if tt.HasText(locales.EditorPageProxy()) {
+		t.Errorf("the proxy page of an object storage; texts %q", tt.Texts())
 	}
 	if err := tt.Click("Redis"); err != nil {
 		t.Fatal(err)

@@ -220,6 +220,10 @@ type App struct {
 	redisSection     string
 	redisSectionsDlg *redisSectionsDialog
 
+	// The dialogs of the object panel (objectpanel.go).
+	objectPrompt    *objectPrompt
+	objectDeleteAsk *objectDeleteAsk
+
 	// The assets window's counts (assets.go): this run's, the days kept in
 	// asset_stats.json, and the range the window shows.
 	assetRun   assetTotals
@@ -490,6 +494,12 @@ func (a *App) mainContent(c *ui.Context) {
 		a.terminalArea(c)
 		return
 	}
+	// An object storage shows its files: it has no terminal to put them
+	// beside, and no panel of the shell's tabs.
+	if s := a.current(); s.isObject() {
+		a.objectArea(c)
+		return
+	}
 	var monitor func()
 	if a.monitorOnRight() {
 		monitor = func() { a.rightMonitor(c) }
@@ -602,17 +612,21 @@ func (a *App) openSession(h *config.Host) { a.openSessionIn(a.selectedNewTab(), 
 func (a *App) openSessionIn(tab *Session, h *config.Host) {
 	// A Redis host's own password may be none, and the server says when it
 	// wants one; its proxy's and jump hosts' are asked for as SSH's are
-	// (redis_session.go).
-	if a.readChainSecrets(h, func() { a.openSessionIn(tab, h) }) {
-		return
-	}
-	need := a.missingSecret(h)
-	if h.IsRedis() {
-		need = a.chainSecret(h)
-	}
-	if need != nil {
-		a.askSecret(need, func() { a.openSessionIn(tab, h) })
-		return
+	// (redis_session.go). A directory of this machine has no secret at
+	// all, and an object storage's key is its own, asked for once.
+	local := h.IsObject() && h.ObjectProvider().Local
+	if !local {
+		if a.readChainSecrets(h, func() { a.openSessionIn(tab, h) }) {
+			return
+		}
+		need := a.missingSecret(h)
+		if h.IsRedis() {
+			need = a.chainSecret(h)
+		}
+		if need != nil {
+			a.askSecret(need, func() { a.openSessionIn(tab, h) })
+			return
+		}
 	}
 	pw := a.passwords[h.ID]
 	if tab != nil && tab.isNewTab() && !tab.isPanelTab() && slices.Contains(a.sessions, tab) {

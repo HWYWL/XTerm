@@ -5138,6 +5138,606 @@ func (msgs Messages) RedisNoMeaning() string {
 	return Catalog.Format(msgs.locale, "redisNoMeaning", nil)
 }
 
+// ProtocolObject says "Object storage"
+// in the language the app shows.
+func ProtocolObject() string { return In(i18n.Locale()).ProtocolObject() }
+
+// ProtocolObject says "Object storage"
+// in the language of msgs.
+func (msgs Messages) ProtocolObject() string {
+	return Catalog.Format(msgs.locale, "protocolObject", nil)
+}
+
+// EditorPageObject says "Object storage"
+// in the language the app shows.
+func EditorPageObject() string { return In(i18n.Locale()).EditorPageObject() }
+
+// EditorPageObject says "Object storage"
+// in the language of msgs.
+func (msgs Messages) EditorPageObject() string {
+	return Catalog.Format(msgs.locale, "editorPageObject", nil)
+}
+
+// FieldObjectProvider says "Storage"
+// in the language the app shows.
+func FieldObjectProvider() string { return In(i18n.Locale()).FieldObjectProvider() }
+
+// FieldObjectProvider says "Storage"
+// in the language of msgs.
+func (msgs Messages) FieldObjectProvider() string {
+	return Catalog.Format(msgs.locale, "fieldObjectProvider", nil)
+}
+
+// FieldEndpoint says "Endpoint"
+// in the language the app shows.
+func FieldEndpoint() string { return In(i18n.Locale()).FieldEndpoint() }
+
+// FieldEndpoint says "Endpoint"
+// in the language of msgs.
+func (msgs Messages) FieldEndpoint() string {
+	return Catalog.Format(msgs.locale, "fieldEndpoint", nil)
+}
+
+// FieldRegion says "Region"
+// in the language the app shows.
+func FieldRegion() string { return In(i18n.Locale()).FieldRegion() }
+
+// FieldRegion says "Region"
+// in the language of msgs.
+func (msgs Messages) FieldRegion() string {
+	return Catalog.Format(msgs.locale, "fieldRegion", nil)
+}
+
+// ObjectRegionCustom says "Custom…"
+// in the language the app shows.
+func ObjectRegionCustom() string { return In(i18n.Locale()).ObjectRegionCustom() }
+
+// ObjectRegionCustom says "Custom…"
+// in the language of msgs.
+func (msgs Messages) ObjectRegionCustom() string {
+	return Catalog.Format(msgs.locale, "objectRegionCustom", nil)
+}
+
+// ObjectRegionSelfHosted says "Only what requests are signed with: us-east-1 unless the server was set to another."
+// in the language the app shows.
+func ObjectRegionSelfHosted() string { return In(i18n.Locale()).ObjectRegionSelfHosted() }
+
+// ObjectRegionSelfHosted says "Only what requests are signed with: us-east-1 unless the server was set to another."
+// in the language of msgs.
+func (msgs Messages) ObjectRegionSelfHosted() string {
+	return Catalog.Format(msgs.locale, "objectRegionSelfHosted", nil)
+}
+
+// FieldBucket says "Bucket"
+// in the language the app shows.
+func FieldBucket() string { return In(i18n.Locale()).FieldBucket() }
+
+// FieldBucket says "Bucket"
+// in the language of msgs.
+func (msgs Messages) FieldBucket() string {
+	return Catalog.Format(msgs.locale, "fieldBucket", nil)
+}
+
+// FieldContainerPlaceholder says "container"
+// in the language the app shows.
+func FieldContainerPlaceholder() string { return In(i18n.Locale()).FieldContainerPlaceholder() }
+
+// FieldContainerPlaceholder says "container"
+// in the language of msgs.
+func (msgs Messages) FieldContainerPlaceholder() string {
+	return Catalog.Format(msgs.locale, "fieldContainerPlaceholder", nil)
+}
+
+// FieldAccessKey says "Access key"
+// in the language the app shows.
+func FieldAccessKey() string { return In(i18n.Locale()).FieldAccessKey() }
+
+// FieldAccessKey says "Access key"
+// in the language of msgs.
+func (msgs Messages) FieldAccessKey() string {
+	return Catalog.Format(msgs.locale, "fieldAccessKey", nil)
+}
+
+// FieldSecretKey says "Secret key"
+// in the language the app shows.
+func FieldSecretKey() string { return In(i18n.Locale()).FieldSecretKey() }
+
+// FieldSecretKey says "Secret key"
+// in the language of msgs.
+func (msgs Messages) FieldSecretKey() string {
+	return Catalog.Format(msgs.locale, "fieldSecretKey", nil)
+}
+
+// FieldObjectRoot says "Folder to open"
+// in the language the app shows.
+func FieldObjectRoot() string { return In(i18n.Locale()).FieldObjectRoot() }
+
+// FieldObjectRoot says "Folder to open"
+// in the language of msgs.
+func (msgs Messages) FieldObjectRoot() string {
+	return Catalog.Format(msgs.locale, "fieldObjectRoot", nil)
+}
+
+// FieldObjectRootHint says "backups/2026, or empty"
+// in the language the app shows.
+func FieldObjectRootHint() string { return In(i18n.Locale()).FieldObjectRootHint() }
+
+// FieldObjectRootHint says "backups/2026, or empty"
+// in the language of msgs.
+func (msgs Messages) FieldObjectRootHint() string {
+	return Catalog.Format(msgs.locale, "fieldObjectRootHint", nil)
+}
+
+// FieldLocalPath says "Directory"
+// in the language the app shows.
+func FieldLocalPath() string { return In(i18n.Locale()).FieldLocalPath() }
+
+// FieldLocalPath says "Directory"
+// in the language of msgs.
+func (msgs Messages) FieldLocalPath() string {
+	return Catalog.Format(msgs.locale, "fieldLocalPath", nil)
+}
+
+// FieldLocalPathHint says "D:\\files or /home/me"
+// in the language the app shows.
+func FieldLocalPathHint() string { return In(i18n.Locale()).FieldLocalPathHint() }
+
+// FieldLocalPathHint says "D:\\files or /home/me"
+// in the language of msgs.
+func (msgs Messages) FieldLocalPathHint() string {
+	return Catalog.Format(msgs.locale, "fieldLocalPathHint", nil)
+}
+
+// ObjectPathStyle says "Put the bucket in the path (MinIO, RustFS)"
+// in the language the app shows.
+func ObjectPathStyle() string { return In(i18n.Locale()).ObjectPathStyle() }
+
+// ObjectPathStyle says "Put the bucket in the path (MinIO, RustFS)"
+// in the language of msgs.
+func (msgs Messages) ObjectPathStyle() string {
+	return Catalog.Format(msgs.locale, "objectPathStyle", nil)
+}
+
+// ErrObjectEndpointRequired says "The endpoint is required"
+// in the language the app shows.
+func ErrObjectEndpointRequired() string { return In(i18n.Locale()).ErrObjectEndpointRequired() }
+
+// ErrObjectEndpointRequired says "The endpoint is required"
+// in the language of msgs.
+func (msgs Messages) ErrObjectEndpointRequired() string {
+	return Catalog.Format(msgs.locale, "errObjectEndpointRequired", nil)
+}
+
+// ErrObjectBucketRequired says "The bucket is required"
+// in the language the app shows.
+func ErrObjectBucketRequired() string { return In(i18n.Locale()).ErrObjectBucketRequired() }
+
+// ErrObjectBucketRequired says "The bucket is required"
+// in the language of msgs.
+func (msgs Messages) ErrObjectBucketRequired() string {
+	return Catalog.Format(msgs.locale, "errObjectBucketRequired", nil)
+}
+
+// ErrObjectKeyRequired says "The access key is required"
+// in the language the app shows.
+func ErrObjectKeyRequired() string { return In(i18n.Locale()).ErrObjectKeyRequired() }
+
+// ErrObjectKeyRequired says "The access key is required"
+// in the language of msgs.
+func (msgs Messages) ErrObjectKeyRequired() string {
+	return Catalog.Format(msgs.locale, "errObjectKeyRequired", nil)
+}
+
+// ErrObjectLocalRequired says "Choose a directory"
+// in the language the app shows.
+func ErrObjectLocalRequired() string { return In(i18n.Locale()).ErrObjectLocalRequired() }
+
+// ErrObjectLocalRequired says "Choose a directory"
+// in the language of msgs.
+func (msgs Messages) ErrObjectLocalRequired() string {
+	return Catalog.Format(msgs.locale, "errObjectLocalRequired", nil)
+}
+
+// ObjectNoPanel says "Object storage has no bottom panel"
+// in the language the app shows.
+func ObjectNoPanel() string { return In(i18n.Locale()).ObjectNoPanel() }
+
+// ObjectNoPanel says "Object storage has no bottom panel"
+// in the language of msgs.
+func (msgs Messages) ObjectNoPanel() string {
+	return Catalog.Format(msgs.locale, "objectNoPanel", nil)
+}
+
+// ObjectEmpty says "This folder is empty"
+// in the language the app shows.
+func ObjectEmpty() string { return In(i18n.Locale()).ObjectEmpty() }
+
+// ObjectEmpty says "This folder is empty"
+// in the language of msgs.
+func (msgs Messages) ObjectEmpty() string {
+	return Catalog.Format(msgs.locale, "objectEmpty", nil)
+}
+
+// ObjectLoading says "Reading the storage…"
+// in the language the app shows.
+func ObjectLoading() string { return In(i18n.Locale()).ObjectLoading() }
+
+// ObjectLoading says "Reading the storage…"
+// in the language of msgs.
+func (msgs Messages) ObjectLoading() string {
+	return Catalog.Format(msgs.locale, "objectLoading", nil)
+}
+
+// ObjectUploading says "Uploading %s"
+// in the language the app shows.
+func ObjectUploading() string { return In(i18n.Locale()).ObjectUploading() }
+
+// ObjectUploading says "Uploading %s"
+// in the language of msgs.
+func (msgs Messages) ObjectUploading() string {
+	return Catalog.Format(msgs.locale, "objectUploading", nil)
+}
+
+// ObjectUploaded says "Uploaded %s"
+// in the language the app shows.
+func ObjectUploaded() string { return In(i18n.Locale()).ObjectUploaded() }
+
+// ObjectUploaded says "Uploaded %s"
+// in the language of msgs.
+func (msgs Messages) ObjectUploaded() string {
+	return Catalog.Format(msgs.locale, "objectUploaded", nil)
+}
+
+// ObjectUploadFailed says "Upload failed: %s"
+// in the language the app shows.
+func ObjectUploadFailed() string { return In(i18n.Locale()).ObjectUploadFailed() }
+
+// ObjectUploadFailed says "Upload failed: %s"
+// in the language of msgs.
+func (msgs Messages) ObjectUploadFailed() string {
+	return Catalog.Format(msgs.locale, "objectUploadFailed", nil)
+}
+
+// ObjectDownloading says "Downloading %s"
+// in the language the app shows.
+func ObjectDownloading() string { return In(i18n.Locale()).ObjectDownloading() }
+
+// ObjectDownloading says "Downloading %s"
+// in the language of msgs.
+func (msgs Messages) ObjectDownloading() string {
+	return Catalog.Format(msgs.locale, "objectDownloading", nil)
+}
+
+// ObjectDownloaded says "Saved %s"
+// in the language the app shows.
+func ObjectDownloaded() string { return In(i18n.Locale()).ObjectDownloaded() }
+
+// ObjectDownloaded says "Saved %s"
+// in the language of msgs.
+func (msgs Messages) ObjectDownloaded() string {
+	return Catalog.Format(msgs.locale, "objectDownloaded", nil)
+}
+
+// ObjectDownloadFailed says "Download failed: %s"
+// in the language the app shows.
+func ObjectDownloadFailed() string { return In(i18n.Locale()).ObjectDownloadFailed() }
+
+// ObjectDownloadFailed says "Download failed: %s"
+// in the language of msgs.
+func (msgs Messages) ObjectDownloadFailed() string {
+	return Catalog.Format(msgs.locale, "objectDownloadFailed", nil)
+}
+
+// ObjectDeleting says "Deleting…"
+// in the language the app shows.
+func ObjectDeleting() string { return In(i18n.Locale()).ObjectDeleting() }
+
+// ObjectDeleting says "Deleting…"
+// in the language of msgs.
+func (msgs Messages) ObjectDeleting() string {
+	return Catalog.Format(msgs.locale, "objectDeleting", nil)
+}
+
+// ObjectDeleteAsk says "Delete %d item(s)? This cannot be undone."
+// in the language the app shows.
+func ObjectDeleteAsk() string { return In(i18n.Locale()).ObjectDeleteAsk() }
+
+// ObjectDeleteAsk says "Delete %d item(s)? This cannot be undone."
+// in the language of msgs.
+func (msgs Messages) ObjectDeleteAsk() string {
+	return Catalog.Format(msgs.locale, "objectDeleteAsk", nil)
+}
+
+// ObjectDeleted says "Deleted %d item(s)"
+// in the language the app shows.
+func ObjectDeleted() string { return In(i18n.Locale()).ObjectDeleted() }
+
+// ObjectDeleted says "Deleted %d item(s)"
+// in the language of msgs.
+func (msgs Messages) ObjectDeleted() string {
+	return Catalog.Format(msgs.locale, "objectDeleted", nil)
+}
+
+// ObjectDeleteFailed says "Delete failed: %s"
+// in the language the app shows.
+func ObjectDeleteFailed() string { return In(i18n.Locale()).ObjectDeleteFailed() }
+
+// ObjectDeleteFailed says "Delete failed: %s"
+// in the language of msgs.
+func (msgs Messages) ObjectDeleteFailed() string {
+	return Catalog.Format(msgs.locale, "objectDeleteFailed", nil)
+}
+
+// ObjectMkdirFailed says "Cannot make the folder: %s"
+// in the language the app shows.
+func ObjectMkdirFailed() string { return In(i18n.Locale()).ObjectMkdirFailed() }
+
+// ObjectMkdirFailed says "Cannot make the folder: %s"
+// in the language of msgs.
+func (msgs Messages) ObjectMkdirFailed() string {
+	return Catalog.Format(msgs.locale, "objectMkdirFailed", nil)
+}
+
+// ObjectFolderName says "Folder name"
+// in the language the app shows.
+func ObjectFolderName() string { return In(i18n.Locale()).ObjectFolderName() }
+
+// ObjectFolderName says "Folder name"
+// in the language of msgs.
+func (msgs Messages) ObjectFolderName() string {
+	return Catalog.Format(msgs.locale, "objectFolderName", nil)
+}
+
+// ObjectFolder says "Folder"
+// in the language the app shows.
+func ObjectFolder() string { return In(i18n.Locale()).ObjectFolder() }
+
+// ObjectFolder says "Folder"
+// in the language of msgs.
+func (msgs Messages) ObjectFolder() string {
+	return Catalog.Format(msgs.locale, "objectFolder", nil)
+}
+
+// ObjectFile says "File"
+// in the language the app shows.
+func ObjectFile() string { return In(i18n.Locale()).ObjectFile() }
+
+// ObjectFile says "File"
+// in the language of msgs.
+func (msgs Messages) ObjectFile() string {
+	return Catalog.Format(msgs.locale, "objectFile", nil)
+}
+
+// ObjectOnline says "Online"
+// in the language the app shows.
+func ObjectOnline() string { return In(i18n.Locale()).ObjectOnline() }
+
+// ObjectOnline says "Online"
+// in the language of msgs.
+func (msgs Messages) ObjectOnline() string {
+	return Catalog.Format(msgs.locale, "objectOnline", nil)
+}
+
+// ObjectOffline says "Offline"
+// in the language the app shows.
+func ObjectOffline() string { return In(i18n.Locale()).ObjectOffline() }
+
+// ObjectOffline says "Offline"
+// in the language of msgs.
+func (msgs Messages) ObjectOffline() string {
+	return Catalog.Format(msgs.locale, "objectOffline", nil)
+}
+
+// ObjectTimeout says "Timeout"
+// in the language the app shows.
+func ObjectTimeout() string { return In(i18n.Locale()).ObjectTimeout() }
+
+// ObjectTimeout says "Timeout"
+// in the language of msgs.
+func (msgs Messages) ObjectTimeout() string {
+	return Catalog.Format(msgs.locale, "objectTimeout", nil)
+}
+
+// ObjectDenied says "No access"
+// in the language the app shows.
+func ObjectDenied() string { return In(i18n.Locale()).ObjectDenied() }
+
+// ObjectDenied says "No access"
+// in the language of msgs.
+func (msgs Messages) ObjectDenied() string {
+	return Catalog.Format(msgs.locale, "objectDenied", nil)
+}
+
+// ObjectProbing says "Probing…"
+// in the language the app shows.
+func ObjectProbing() string { return In(i18n.Locale()).ObjectProbing() }
+
+// ObjectProbing says "Probing…"
+// in the language of msgs.
+func (msgs Messages) ObjectProbing() string {
+	return Catalog.Format(msgs.locale, "objectProbing", nil)
+}
+
+// ObjectProbeLatency says "%s"
+// in the language the app shows.
+func ObjectProbeLatency() string { return In(i18n.Locale()).ObjectProbeLatency() }
+
+// ObjectProbeLatency says "%s"
+// in the language of msgs.
+func (msgs Messages) ObjectProbeLatency() string {
+	return Catalog.Format(msgs.locale, "objectProbeLatency", nil)
+}
+
+// ObjectSuccess says "Success"
+// in the language the app shows.
+func ObjectSuccess() string { return In(i18n.Locale()).ObjectSuccess() }
+
+// ObjectSuccess says "Success"
+// in the language of msgs.
+func (msgs Messages) ObjectSuccess() string {
+	return Catalog.Format(msgs.locale, "objectSuccess", nil)
+}
+
+// ObjectOkCalls says "Succeeded"
+// in the language the app shows.
+func ObjectOkCalls() string { return In(i18n.Locale()).ObjectOkCalls() }
+
+// ObjectOkCalls says "Succeeded"
+// in the language of msgs.
+func (msgs Messages) ObjectOkCalls() string {
+	return Catalog.Format(msgs.locale, "objectOkCalls", nil)
+}
+
+// ObjectFailed says "Failed"
+// in the language the app shows.
+func ObjectFailed() string { return In(i18n.Locale()).ObjectFailed() }
+
+// ObjectFailed says "Failed"
+// in the language of msgs.
+func (msgs Messages) ObjectFailed() string {
+	return Catalog.Format(msgs.locale, "objectFailed", nil)
+}
+
+// ObjectTimeoutCalls says "%d timeouts"
+// in the language the app shows.
+func ObjectTimeoutCalls() string { return In(i18n.Locale()).ObjectTimeoutCalls() }
+
+// ObjectTimeoutCalls says "%d timeouts"
+// in the language of msgs.
+func (msgs Messages) ObjectTimeoutCalls() string {
+	return Catalog.Format(msgs.locale, "objectTimeoutCalls", nil)
+}
+
+// ObjectTraffic says "Traffic"
+// in the language the app shows.
+func ObjectTraffic() string { return In(i18n.Locale()).ObjectTraffic() }
+
+// ObjectTraffic says "Traffic"
+// in the language of msgs.
+func (msgs Messages) ObjectTraffic() string {
+	return Catalog.Format(msgs.locale, "objectTraffic", nil)
+}
+
+// ObjectToday says "Today ↓ %s · ↑ %s"
+// in the language the app shows.
+func ObjectToday() string { return In(i18n.Locale()).ObjectToday() }
+
+// ObjectToday says "Today ↓ %s · ↑ %s"
+// in the language of msgs.
+func (msgs Messages) ObjectToday() string {
+	return Catalog.Format(msgs.locale, "objectToday", nil)
+}
+
+// ObjectRequests says "Requests"
+// in the language the app shows.
+func ObjectRequests() string { return In(i18n.Locale()).ObjectRequests() }
+
+// ObjectRequests says "Requests"
+// in the language of msgs.
+func (msgs Messages) ObjectRequests() string {
+	return Catalog.Format(msgs.locale, "objectRequests", nil)
+}
+
+// ObjectCalls says "%d calls"
+// in the language the app shows.
+func ObjectCalls() string { return In(i18n.Locale()).ObjectCalls() }
+
+// ObjectCalls says "%d calls"
+// in the language of msgs.
+func (msgs Messages) ObjectCalls() string {
+	return Catalog.Format(msgs.locale, "objectCalls", nil)
+}
+
+// ObjectLatency says "Latency"
+// in the language the app shows.
+func ObjectLatency() string { return In(i18n.Locale()).ObjectLatency() }
+
+// ObjectLatency says "Latency"
+// in the language of msgs.
+func (msgs Messages) ObjectLatency() string {
+	return Catalog.Format(msgs.locale, "objectLatency", nil)
+}
+
+// ObjectCodes says "Status codes"
+// in the language the app shows.
+func ObjectCodes() string { return In(i18n.Locale()).ObjectCodes() }
+
+// ObjectCodes says "Status codes"
+// in the language of msgs.
+func (msgs Messages) ObjectCodes() string {
+	return Catalog.Format(msgs.locale, "objectCodes", nil)
+}
+
+// ObjectNoSamples says "No requests yet"
+// in the language the app shows.
+func ObjectNoSamples() string { return In(i18n.Locale()).ObjectNoSamples() }
+
+// ObjectNoSamples says "No requests yet"
+// in the language of msgs.
+func (msgs Messages) ObjectNoSamples() string {
+	return Catalog.Format(msgs.locale, "objectNoSamples", nil)
+}
+
+// ObjectTransfersRunning says "%d transfers running"
+// in the language the app shows.
+func ObjectTransfersRunning() string { return In(i18n.Locale()).ObjectTransfersRunning() }
+
+// ObjectTransfersRunning says "%d transfers running"
+// in the language of msgs.
+func (msgs Messages) ObjectTransfersRunning() string {
+	return Catalog.Format(msgs.locale, "objectTransfersRunning", nil)
+}
+
+// ObjectClearFinished says "Clear finished"
+// in the language the app shows.
+func ObjectClearFinished() string { return In(i18n.Locale()).ObjectClearFinished() }
+
+// ObjectClearFinished says "Clear finished"
+// in the language of msgs.
+func (msgs Messages) ObjectClearFinished() string {
+	return Catalog.Format(msgs.locale, "objectClearFinished", nil)
+}
+
+// ObjectTransferRemaining says "remaining %s"
+// in the language the app shows.
+func ObjectTransferRemaining() string { return In(i18n.Locale()).ObjectTransferRemaining() }
+
+// ObjectTransferRemaining says "remaining %s"
+// in the language of msgs.
+func (msgs Messages) ObjectTransferRemaining() string {
+	return Catalog.Format(msgs.locale, "objectTransferRemaining", nil)
+}
+
+// ObjectClear says "Clear"
+// in the language the app shows.
+func ObjectClear() string { return In(i18n.Locale()).ObjectClear() }
+
+// ObjectClear says "Clear"
+// in the language of msgs.
+func (msgs Messages) ObjectClear() string {
+	return Catalog.Format(msgs.locale, "objectClear", nil)
+}
+
+// ObjectTransfersDone says "All finished"
+// in the language the app shows.
+func ObjectTransfersDone() string { return In(i18n.Locale()).ObjectTransfersDone() }
+
+// ObjectTransfersDone says "All finished"
+// in the language of msgs.
+func (msgs Messages) ObjectTransfersDone() string {
+	return Catalog.Format(msgs.locale, "objectTransfersDone", nil)
+}
+
+// ObjectProviderLocal says "Local file system"
+// in the language the app shows.
+func ObjectProviderLocal() string { return In(i18n.Locale()).ObjectProviderLocal() }
+
+// ObjectProviderLocal says "Local file system"
+// in the language of msgs.
+func (msgs Messages) ObjectProviderLocal() string {
+	return Catalog.Format(msgs.locale, "objectProviderLocal", nil)
+}
+
 // RedisHelpIntro says "Redis commands, as in redis-cli:"
 // in the language the app shows.
 func RedisHelpIntro() string { return In(i18n.Locale()).RedisHelpIntro() }

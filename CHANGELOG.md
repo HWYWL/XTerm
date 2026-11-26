@@ -9,6 +9,30 @@ Each version's notes, newest first, in English and Simplified Chinese. A
 release's notes on GitHub and in the app's update window are its section
 here; see [发布](docs/zh-CN/development.md#发布).
 
+## 0.3.3
+
+### English
+
+- Connect to an object storage as a host: Aliyun OSS, Tencent Cloud COS, Huawei Cloud OBS, Qiniu Kodo, AWS S3, Google Cloud Storage, Azure Blob, MinIO, RustFS, and a directory of this machine.
+- An object storage's tab is its files, with the file panel's table: open a folder, download with a double click, upload files or drop them in, make a folder, delete; there is no terminal and no bottom panel.
+- The storage's System page probes the bucket every ten seconds — online, no access, offline or timed out, and how long it took — and draws the success rate, the traffic, the calls a second of Put, Get, List and Delete, their P50/P90/P99, and the answers by status code.
+- Uploads and downloads list their files under the panel: a bar, the bytes, the speed and the time left for each, with a cancel button and a way to clear the finished ones; the traffic counts bytes as they flow, not when a transfer ends.
+- A cloud's region is a list: choosing one fills in that region's endpoint, the regions of AWS China included; a region the list does not have is typed.
+- Redis servers get a System page of their own: the role, both versions, the clients connected and the uptime, the memory, clients and hit rate as bars and rings, the commands a second and the traffic as curves, and a bar for each database's keys.
+- INFO's sections are a button that opens a dialog: the sections at its top, and the fields of the chosen one as a table of the field, its value and what it means — the fields of Redis 6 to 8 are documented, and a field of a newer server says that it is not documented yet.
+- The connection tree, the recent connections, the import preview and the object panel show each connection's own logo — Linux, Redis, the cloud of the bucket — instead of the same server icon.
+
+### 简体中文
+
+- 可以把对象存储当作一台主机来连接：阿里云 OSS、腾讯云 COS、华为云 OBS、七牛云 Kodo、AWS S3、Google Cloud Storage、Azure Blob、MinIO、RustFS，以及本机的一个目录。
+- 对象存储的标签页就是它的文件，和文件面板同样的表格：进入文件夹、双击下载、上传或把文件拖进来、新建文件夹、删除；没有终端，也没有底部面板。
+- 对象存储的系统页每十秒探测一次桶，显示在线、无权限、离线或超时和这次探测的耗时，并画出成功率、流量、Put / Get / List / Delete 每秒的请求量与 P50/P90/P99，以及按状态码统计的应答。
+- 上传和下载在面板下方列出每个文件：进度条、字节数、速度和剩余时间，可以取消，全部结束后可以清除；流量按传输中的字节实时增长，不是传完才记。
+- 云厂商的区域改成下拉：选中就把服务地址填成该区域的端点，包括 AWS 中国区；列表里没有的区域选“自定义…”后输入。
+- Redis 服务器有自己的系统页：角色、两个版本、已连接客户端数和运行天数，内存、客户端数和命中率画成用量条与环，命令量和流量画成曲线，每个数据库的键数一根条。
+- INFO 的分区变成一个按钮，点开是对话框：上面是各分区，下面是所选分区的字段、数值和含义三列表格——Redis 6 到 8 的字段都有说明，比 8 更新的服务器上的字段显示“暂无说明”。
+- 连接树、最近连接、导入预览和对象存储面板显示各自的标志——Linux、Redis、桶所在的云——不再是同一个服务器图标。
+
 ## 0.2.2
 
 ### English

@@ -53,6 +53,8 @@ type Host struct {
 	// every host before the key was, ProtocolRedis for a Redis server.
 	// Read it with ProtocolOrDefault.
 	Protocol string `json:"protocol,omitempty"`
+	// Object holds the storage's fields when Protocol is ProtocolObject.
+	Object *ObjectSettings `json:"object,omitempty"`
 	// Redis holds the host's Redis fields when Protocol is ProtocolRedis.
 	Redis *RedisSettings `json:"redis,omitempty"`
 
@@ -144,6 +146,19 @@ func (h *Host) Title() string {
 // no user: its address and port, or the first seed of its cluster and how
 // many more there are.
 func (h *Host) Target() string {
+	if h.IsObject() {
+		o := h.Object
+		if o == nil {
+			return ""
+		}
+		if o.Provider == ObjectLocal {
+			return o.LocalPath
+		}
+		if root := h.ObjectRoot(); root != "" {
+			return o.Bucket + "/" + root
+		}
+		return o.Bucket
+	}
 	if h.IsRedis() {
 		if h.Redis != nil && h.Redis.Cluster {
 			seeds := h.RedisSeeds()

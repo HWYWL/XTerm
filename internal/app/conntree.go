@@ -376,7 +376,7 @@ func (a *App) connTreeRow(c *ui.Context, m *managerState, it managerItem, r ui.O
 			ui.Text(c, f.Name).SingleLine().MinWidth(0).TextColor(color)
 			return
 		}
-		ui.Icon(c, icons.Get("server")).FontSize(14).TextColor(color.Alpha(0.75))
+		a.hostIcon(c, h, 14, color)
 		ui.Text(c, h.Title()).SingleLine().MinWidth(0).TextColor(color)
 		if dot, ok := a.sessionDot(h); ok {
 			widgets.StatusDot(c, dot)

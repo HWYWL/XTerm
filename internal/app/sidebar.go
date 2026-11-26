@@ -27,6 +27,8 @@ func (a *App) monitorPanel(c *ui.Context) {
 		switch {
 		case s.isRedis():
 			a.redisPanel(c, s)
+		case s.isObject():
+			a.objectPanel(c, s)
 		case s.isLocal():
 			a.localMonitor(c)
 		default:

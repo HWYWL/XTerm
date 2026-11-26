@@ -75,6 +75,50 @@ func must(b []byte, err error) []byte {
 	return b
 }
 
+// Every brand logo parses and draws: a cloud's in the colors its owner
+// draws it, a single-colored one (Linux, Redis, MinIO, AWS's letters) in
+// the color the row gives it.
+func TestBrandIcons(t *testing.T) {
+	entries, err := files.ReadDir("brands")
+	if err != nil {
+		t.Fatal(err)
+	}
+	names := 0
+	for _, e := range entries {
+		name, ok := strings.CutSuffix(e.Name(), ".svg")
+		if !ok {
+			continue
+		}
+		names++
+		if _, err := ui.ParseSVG(must(files.ReadFile("brands/" + e.Name()))); err != nil {
+			t.Errorf("%s: %v", e.Name(), err)
+			continue
+		}
+		tt := ui.NewTester(func(c *ui.Context) {
+			ui.Box(c).Fill().Background(ui.RGB(255, 255, 255)).Center().Children(func() {
+				ui.Icon(c, Brand(name)).FontSize(28).TextColor(ui.RGB(20, 20, 20))
+			})
+		}, 40, 40)
+		tt.Frame()
+		img := tt.Image()
+		ink := 0
+		for y := img.Rect.Min.Y; y < img.Rect.Max.Y; y++ {
+			for x := img.Rect.Min.X; x < img.Rect.Max.X; x++ {
+				p := img.RGBAAt(x, y)
+				if p.R < 240 || p.G < 240 || p.B < 240 {
+					ink++
+				}
+			}
+		}
+		if ink < 60 {
+			t.Errorf("%s: %d pixels drawn", name, ink)
+		}
+	}
+	if names < 10 {
+		t.Fatalf("%d logos in brands/", names)
+	}
+}
+
 func TestMissingAgentIcon(t *testing.T) {
 	defer func() {
 		if recover() == nil {

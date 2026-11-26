@@ -23,13 +23,27 @@ import (
 // sizes. A panel row (paneltab.go) is the panel itself and ignores it, as
 // full screen, which shows the terminal alone, does.
 
+// noBottomPanel says why the tab has no bottom panel, "" when it has one:
+// an object storage shows its files and has no shell's tabs, and a Redis
+// server has none either.
+func (a *App) noBottomPanel() string {
+	switch s := a.current(); {
+	case s.isObject():
+		return locales.ObjectNoPanel()
+	case s.isRedis():
+		return locales.RedisNoPanel()
+	}
+	return ""
+}
+
 // setBottomPanelHidden collapses the bottom panel, or opens it, and
 // saves the choice.
 func (a *App) setBottomPanelHidden(hidden bool) {
-	// A Redis tab has no bottom panel: asking for it says why.
-	if !hidden && a.current().isRedis() {
-		a.notify(locales.RedisNoPanel())
-		return
+	if !hidden {
+		if why := a.noBottomPanel(); why != "" {
+			a.notify(why)
+			return
+		}
 	}
 	if a.bottomHidden == hidden {
 		return
@@ -45,8 +59,8 @@ func (a *App) toggleBottomPanel() { a.setBottomPanelHidden(!a.bottomHidden) }
 // panel row's own, else the one under the terminal, which opens if it
 // was collapsed.
 func (a *App) openBottomTab(tab int) {
-	if a.current().isRedis() {
-		a.notify(locales.RedisNoPanel())
+	if why := a.noBottomPanel(); why != "" {
+		a.notify(why)
 		return
 	}
 	*a.shownBottomTab() = tab

@@ -9,6 +9,20 @@ Each version's notes, newest first, in English and Simplified Chinese. A
 release's notes on GitHub and in the app's update window are its section
 here; see [发布](docs/zh-CN/development.md#发布).
 
+## 0.2.2
+
+### English
+
+- The AI tab shows each answer as the page it is written as: headings, lists, quotes and tables, code blocks with their language and a copy button, and bold, italic, inline code and links within a paragraph.
+- An answer still streaming shows what it has: an open code block runs to its end, and markers that have not closed keep their text.
+- A long answer scrolls above the question box: the box, the send button and the new chat button stay inside the panel instead of being pushed out of it.
+
+### 简体中文
+
+- AI 标签页把每个回答按它写的页面显示：标题、列表、引用和表格，代码块带语言和复制按钮，段落里的粗体、斜体、行内代码和链接。
+- 回答还在生成时也照样显示：没闭合的代码块一直显示到末尾，没闭合的标记保留原文。
+- 回答再长也在输入框上方滚动：输入框、发送按钮和新建对话按钮留在面板里，不再被顶到面板外面。
+
 ## 0.2.1
 
 ### English

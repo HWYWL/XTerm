@@ -614,6 +614,8 @@
   "redisConnected": "Connected to {addr}. Type `help` for a few commands; `quit` closes this tab.",
   "redisBye": "Bye.",
   "redisTunnelsNote": "Tunnels run on the jump host's connection: choose one on the Jump host page first.",
+  "jumpedSession": "This terminal ran ssh: the resources, the files and the assistant are this host's.",
+  "newConnectionThrough": "New connection through this host",
   "redisHelpIntro": "Redis commands, as in redis-cli:",
   "redisClusterNodes": "{n} nodes",
   "redisNoPanel": "The bottom panel is not available for a Redis connection",

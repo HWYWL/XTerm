@@ -4938,6 +4938,26 @@ func (msgs Messages) RedisTunnelsNote() string {
 	return Catalog.Format(msgs.locale, "redisTunnelsNote", nil)
 }
 
+// JumpedSession says "This terminal ran ssh: the resources, the files and the assistant are this host's."
+// in the language the app shows.
+func JumpedSession() string { return In(i18n.Locale()).JumpedSession() }
+
+// JumpedSession says "This terminal ran ssh: the resources, the files and the assistant are this host's."
+// in the language of msgs.
+func (msgs Messages) JumpedSession() string {
+	return Catalog.Format(msgs.locale, "jumpedSession", nil)
+}
+
+// NewConnectionThrough says "New connection through this host"
+// in the language the app shows.
+func NewConnectionThrough() string { return In(i18n.Locale()).NewConnectionThrough() }
+
+// NewConnectionThrough says "New connection through this host"
+// in the language of msgs.
+func (msgs Messages) NewConnectionThrough() string {
+	return Catalog.Format(msgs.locale, "newConnectionThrough", nil)
+}
+
 // RedisHelpIntro says "Redis commands, as in redis-cli:"
 // in the language the app shows.
 func RedisHelpIntro() string { return In(i18n.Locale()).RedisHelpIntro() }

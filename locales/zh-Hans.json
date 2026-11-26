@@ -488,6 +488,8 @@
   "redisConnected": "已连接 {addr}。输入 `help` 查看常用命令，`quit` 关闭这个标签页。",
   "redisBye": "再见。",
   "redisTunnelsNote": "隧道经由跳板机的连接转发：请先在“跳板机”页选一个跳板机。",
+  "jumpedSession": "这个终端已 ssh 到其他主机：监控、文件与 AI 仍作用在当前连接的主机上。",
+  "newConnectionThrough": "经由此主机新建连接",
   "redisHelpIntro": "Redis 命令，和 redis-cli 一样：",
   "redisClusterNodes": "{n} 个节点",
   "redisNoPanel": "Redis 连接无法使用底部面板",

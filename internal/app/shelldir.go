@@ -33,6 +33,9 @@ type shellDirState struct {
 	// agent is the coding agent in the shell's foreground, as last read:
 	// nil for none.
 	agent *monitor.Agent
+	// comm is the name of the program in the shell's foreground, as last
+	// read: "ssh" as a menu of a jump host started one (sidebar.go).
+	comm string
 }
 
 // shellDirReads are how long the follower waits after a command before
@@ -70,6 +73,9 @@ func (a *App) startShellDir(ctx context.Context, s *Session, p *pane, client *ss
 	// then (agentWatch.turns): only the goroutine uses them.
 	var sent *monitor.Agent
 	sentTurn := w.turns.Load()
+	// comm is the program last sent the UI thread: only the goroutine uses
+	// it.
+	comm := ""
 	// read reads the directory, when dir, and the foreground program,
 	// when the tabs show agents, and reports whether the tab shows one
 	// after it. A read that fails, as one that times out, tells nothing:
@@ -101,11 +107,17 @@ func (a *App) startShellDir(ctx context.Context, s *Session, p *pane, client *ss
 		// Only a change redraws: one from what was sent, though the UI
 		// thread may not have taken it yet, or since the setting changed.
 		newAgent := agents && err == nil && (ag != sent || turn != sentTurn)
-		if ctx.Err() != nil || !newDir && !newAgent {
+		// The program in the foreground tells that the shell went to
+		// another host, as a jump host's menu does with ssh.
+		newComm := agents && err == nil && sh.Comm != comm
+		if ctx.Err() != nil || !newDir && !newAgent && !newComm {
 			return agents && ag != nil
 		}
 		if newAgent {
 			sent, sentTurn = ag, turn
+		}
+		if newComm {
+			comm = sh.Comm
 		}
 		a.post(func() {
 			if ctx.Err() != nil || p.shell.wake != wake {
@@ -113,6 +125,9 @@ func (a *App) startShellDir(ctx context.Context, s *Session, p *pane, client *ss
 			}
 			if newDir {
 				a.shellDirRead(s, p, d, baseline)
+			}
+			if newComm {
+				p.shell.comm = comm
 			}
 			if newAgent {
 				a.shellAgentRead(p, ag)

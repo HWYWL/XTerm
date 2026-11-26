@@ -112,6 +112,23 @@ func newSession(h *config.Host) *Session {
 // shell (redis_session.go).
 func (s *Session) isRedis() bool { return s != nil && s.Host.IsRedis() }
 
+// jumpedFrom tells whether a program of s's shell went to another host, as
+// ssh does from a jump host's menu: the terminal then shows a session the
+// app's channels — the exec channel of the monitor, SFTP, the assistant's
+// commands — do not reach, as they end at the host the app connected to.
+func (s *Session) jumpedFrom() bool {
+	if s == nil || s.isLocal() || s.isRedis() {
+		return false
+	}
+	for _, p := range s.panes.panes() {
+		switch p.shell.comm {
+		case "ssh", "sshpass", "mosh-client", "telnet":
+			return true
+		}
+	}
+	return false
+}
+
 func (s *Session) label() string {
 	if s.isNewTab() {
 		return locales.NewTab()

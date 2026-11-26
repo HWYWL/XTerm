@@ -69,6 +69,15 @@ func (a *App) serverView(c *ui.Context, s *Session) {
 				a.sysInfoButton(c, s)
 			})
 		})
+		// A shell that went to another host, as a jump host's menu does,
+		// shows that host: what is here is the host the app connected to,
+		// and so are the monitor, the files and the assistant.
+		if s != nil && s.status == statusConnected && s.jumpedFrom() {
+			widgets.Muted(c, locales.JumpedSession()).FontSize(11.5)
+			if ui.Button(c, locales.NewConnectionThrough()).FontSize(10).Clicked() {
+				a.newConnectionThrough(s.Host)
+			}
+		}
 		var st *monitor.Stats
 		switch {
 		case s == nil:
@@ -459,6 +468,10 @@ func (a *App) sessionRow(c *ui.Context, s *Session, active bool) (closed bool) {
 		if m.Item(locales.DuplicateSession()).Chosen() {
 			// In a tab of its own, though a new tab is selected.
 			a.duplicateSession(s)
+		}
+		if m.Item(locales.NewConnectionThrough()).Disabled(s.isLocal() || s.isRedis()).Chosen() &&
+			!s.isLocal() && !s.isRedis() {
+			a.newConnectionThrough(s.Host)
 		}
 		if m.Item(locales.Disconnect()).Disabled(s.status != statusConnected && s.status != statusConnecting).Chosen() {
 			a.disconnectSession(s)

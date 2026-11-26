@@ -151,6 +151,24 @@ func (a *App) newConnection() {
 	a.openEditor(nil, WindowMain)
 }
 
+// newConnectionThrough opens the editor on a new host that goes through h,
+// h being the host of the session on screen: a jump host's menu leaves the
+// app's channels — the monitor's exec channel, SFTP, the assistant's
+// commands — at h, and a host of its own through it reaches the host the
+// shell went to.
+func (a *App) newConnectionThrough(h *config.Host) {
+	if h == nil || h.IsRedis() || h.Deleted() {
+		return
+	}
+	if a.windowOpen(WindowEditor) {
+		a.plat.FocusWindow(WindowEditor)
+		return
+	}
+	a.openEditor(nil, WindowMain)
+	a.editor.proxy.kind, a.editor.proxy.jump = config.ProxyJump, h.ID
+	a.editor.proxy.hosts = a.hosts
+}
+
 // editConnection opens the connection editor on h, a saved host, or
 // brings the open editor to the front, whichever host it edits: there is
 // one editor at a time, and what it holds is not thrown away. OK saves

@@ -105,6 +105,10 @@ type aiTurn struct {
 	tools int
 	// model is the provider and model that answered, as the page says.
 	model string
+	// blocks is the answer as the page shows it, parsed from renderedFrom
+	// (see markdown.go).
+	blocks       []mdBlock
+	renderedFrom string
 }
 
 // aiPending is a command the assistant may run, waiting for the user.

@@ -27,7 +27,7 @@ func (a *App) aiPanel(c *ui.Context) {
 		a.aiTurnedOff(c)
 		return
 	}
-	ui.Column(c).Key(s.ID).Fill().Children(func() {
+	ui.Column(c).Key(s.ID).Grow(1).MinHeight(0).Children(func() {
 		a.aiHeader(c)
 		a.aiTurns(c, s)
 		if st.pending != nil {
@@ -39,7 +39,7 @@ func (a *App) aiPanel(c *ui.Context) {
 
 // aiTurnedOff is the page before the assistant is turned on.
 func (a *App) aiTurnedOff(c *ui.Context) {
-	ui.Column(c).Fill().Padding(16).Gap(10).Children(func() {
+	ui.Column(c).Grow(1).MinHeight(0).Padding(16).Gap(10).Children(func() {
 		widgets.Muted(c, locales.AiEnableFirst()).Wrap()
 		if ui.PrimaryButton(c, locales.AiOpenSettings()).Clicked() {
 			a.openAISettings()
@@ -54,7 +54,7 @@ func (a *App) aiHeader(c *ui.Context) {
 	if label == "" {
 		label = locales.AiNoModel()
 	}
-	ui.Row(c).Padding(8, 10).Gap(6).AlignItems(ui.Center).
+	ui.Row(c).Padding(8, 10).Gap(6).AlignItems(ui.Center).Shrink(0).
 		BorderWidth(0, 0, 1, 0).BorderColor(theme.Border).Children(func() {
 		widgets.Muted(c, label).FontSize(11).SingleLine().Grow(1).MinWidth(0)
 		if ui.Button(c, locales.AiSettingsShort()).FontSize(10).Clicked() {
@@ -100,7 +100,7 @@ func (a *App) aiTurnRow(c *ui.Context, s *Session, i int) {
 			}
 		}
 		if t.answer != "" {
-			ui.Text(c, t.answer).Wrap().Selectable().FontSize(12)
+			a.aiAnswer(c, t)
 		}
 		if t.stopped && t.answer == "" {
 			widgets.Muted(c, locales.AiStopped()).FontSize(11)
@@ -132,7 +132,7 @@ func (a *App) aiTurnRow(c *ui.Context, s *Session, i int) {
 // aiPendingRow is the command the assistant asked to run, and whether to.
 func (a *App) aiPendingRow(c *ui.Context, s *Session) {
 	p := s.ai.pending
-	ui.Column(c).Gap(6).Padding(8, 10).Background(theme.Surface).
+	ui.Column(c).Gap(6).Padding(8, 10).Background(theme.Surface).Shrink(0).
 		BorderWidth(1, 0, 1, 0).BorderColor(theme.Border).Children(func() {
 		ui.Text(c, locales.AiRunCommand()).Wrap().FontSize(11)
 		ui.Text(c, p.cmd).Wrap().Selectable().FontSize(11.5)
@@ -152,7 +152,8 @@ func (a *App) aiPendingRow(c *ui.Context, s *Session) {
 // sends, and Ctrl+Enter breaks the line.
 func (a *App) aiComposer(c *ui.Context, s *Session) {
 	st := &s.ai
-	ui.Column(c).Gap(6).Padding(8).BorderWidth(1, 0, 0, 0).BorderColor(theme.Border).Children(func() {
+	ui.Column(c).Gap(6).Padding(8).Shrink(0).
+		BorderWidth(1, 0, 0, 0).BorderColor(theme.Border).Children(func() {
 		if st.err != "" {
 			ui.Text(c, st.err).Wrap().FontSize(11).TextColor(theme.Danger)
 		}

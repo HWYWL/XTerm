@@ -4768,6 +4768,206 @@ func (msgs Messages) EditorPageSSH() string {
 	return Catalog.Format(msgs.locale, "editorPageSSH", nil)
 }
 
+// ProtocolSerial says "Serial"
+// in the language the app shows.
+func ProtocolSerial() string { return In(i18n.Locale()).ProtocolSerial() }
+
+// ProtocolSerial says "Serial"
+// in the language of msgs.
+func (msgs Messages) ProtocolSerial() string {
+	return Catalog.Format(msgs.locale, "protocolSerial", nil)
+}
+
+// ProtocolUnsupported says "This protocol is not supported yet"
+// in the language the app shows.
+func ProtocolUnsupported() string { return In(i18n.Locale()).ProtocolUnsupported() }
+
+// ProtocolUnsupported says "This protocol is not supported yet"
+// in the language of msgs.
+func (msgs Messages) ProtocolUnsupported() string {
+	return Catalog.Format(msgs.locale, "protocolUnsupported", nil)
+}
+
+// ProtocolRedis says "Redis"
+// in the language the app shows.
+func ProtocolRedis() string { return In(i18n.Locale()).ProtocolRedis() }
+
+// ProtocolRedis says "Redis"
+// in the language of msgs.
+func (msgs Messages) ProtocolRedis() string {
+	return Catalog.Format(msgs.locale, "protocolRedis", nil)
+}
+
+// EditorPageRedis says "Redis connection"
+// in the language the app shows.
+func EditorPageRedis() string { return In(i18n.Locale()).EditorPageRedis() }
+
+// EditorPageRedis says "Redis connection"
+// in the language of msgs.
+func (msgs Messages) EditorPageRedis() string {
+	return Catalog.Format(msgs.locale, "editorPageRedis", nil)
+}
+
+// FieldRedisMode says "Mode"
+// in the language the app shows.
+func FieldRedisMode() string { return In(i18n.Locale()).FieldRedisMode() }
+
+// FieldRedisMode says "Mode"
+// in the language of msgs.
+func (msgs Messages) FieldRedisMode() string {
+	return Catalog.Format(msgs.locale, "fieldRedisMode", nil)
+}
+
+// RedisStandalone says "Standalone"
+// in the language the app shows.
+func RedisStandalone() string { return In(i18n.Locale()).RedisStandalone() }
+
+// RedisStandalone says "Standalone"
+// in the language of msgs.
+func (msgs Messages) RedisStandalone() string {
+	return Catalog.Format(msgs.locale, "redisStandalone", nil)
+}
+
+// RedisCluster says "Cluster"
+// in the language the app shows.
+func RedisCluster() string { return In(i18n.Locale()).RedisCluster() }
+
+// RedisCluster says "Cluster"
+// in the language of msgs.
+func (msgs Messages) RedisCluster() string {
+	return Catalog.Format(msgs.locale, "redisCluster", nil)
+}
+
+// FieldRedisSeeds says "Seed nodes"
+// in the language the app shows.
+func FieldRedisSeeds() string { return In(i18n.Locale()).FieldRedisSeeds() }
+
+// FieldRedisSeeds says "Seed nodes"
+// in the language of msgs.
+func (msgs Messages) FieldRedisSeeds() string {
+	return Catalog.Format(msgs.locale, "fieldRedisSeeds", nil)
+}
+
+// RedisSeedsPlaceholder says "10.0.0.1:6379"
+// in the language the app shows.
+func RedisSeedsPlaceholder() string { return In(i18n.Locale()).RedisSeedsPlaceholder() }
+
+// RedisSeedsPlaceholder says "10.0.0.1:6379"
+// in the language of msgs.
+func (msgs Messages) RedisSeedsPlaceholder() string {
+	return Catalog.Format(msgs.locale, "redisSeedsPlaceholder", nil)
+}
+
+// RedisSeedsHint says "One host:port a line. The command line follows the cluster's redirections."
+// in the language the app shows.
+func RedisSeedsHint() string { return In(i18n.Locale()).RedisSeedsHint() }
+
+// RedisSeedsHint says "One host:port a line. The command line follows the cluster's redirections."
+// in the language of msgs.
+func (msgs Messages) RedisSeedsHint() string {
+	return Catalog.Format(msgs.locale, "redisSeedsHint", nil)
+}
+
+// FieldRedisDB says "Database"
+// in the language the app shows.
+func FieldRedisDB() string { return In(i18n.Locale()).FieldRedisDB() }
+
+// FieldRedisDB says "Database"
+// in the language of msgs.
+func (msgs Messages) FieldRedisDB() string {
+	return Catalog.Format(msgs.locale, "fieldRedisDB", nil)
+}
+
+// ErrRedisSeedsRequired says "Add at least one seed node"
+// in the language the app shows.
+func ErrRedisSeedsRequired() string { return In(i18n.Locale()).ErrRedisSeedsRequired() }
+
+// ErrRedisSeedsRequired says "Add at least one seed node"
+// in the language of msgs.
+func (msgs Messages) ErrRedisSeedsRequired() string {
+	return Catalog.Format(msgs.locale, "errRedisSeedsRequired", nil)
+}
+
+// ErrRedisSeedInvalid says "\"{seed}\" is not host:port"
+// in the language the app shows.
+func ErrRedisSeedInvalid(seed string) string { return In(i18n.Locale()).ErrRedisSeedInvalid(seed) }
+
+// ErrRedisSeedInvalid says "\"{seed}\" is not host:port"
+// in the language of msgs.
+func (msgs Messages) ErrRedisSeedInvalid(seed string) string {
+	return Catalog.Format(msgs.locale, "errRedisSeedInvalid", map[string]any{"seed": seed})
+}
+
+// ErrRedisDBInvalid says "The database is a number from 0 to 15"
+// in the language the app shows.
+func ErrRedisDBInvalid() string { return In(i18n.Locale()).ErrRedisDBInvalid() }
+
+// ErrRedisDBInvalid says "The database is a number from 0 to 15"
+// in the language of msgs.
+func (msgs Messages) ErrRedisDBInvalid() string {
+	return Catalog.Format(msgs.locale, "errRedisDBInvalid", nil)
+}
+
+// RedisConnected says "Connected to {addr}. Type `help` for a few commands; `quit` closes this tab."
+// in the language the app shows.
+func RedisConnected(addr string) string { return In(i18n.Locale()).RedisConnected(addr) }
+
+// RedisConnected says "Connected to {addr}. Type `help` for a few commands; `quit` closes this tab."
+// in the language of msgs.
+func (msgs Messages) RedisConnected(addr string) string {
+	return Catalog.Format(msgs.locale, "redisConnected", map[string]any{"addr": addr})
+}
+
+// RedisBye says "Bye."
+// in the language the app shows.
+func RedisBye() string { return In(i18n.Locale()).RedisBye() }
+
+// RedisBye says "Bye."
+// in the language of msgs.
+func (msgs Messages) RedisBye() string {
+	return Catalog.Format(msgs.locale, "redisBye", nil)
+}
+
+// RedisTunnelsNote says "Tunnels run on the jump host's connection: choose one on the Jump host page first."
+// in the language the app shows.
+func RedisTunnelsNote() string { return In(i18n.Locale()).RedisTunnelsNote() }
+
+// RedisTunnelsNote says "Tunnels run on the jump host's connection: choose one on the Jump host page first."
+// in the language of msgs.
+func (msgs Messages) RedisTunnelsNote() string {
+	return Catalog.Format(msgs.locale, "redisTunnelsNote", nil)
+}
+
+// RedisHelpIntro says "Redis commands, as in redis-cli:"
+// in the language the app shows.
+func RedisHelpIntro() string { return In(i18n.Locale()).RedisHelpIntro() }
+
+// RedisHelpIntro says "Redis commands, as in redis-cli:"
+// in the language of msgs.
+func (msgs Messages) RedisHelpIntro() string {
+	return Catalog.Format(msgs.locale, "redisHelpIntro", nil)
+}
+
+// RedisClusterNodes says "{n} nodes"
+// in the language the app shows.
+func RedisClusterNodes(n string) string { return In(i18n.Locale()).RedisClusterNodes(n) }
+
+// RedisClusterNodes says "{n} nodes"
+// in the language of msgs.
+func (msgs Messages) RedisClusterNodes(n string) string {
+	return Catalog.Format(msgs.locale, "redisClusterNodes", map[string]any{"n": n})
+}
+
+// RedisNoPanel says "The bottom panel is not available for a Redis connection"
+// in the language the app shows.
+func RedisNoPanel() string { return In(i18n.Locale()).RedisNoPanel() }
+
+// RedisNoPanel says "The bottom panel is not available for a Redis connection"
+// in the language of msgs.
+func (msgs Messages) RedisNoPanel() string {
+	return Catalog.Format(msgs.locale, "redisNoPanel", nil)
+}
+
 // EditorPageTerminal says "Terminal"
 // in the language the app shows.
 func EditorPageTerminal() string { return In(i18n.Locale()).EditorPageTerminal() }

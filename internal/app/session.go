@@ -11,6 +11,7 @@ import (
 
 	"finallyshell/internal/config"
 	"finallyshell/internal/monitor"
+	"finallyshell/internal/redis"
 	"finallyshell/internal/remotefs"
 	"finallyshell/internal/sshx"
 	"finallyshell/internal/termenc"
@@ -50,6 +51,10 @@ type Session struct {
 	stats  monitor.Stats
 	sftp   *sftp.Client
 	files  fileState
+
+	// redisOpts is how a Redis session reaches its server, a connection
+	// for each pane (redis_session.go); zero for the other protocols.
+	redisOpts redis.Options
 
 	tunnels tunnelState // see tunnels.go
 	procs   procState   // the Processes tab, see processes.go
@@ -102,6 +107,11 @@ func newSession(h *config.Host) *Session {
 	return s
 }
 
+// isRedis tells whether s is a Redis session: its host speaks that
+// protocol, and its panes show the server's command line instead of a
+// shell (redis_session.go).
+func (s *Session) isRedis() bool { return s != nil && s.Host.IsRedis() }
+
 func (s *Session) label() string {
 	if s.isNewTab() {
 		return locales.NewTab()
@@ -120,6 +130,10 @@ func (s *Session) label() string {
 // credential store when the app has not read it yet. A password the
 // server refuses opens the prompt (loginFailed).
 func (a *App) connect(s *Session, secret string) {
+	if s.isRedis() {
+		a.connectRedis(s, secret)
+		return
+	}
 	if s.cancel != nil {
 		s.cancel()
 	}

@@ -239,7 +239,7 @@ func TestEditorEditKeepsFields(t *testing.T) {
 	}
 	tt := editorWindow(t, a, p)
 	ed := a.editor
-	want := connEditor{id: "h1", name: "web", addr: "10.0.0.1", port: "2200", notes: "main box\nrack 4",
+	want := connEditor{id: "h1", protocol: editorSSH, name: "web", addr: "10.0.0.1", port: "2200", notes: "main box\nrack 4", db: "0",
 		auth: config.AuthKey, user: "root", keyPath: "~/.ssh/id_rsa", passphrase: "phrase",
 		remember: true, monitor: false, termType: "vt220", backspace: config.BackspaceCtrlH,
 		proxy:   proxyFields{kind: config.ProxySOCKS5, addr: "10.0.0.9", port: "1081", user: "alice", password: "pp", saved: h.Proxy, hosts: a.hosts},
@@ -271,7 +271,7 @@ func TestEditorEditKeepsFields(t *testing.T) {
 		t.Errorf("terminal page; texts %q", tt.Texts())
 	}
 
-	if err := tt.Click(locales.EditorPageSSH()); err != nil {
+	if err := tt.Click("SSH"); err != nil {
 		t.Fatal(err)
 	}
 	typeInto(t, tt, locales.FieldName(), "web-1")
@@ -463,7 +463,7 @@ func TestEditorErrorOnAnotherPage(t *testing.T) {
 	// An error on the page shown keeps it.
 	typeInto(t, tt, locales.FieldTermType(), "xterm")
 	tt.Key(0, ui.KeyEscape)
-	if err := tt.Click(locales.EditorPageSSH()); err != nil {
+	if err := tt.Click("SSH"); err != nil {
 		t.Fatal(err)
 	}
 	typeInto(t, tt, locales.FieldUser(), "")
@@ -635,7 +635,7 @@ func TestEditorPages(t *testing.T) {
 				editorTunnels: {locales.TunnelsIntro(), locales.TunnelsEmpty(), locales.TunnelAdd()},
 			}
 			labels := map[string]string{
-				editorSSH: locales.EditorPageSSH(), editorTerminal: locales.EditorPageTerminal(),
+				editorSSH: "SSH", editorTerminal: locales.EditorPageTerminal(),
 				editorProxy: locales.EditorPageProxy(), editorTunnels: locales.EditorPageTunnels(),
 			}
 			for _, page := range []string{editorSSH, editorTerminal, editorProxy, editorTunnels} {
@@ -653,6 +653,9 @@ func TestEditorPages(t *testing.T) {
 				saveShot(t, tt, "editor-"+page+"-"+lang+".png")
 			}
 			if lang == "zh-Hans" {
+				if err := tt.Click("SSH"); err != nil {
+					t.Fatal(err)
+				}
 				for _, want := range []string{"确定", "取消", "SSH 连接", "终端", "代理", "隧道"} {
 					if !tt.HasText(want) {
 						t.Errorf("missing %q", want)
@@ -661,6 +664,49 @@ func TestEditorPages(t *testing.T) {
 			}
 		})
 	}
+}
+
+// The editor offers the protocols at its top: SSH and Redis, which it
+// configures, and the protocols to come, which choose nothing yet.
+func TestEditorProtocols(t *testing.T) {
+	a, p := testApp(t)
+	a.newConnection()
+	tt := editorWindow(t, a, p)
+	for _, want := range []string{"SSH", "Redis", "S3", "RDP", "VNC", locales.ProtocolSerial(), "Telnet"} {
+		if !tt.HasText(want) {
+			t.Errorf("%q is not offered; texts %q", want, tt.Texts())
+		}
+	}
+	if a.editor.nav.Page != editorSSH || a.editor.protocol != editorSSH {
+		t.Fatalf("on opening: page %q, protocol %q", a.editor.nav.Page, a.editor.protocol)
+	}
+	if err := tt.Click(locales.EditorPageTerminal()); err != nil {
+		t.Fatal(err)
+	}
+	for _, pill := range []string{"S3", "RDP", "VNC", locales.ProtocolSerial(), "Telnet"} {
+		if err := tt.Click(pill); err != nil {
+			t.Fatal(err)
+		}
+		if a.editor.nav.Page != editorTerminal || a.editor.protocol != editorSSH {
+			t.Errorf("%s chose the page %q, protocol %q", pill, a.editor.nav.Page, a.editor.protocol)
+		}
+	}
+	if err := tt.Click("Redis"); err != nil {
+		t.Fatal(err)
+	}
+	if a.editor.nav.Page != editorRedis || a.editor.protocol != editorRedis {
+		t.Errorf("Redis: page %q, protocol %q", a.editor.nav.Page, a.editor.protocol)
+	}
+	if !tt.HasText(locales.EditorPageRedis()) {
+		t.Errorf("no Redis page; texts %q", tt.Texts())
+	}
+	if err := tt.Click("SSH"); err != nil {
+		t.Fatal(err)
+	}
+	if a.editor.nav.Page != editorSSH || a.editor.protocol != editorSSH || !tt.HasText(locales.SectionGeneral()) {
+		t.Errorf("the SSH page %q; texts %q", a.editor.nav.Page, tt.Texts())
+	}
+	saveShot(t, tt, "editor-protocols-en.png")
 }
 
 // Backspace and Delete send what the host's choices say; other keys,

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"finallyshell/internal/icons"
+	"finallyshell/internal/redis"
 	"finallyshell/locales"
 
 	"github.com/egoist/mygo/plugins/terminal"
@@ -56,6 +57,27 @@ func (a *App) splitPane(s *Session, dir splitDir) {
 		a.paneOpened(s, at, p, dir, nil, shellSpec{}, term, err)
 		return
 	}
+	if s.isRedis() {
+		// Each pane has a connection of its own, as the protocol has no
+		// channels to share.
+		opts, spec := s.redisOpts, a.shellSpec(s.Host)
+		ctx := s.ctx
+		go func() {
+			client, err := redis.Dial(ctx, opts)
+			if err != nil {
+				a.post(func() { a.notify(describeError(err)) })
+				return
+			}
+			term, cli, err := a.redisTerminal(s, p, client, spec.topts, opts.DB)
+			a.post(func() {
+				if err == nil {
+					p.redis = cli
+				}
+				a.paneOpened(s, at, p, dir, nil, spec, term, err)
+			})
+		}()
+		return
+	}
 	client, spec := s.client, a.shellSpec(s.Host)
 	go func() {
 		term, err := a.openPaneShell(s, p, client, spec)
@@ -100,6 +122,10 @@ func paneError(err error) string {
 // startPane follows the folder and the foreground program of p's shell,
 // which just opened on s's connection, as long as both last.
 func (a *App) startPane(s *Session, p *pane, spec shellSpec) {
+	if s.isRedis() { // no shell to follow
+		a.updateTerminal(p.term, spec.topts)
+		return
+	}
 	parent := s.ctx
 	if parent == nil {
 		parent = context.Background()
@@ -128,6 +154,7 @@ func (p *pane) end() {
 		p.term.Close()
 		p.term = nil
 	}
+	p.redis = nil
 }
 
 // paneExited takes the end of the shell of p, one of s's panes. While
@@ -147,6 +174,17 @@ func (a *App) paneExited(s *Session, p *pane) {
 		return // a terminal opened since, in its place
 	}
 	switch {
+	case s.isRedis() && s.split():
+		a.closePane(s, p)
+	case s.isRedis():
+		// The command line says whether it left or the server dropped
+		// it: `quit` ends the tab, a lost connection keeps it.
+		if p.redis != nil && p.redis.quitFlag.Load() {
+			s.status, s.err = statusClosed, errShellExited
+			p.sayEnd(locales.StatusExited())
+		} else {
+			a.connectionLost(s)
+		}
 	case s.isLocal() && s.split():
 		a.closePane(s, p)
 	case s.isLocal():

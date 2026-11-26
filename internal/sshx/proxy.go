@@ -151,6 +151,40 @@ func ProxyAddr(p *config.ProxyConfig) string {
 	return net.JoinHostPort(p.Addr, strconv.Itoa(p.PortOrDefault()))
 }
 
+// DialTCP opens a connection to addr the way reaching h goes: directly,
+// through its SOCKS5 or HTTP proxy, or through its jump host. It is what a
+// protocol that is not SSH uses, as Redis, whose addresses are known only
+// as the conversation goes — a cluster moves them — and which each take a
+// connection of their own.
+func DialTCP(h *config.Host, opts Options, addr string, timeout time.Duration) (net.Conn, error) {
+	p := config.ProxyOf(h)
+	if p == nil {
+		return net.DialTimeout("tcp", addr, timeout)
+	}
+	switch p.Kind {
+	case config.ProxySOCKS5:
+		return dialSOCKS5(p, opts.ProxyPassword, addr, timeout)
+	case config.ProxyHTTP:
+		return dialHTTP(p, opts.ProxyPassword, addr, timeout)
+	case config.ProxyJump:
+		return dialJump(opts.Jump, opts.KeepAlive, addr, timeout)
+	}
+	return nil, fmt.Errorf("unknown proxy kind %q", p.Kind)
+}
+
+// JumpClient connects to the jump host closest to the host opts are for,
+// the last of its chain, and returns its client: nil when that host has no
+// jump host. What runs on the jump host's own connection — tunnels — uses
+// it, as a host reached through it would.
+func JumpClient(opts Options) (*ssh.Client, error) {
+	if opts.Jump == nil || opts.Jump.Host == nil {
+		return nil, nil
+	}
+	jopts := opts.Jump.Options
+	jopts.KeepAlive = opts.KeepAlive
+	return Dial(opts.Jump.Host, jopts)
+}
+
 // dialSOCKS5 asks the SOCKS5 proxy p to connect to addr, with the user
 // and password when p has a user. The proxy resolves addr's name.
 func dialSOCKS5(p *config.ProxyConfig, password, addr string, timeout time.Duration) (net.Conn, error) {

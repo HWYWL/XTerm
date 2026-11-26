@@ -70,6 +70,10 @@ func (a *App) openPanelTab(s *Session, tab int) {
 	if s.isLocal() {
 		return // no panel row: see panelCornerButton
 	}
+	if s.isRedis() {
+		a.notify(locales.RedisNoPanel())
+		return // no panel row: a Redis tab has no panel
+	}
 	p := a.panelRowOf(s)
 	if p == nil {
 		i := slices.Index(a.sessions, s)

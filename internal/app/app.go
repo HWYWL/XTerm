@@ -478,6 +478,12 @@ func (a *App) mainArea(c *ui.Context) {
 // monitor on the right, the right column holds it too, on top, over the
 // panel when that is there.
 func (a *App) mainContent(c *ui.Context) {
+	// A Redis tab shows its command line alone: the panel's tabs, the
+	// monitor and the rest are the shell's, which the protocol has not.
+	if s := a.current(); s.isRedis() {
+		a.terminalArea(c)
+		return
+	}
 	var monitor func()
 	if a.monitorOnRight() {
 		monitor = func() { a.rightMonitor(c) }
@@ -588,10 +594,17 @@ func (a *App) openSession(h *config.Host) { a.openSessionIn(a.selectedNewTab(), 
 // asks for those the store does not have either: h's own, then its
 // proxy's and jump hosts', one at a time.
 func (a *App) openSessionIn(tab *Session, h *config.Host) {
+	// A Redis host's own password may be none, and the server says when it
+	// wants one; its proxy's and jump hosts' are asked for as SSH's are
+	// (redis_session.go).
 	if a.readChainSecrets(h, func() { a.openSessionIn(tab, h) }) {
 		return
 	}
-	if need := a.missingSecret(h); need != nil {
+	need := a.missingSecret(h)
+	if h.IsRedis() {
+		need = a.chainSecret(h)
+	}
+	if need != nil {
 		a.askSecret(need, func() { a.openSessionIn(tab, h) })
 		return
 	}
@@ -627,8 +640,17 @@ func (a *App) reconnect(s *Session) {
 	if a.readChainSecrets(s.Host, func() { a.reconnect(s) }) {
 		return
 	}
-	if need := a.missingSecret(s.Host); need != nil {
+	need := a.missingSecret(s.Host)
+	if s.isRedis() {
+		need = a.chainSecret(s.Host)
+	}
+	if need != nil {
 		a.askSecret(need, func() { a.reconnect(s) })
+		return
+	}
+	if s.isRedis() { // its server again, with the password known
+		s.disconnect()
+		a.connect(s, a.passwords[s.Host.ID])
 		return
 	}
 	s.disconnect()

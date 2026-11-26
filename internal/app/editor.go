@@ -43,11 +43,28 @@ func editorSpec(editing bool) WindowSpec {
 // The editor's pages.
 const (
 	editorSSH      = "ssh"
+	editorRedis    = "redis"
 	editorTerminal = "terminal"
 	editorProxy    = "proxy"
 	editorTunnels  = "tunnels"
 	editorJump     = "jump"
 )
+
+// editorProtocols are the protocols the editor offers at its top. SSH and
+// Redis are the ones it configures; the others are there for the protocols
+// to come, and say they are not supported yet.
+var editorProtocols = []struct {
+	id   string
+	name func() string
+}{
+	{editorSSH, func() string { return "SSH" }},
+	{editorRedis, locales.ProtocolRedis},
+	{"s3", func() string { return "S3" }},
+	{"rdp", func() string { return "RDP" }},
+	{"vnc", func() string { return "VNC" }},
+	{"serial", locales.ProtocolSerial},
+	{"telnet", func() string { return "Telnet" }},
+}
 
 // editorField names a field of the editor that can be wrong.
 type editorField int
@@ -58,6 +75,8 @@ const (
 	fieldUser
 	fieldKeyPath
 	fieldTermType
+	fieldSeeds
+	fieldDB
 )
 
 // page is the editor's page that shows f.
@@ -69,6 +88,8 @@ func (f editorField) page() string {
 		return editorJump
 	case slices.Contains(proxyFieldOrder, f):
 		return editorProxy
+	case f == fieldSeeds || f == fieldDB:
+		return editorRedis
 	}
 	return editorSSH
 }
@@ -79,6 +100,10 @@ type connEditor struct {
 	id  string           // the host edited; "" for a new one
 	nav widgets.NavState // the page shown
 
+	// protocol is the protocol of the host, editorSSH or editorRedis,
+	// chosen by the row at the top of the window.
+	protocol string
+
 	name, addr, port, notes string
 	auth                    config.AuthKind
 	user                    string
@@ -86,16 +111,23 @@ type connEditor struct {
 	keyPath, passphrase     string
 	remember                bool // in the system's credential store
 	monitor                 bool
-	termType                string
-	backspace               config.BackspaceKey
-	delete                  config.DeleteKey
-	encoding                config.Encoding
-	proxy                   proxyFields  // the Proxy page (editor_proxy.go)
-	tunnels                 tunnelEditor // see editor_tunnels.go
-	folder                  string       // a new host's, from the manager
+
+	termType  string
+	backspace config.BackspaceKey
+	delete    config.DeleteKey
+	encoding  config.Encoding
+	proxy     proxyFields  // the Proxy page (editor_proxy.go)
+	tunnels   tunnelEditor // see editor_tunnels.go
+	folder    string       // a new host's, from the manager
 	// tree is the tree of hosts that opened the editor, which shows the
 	// host once saved: the manager's when nil.
 	tree *managerState
+
+	// The Redis page's fields: whether the host is a cluster, its seeds
+	// one a line, and its database as typed (editor_redis.go).
+	cluster bool
+	seeds   string
+	db      string
 
 	// readingSecret is set while the host's saved password, or
 	// passphrase, is read from the credential store into the fields.
@@ -135,22 +167,37 @@ func (a *App) openEditor(h *config.Host, from WindowKind) {
 		a.plat.FocusWindow(WindowEditor)
 		return
 	}
-	ed := &connEditor{port: "22", user: "root", auth: config.AuthPassword, remember: true, monitor: true}
+	ed := &connEditor{protocol: editorSSH, port: "22", user: "root", auth: config.AuthPassword, remember: true, monitor: true, db: "0"}
 	if h != nil {
 		ed.id = h.ID
 		ed.name, ed.addr, ed.notes = h.Name, h.Addr, h.Notes
-		ed.port = strconv.Itoa(h.PortOr22())
-		ed.auth, ed.user, ed.keyPath = h.Auth, h.User, h.KeyPath
-		switch ed.auth {
-		case config.AuthAgent:
-		case config.AuthKey:
-			ed.passphrase = a.passwords[h.ID]
-		default:
-			ed.auth = config.AuthPassword
-			ed.password = a.passwords[h.ID]
-		}
 		ed.remember = h.RemembersPassword()
-		ed.monitor = h.MonitorEnabled()
+		ed.protocol = h.ProtocolOrDefault()
+		if h.IsRedis() {
+			ed.port = "6379"
+			if h.Port != 0 {
+				ed.port = strconv.Itoa(h.Port)
+			}
+			if h.Redis != nil {
+				ed.cluster = h.Redis.Cluster
+				ed.seeds = strings.Join(h.Redis.Seeds, "\n")
+				ed.db = strconv.Itoa(h.Redis.DB)
+			}
+			ed.password = a.passwords[h.ID]
+			ed.auth = config.AuthPassword
+		} else {
+			ed.port = strconv.Itoa(h.PortOr22())
+			ed.auth, ed.user, ed.keyPath = h.Auth, h.User, h.KeyPath
+			switch ed.auth {
+			case config.AuthAgent:
+			case config.AuthKey:
+				ed.passphrase = a.passwords[h.ID]
+			default:
+				ed.auth = config.AuthPassword
+				ed.password = a.passwords[h.ID]
+			}
+			ed.monitor = h.MonitorEnabled()
+		}
 		ed.termType, ed.backspace, ed.delete, ed.encoding = h.TermType, h.Backspace, h.Delete, h.Encoding
 	}
 	ed.proxy = a.proxyFieldsOf(h)
@@ -178,6 +225,14 @@ func validTermType(s string) bool {
 // problems are what is wrong with the fields, said in the language shown.
 func (ed *connEditor) problems() map[editorField]string {
 	errs := map[editorField]string{}
+	if ed.protocol == editorRedis {
+		ed.redisProblems(errs)
+		if !validTermType(strings.TrimSpace(ed.termType)) {
+			errs[fieldTermType] = locales.ErrTermTypeInvalid()
+		}
+		ed.proxyProblems(errs)
+		return errs
+	}
 	if strings.TrimSpace(ed.addr) == "" {
 		errs[fieldAddr] = locales.ErrHostRequired()
 	}
@@ -205,7 +260,7 @@ func (a *App) saveEditor() {
 	ed.checked = true
 	if errs := ed.problems(); len(errs) > 0 {
 		first, here := "", false
-		for _, f := range append([]editorField{fieldAddr, fieldPort, fieldUser, fieldKeyPath, fieldTermType}, proxyFieldOrder...) {
+		for _, f := range append([]editorField{fieldAddr, fieldPort, fieldUser, fieldKeyPath, fieldTermType, fieldSeeds, fieldDB}, proxyFieldOrder...) {
 			if errs[f] != "" {
 				first = cmp.Or(first, f.page())
 				here = here || f.page() == ed.nav.Page
@@ -228,26 +283,31 @@ func (a *App) saveEditor() {
 		a.hosts.Add(h)
 		ed.id = h.ID
 	}
-	port, _ := strconv.Atoi(strings.TrimSpace(ed.port))
-	h.Name, h.Addr, h.Port, h.Notes = strings.TrimSpace(ed.name), strings.TrimSpace(ed.addr), port, ed.notes
-	h.User, h.Auth = strings.TrimSpace(ed.user), ed.auth
-	secret := ed.password
-	h.KeyPath = ""
-	switch ed.auth {
-	case config.AuthKey:
-		h.KeyPath, secret = strings.TrimSpace(ed.keyPath), ed.passphrase
-	case config.AuthAgent:
-		secret = ""
+	if ed.protocol == editorRedis {
+		a.saveRedis(h, ed)
+	} else {
+		h.Protocol, h.Redis = "", nil
+		port, _ := strconv.Atoi(strings.TrimSpace(ed.port))
+		h.Name, h.Addr, h.Port, h.Notes = strings.TrimSpace(ed.name), strings.TrimSpace(ed.addr), port, ed.notes
+		h.User, h.Auth = strings.TrimSpace(ed.user), ed.auth
+		secret := ed.password
+		h.KeyPath = ""
+		switch ed.auth {
+		case config.AuthKey:
+			h.KeyPath, secret = strings.TrimSpace(ed.keyPath), ed.passphrase
+		case config.AuthAgent:
+			secret = ""
+		}
+		a.keepLogin(h, secret, ed.remember, ed.readingSecret)
+		h.NoMonitor = !ed.monitor
+		h.TermType, h.Backspace, h.Delete, h.Encoding = strings.TrimSpace(ed.termType), ed.backspace, ed.delete, ed.encoding
+		if h.TermType == config.DefaultTermType {
+			h.TermType = ""
+		}
+		a.saveProxy(h, &ed.proxy)
+		h.Tunnels = ed.tunnels.result()
+		a.keepProxySecret(h, ed.remember, ed.readingProxySecret)
 	}
-	a.keepLogin(h, secret, ed.remember, ed.readingSecret)
-	h.NoMonitor = !ed.monitor
-	h.TermType, h.Backspace, h.Delete, h.Encoding = strings.TrimSpace(ed.termType), ed.backspace, ed.delete, ed.encoding
-	if h.TermType == config.DefaultTermType {
-		h.TermType = ""
-	}
-	a.saveProxy(h, &ed.proxy)
-	h.Tunnels = ed.tunnels.result()
-	a.keepProxySecret(h, ed.remember, ed.readingProxySecret)
 	tree := ed.tree
 	if tree == nil {
 		tree = &a.manager
@@ -292,6 +352,60 @@ func (a *App) browseKey() {
 // termTypes are the terminal types the editor suggests.
 var termTypes = []string{"xterm-256color", "xterm", "xterm-color", "vt100", "vt220", "linux", "screen-256color", "tmux-256color", "ansi"}
 
+// protocolRow is the row of protocols at the top of the editor: SSH and
+// Redis, either of which it configures, chosen; and the others, which are
+// not supported yet, muted and saying so.
+func (a *App) protocolRow(c *ui.Context, ed *connEditor) {
+	ui.Row(c).Padding(10, 14).Gap(6).AlignItems(ui.Center).Justify(ui.Center).Children(func() {
+		for _, p := range editorProtocols {
+			active := p.id == ed.protocol
+			supported := p.id == editorSSH || p.id == editorRedis
+			pill := ui.Row(c).Height(26).Padding(0, 14).Radius(13).
+				AlignItems(ui.Center).Justify(ui.Center)
+			if active {
+				pill.Background(theme.Accent)
+			} else {
+				pill.Background(theme.Surface).Border(1, theme.Border)
+				if !supported {
+					pill.Tooltip(locales.ProtocolUnsupported())
+				}
+			}
+			pill.Children(func() {
+				text := ui.Text(c, p.name()).FontSize(12).SingleLine()
+				if active {
+					text.TextColor(theme.AccentText).FontWeight(600)
+				} else if supported {
+					text.TextColor(theme.Text)
+				} else {
+					text.TextColor(theme.TextMuted)
+				}
+			})
+			if supported && pill.Cursor(ui.CursorPointer).Clicked() {
+				a.chooseProtocol(ed, p.id)
+			}
+		}
+	})
+}
+
+// chooseProtocol shows the page of the protocol chosen, with the fields it
+// has: SSH's address and login, or Redis's mode, nodes and password.
+func (a *App) chooseProtocol(ed *connEditor, id string) {
+	if ed.protocol == id {
+		ed.nav.Page = id
+		return
+	}
+	ed.protocol = id
+	ed.nav.Page = id
+	// The ports of the two protocols differ: the one typed is kept only
+	// when it is not the other protocol's.
+	if id == editorRedis && strings.TrimSpace(ed.port) == "22" {
+		ed.port = "6379"
+	}
+	if id == editorSSH && strings.TrimSpace(ed.port) == "6379" {
+		ed.port = "22"
+	}
+}
+
 // editorView is the connection editor's window: the pages on the left,
 // OK and Cancel below. Enter is OK, but in the notes, where it breaks
 // the line, and Escape is Cancel.
@@ -311,14 +425,26 @@ func (a *App) editorView(c *ui.Context) {
 	if ed.checked {
 		errs = ed.problems()
 	}
+	// The protocol's page is not an entry of the tree: the row of protocols
+	// above chooses it, and the tree holds the pages beside it, which both
+	// protocols have: a Redis server too is reached through a proxy or a
+	// jump host, and its command line is a terminal.
+	if ed.nav.Page == "" {
+		ed.nav.Page = ed.protocol
+	}
+	main := widgets.NavPage{ID: editorSSH, Hidden: true, Title: locales.EditorPageSSH, View: func(c *ui.Context) { a.sshPage(c, ed, errs, input) }}
+	if ed.protocol == editorRedis {
+		main = widgets.NavPage{ID: editorRedis, Hidden: true, Title: locales.EditorPageRedis, View: func(c *ui.Context) { a.redisPage(c, ed, errs, input) }}
+	}
 	pages := []widgets.NavPage{
-		{ID: editorSSH, Title: locales.EditorPageSSH, View: func(c *ui.Context) { a.sshPage(c, ed, errs, input) }},
+		main,
 		{ID: editorTerminal, Title: locales.EditorPageTerminal, View: func(c *ui.Context) { a.terminalPage(c, ed, errs, input) }},
 		{ID: editorProxy, Title: locales.EditorPageProxy, View: func(c *ui.Context) { a.proxyPage(c, ed, errs, input) }},
 		{ID: editorTunnels, Title: locales.EditorPageTunnels, View: func(c *ui.Context) { a.tunnelsPage(c, ed) }},
 		{ID: editorJump, Title: locales.EditorPageJumpHost, View: func(c *ui.Context) { a.jumpPage(c, ed, errs) }},
 	}
 	ui.Column(c).Fill().Children(func() {
+		a.protocolRow(c, ed)
 		widgets.NavPages(c, &ed.nav, pages).Grow(1).MinHeight(0)
 		ui.Row(c).Gap(8).Padding(10, 16).AlignItems(ui.Center).BorderWidth(1, 0, 0, 0).BorderColor(theme.Border).Children(func() {
 			if ed.saveErr != nil {

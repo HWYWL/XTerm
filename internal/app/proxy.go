@@ -159,6 +159,22 @@ func (a *App) missingSecret(h *config.Host) *secretNeed {
 	return nil
 }
 
+// chainSecret is the first password on the way to h — of a jump host or a
+// proxy — that the app does not know; nil for none. h's own is left out, as
+// a protocol that is not SSH, as Redis, may take none: its page says
+// whether it has one.
+func (a *App) chainSecret(h *config.Host) *secretNeed {
+	for _, n := range a.chainSecrets(h) {
+		if n.key == h.ID && !n.proxy {
+			continue // h's own login
+		}
+		if _, known := a.knownSecret(n); !known && !n.passphrase {
+			return n
+		}
+	}
+	return nil
+}
+
 // askSecret shows the password prompt for need; then runs once it is
 // entered (passwordEntered).
 func (a *App) askSecret(need *secretNeed, then func()) {

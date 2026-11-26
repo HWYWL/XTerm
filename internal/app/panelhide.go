@@ -26,6 +26,11 @@ import (
 // setBottomPanelHidden collapses the bottom panel, or opens it, and
 // saves the choice.
 func (a *App) setBottomPanelHidden(hidden bool) {
+	// A Redis tab has no bottom panel: asking for it says why.
+	if !hidden && a.current().isRedis() {
+		a.notify(locales.RedisNoPanel())
+		return
+	}
 	if a.bottomHidden == hidden {
 		return
 	}
@@ -40,6 +45,10 @@ func (a *App) toggleBottomPanel() { a.setBottomPanelHidden(!a.bottomHidden) }
 // panel row's own, else the one under the terminal, which opens if it
 // was collapsed.
 func (a *App) openBottomTab(tab int) {
+	if a.current().isRedis() {
+		a.notify(locales.RedisNoPanel())
+		return
+	}
 	*a.shownBottomTab() = tab
 	if !a.current().isPanelTab() {
 		a.setBottomPanelHidden(false)

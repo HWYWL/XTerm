@@ -463,8 +463,8 @@ func (a *App) sessionRow(c *ui.Context, s *Session, active bool) (closed bool) {
 		if m.Item(locales.Disconnect()).Disabled(s.status != statusConnected && s.status != statusConnecting).Chosen() {
 			a.disconnectSession(s)
 		}
-		if m.Item(locales.DiagTitle()).Disabled(s.status != statusConnected || s.isLocal()).Chosen() &&
-			s.status == statusConnected && !s.isLocal() {
+		diag := s.status != statusConnected || s.isLocal() || s.isRedis()
+		if m.Item(locales.DiagTitle()).Disabled(diag).Chosen() && !diag {
 			a.openDiag(s)
 		}
 		if m.Item(locales.RecordFiles()).Chosen() {

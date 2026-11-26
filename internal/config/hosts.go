@@ -49,6 +49,13 @@ type Host struct {
 	Auth    AuthKind `json:"auth"`
 	KeyPath string   `json:"keyPath,omitempty"`
 
+	// Protocol is how the host is reached: "" or ProtocolSSH for SSH, as
+	// every host before the key was, ProtocolRedis for a Redis server.
+	// Read it with ProtocolOrDefault.
+	Protocol string `json:"protocol,omitempty"`
+	// Redis holds the host's Redis fields when Protocol is ProtocolRedis.
+	Redis *RedisSettings `json:"redis,omitempty"`
+
 	// Folder is the ID of the folder the host is in, "" for the top level.
 	Folder string `json:"folder,omitempty"`
 	// Notes are the user's own words about the host.
@@ -133,8 +140,23 @@ func (h *Host) Title() string {
 	return h.Addr
 }
 
-// Target is user@addr, with the port when it is not 22.
+// Target is user@addr, with the port when it is not 22. A Redis host has
+// no user: its address and port, or the first seed of its cluster and how
+// many more there are.
 func (h *Host) Target() string {
+	if h.IsRedis() {
+		if h.Redis != nil && h.Redis.Cluster {
+			seeds := h.RedisSeeds()
+			switch len(seeds) {
+			case 0:
+				return ""
+			case 1:
+				return seeds[0]
+			}
+			return seeds[0] + " +" + strconv.Itoa(len(seeds)-1)
+		}
+		return h.AddrPort(6379)
+	}
 	s := h.User + "@" + h.Addr
 	if h.PortOr22() != 22 {
 		s += ":" + strconv.Itoa(h.PortOr22())

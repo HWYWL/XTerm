@@ -57,7 +57,7 @@ func (a *App) recording(s *Session) bool { return a.recorder(s) != nil }
 
 // startRecording starts s's transcript, and says whether it did.
 func (a *App) startRecording(s *Session) bool {
-	if s == nil || a.recording(s) || s.status != statusConnected || s.Host == nil {
+	if s == nil || a.recording(s) || s.status != statusConnected || s.Host == nil || s.isRedis() {
 		return false
 	}
 	name := s.name
@@ -157,7 +157,7 @@ func (c *recordConn) Resize(cols, rows int) error {
 
 // recordMenu is the recording items of a session's context menu.
 func (a *App) recordMenu(m *ui.Menu, s *Session) {
-	if s.isLocal() || s.status != statusConnected {
+	if s.isLocal() || s.isRedis() || s.status != statusConnected {
 		return
 	}
 	if a.recording(s) {

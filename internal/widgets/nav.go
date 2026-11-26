@@ -9,6 +9,9 @@ type NavPage struct {
 	// Parent is the ID of the page whose entry this one's sits under, ""
 	// at the top. A parent comes before its children in the list.
 	Parent string
+	// Hidden leaves the page out of the tree: it shows only when Page asks
+	// for it, as the connection editor's protocol page does.
+	Hidden bool
 	// Title is the entry's text and the page's heading, from locales:
 	// asked each time it is drawn, so it follows the language.
 	Title func() string
@@ -41,6 +44,9 @@ func NavPages(c *ui.Context, s *NavState, pages []NavPage) ui.Element {
 	for i := range pages {
 		p := &pages[i]
 		byID[p.ID] = p
+		if p.Hidden {
+			continue
+		}
 		if p.Parent == "" {
 			roots = append(roots, p.ID)
 		} else {
@@ -61,14 +67,18 @@ func NavPages(c *ui.Context, s *NavState, pages []NavPage) ui.Element {
 
 	t := c.Theme()
 	return ui.Row(c).Fill().AlignItems(ui.Stretch).Children(func() {
-		ui.Outline(c, &s.tree, roots, func(id string) []string {
-			return children[id]
-		}, func(id string) {
-			ui.Text(c, byID[id].Title()).SingleLine()
-		}).Width(NavWidth).Shrink(0).Padding(6, 4).
-			BorderWidth(0, 1, 0, 0).BorderColor(t.Border)
-		if s.row >= 0 && s.row < s.tree.Rows() {
-			s.Page = s.tree.Item(s.row)
+		// With no page in the tree, as a protocol's own page has none,
+		// the page takes the width.
+		if len(roots) > 0 {
+			ui.Outline(c, &s.tree, roots, func(id string) []string {
+				return children[id]
+			}, func(id string) {
+				ui.Text(c, byID[id].Title()).SingleLine()
+			}).Width(NavWidth).Shrink(0).Padding(6, 4).
+				BorderWidth(0, 1, 0, 0).BorderColor(t.Border)
+			if s.row >= 0 && s.row < s.tree.Rows() {
+				s.Page = s.tree.Item(s.row)
+			}
 		}
 		page := byID[s.Page]
 		ui.Column(c.Key(s.Page)).Grow(1).MinWidth(0).Children(func() {

@@ -152,7 +152,7 @@ func TestEditorProxyErrors(t *testing.T) {
 	choose(t, tt, locales.FieldProxyType(), "SOCKS5")
 	typeInto(t, tt, locales.FieldPort(), "0")
 	// From another page, OK shows the Proxy page with its errors.
-	tt.Click(locales.EditorPageSSH())
+	tt.Click("SSH")
 	if err := tt.Click(locales.Ok()); err != nil {
 		t.Fatal(err)
 	}

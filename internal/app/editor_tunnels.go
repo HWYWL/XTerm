@@ -104,6 +104,11 @@ func tunnelColumns() []ui.TableColumn {
 func (a *App) tunnelsPage(c *ui.Context, ed *connEditor) {
 	te := &ed.tunnels
 	widgets.Muted(c, locales.TunnelsIntro()).FontSize(12)
+	// A Redis connection has no SSH session of its own: its tunnels go
+	// through the jump host's, so it needs one.
+	if ed.protocol == editorRedis && ed.proxy.kind != config.ProxyJump {
+		widgets.Muted(c, locales.RedisTunnelsNote()).FontSize(12)
+	}
 	list := te.list
 	if te.row >= len(list) {
 		te.row = -1

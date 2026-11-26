@@ -83,7 +83,9 @@ func chartBorder(t *ui.Theme) ui.Color {
 func UsageBar(c *ui.Context, label string, frac float64, text string, fill ui.Color) {
 	frac = math.Max(0, math.Min(1, frac))
 	ui.Row(c).Gap(6).Children(func() {
-		ui.Text(c, label).Width(34).Shrink(0).SingleLine()
+		// Wide enough for "Memory", "Clients" and "Hit rate", which the bars
+		// of a Redis server's page name.
+		ui.Text(c, label).Width(56).Shrink(0).SingleLine()
 		ui.Box(c).Grow(1).Height(18).Radius(6).Border(1, chartBorder(c.Theme())).Clip().Children(func() {
 			ui.Box(c).Absolute().Top(0).Left(0).Bottom(0).WidthPercent(float32(frac * 100)).Background(fill)
 			ui.Row(c).Fill().PaddingX(6).AlignItems(ui.Center).ZIndex(1).Children(func() {

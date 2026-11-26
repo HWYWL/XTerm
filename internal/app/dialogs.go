@@ -45,6 +45,7 @@ func (a *App) dialogs(c *ui.Context) {
 	}
 	a.signalDialogs(c)
 	a.procDetailDialogs(c)
+	a.redisSectionsDialogs(c)
 	a.recFilesDialog(c)
 	a.diagDialogs(c)
 	a.sendAskDialog(c)

@@ -108,6 +108,10 @@ func (a *App) connectRedis(s *Session, secret string) {
 		if jump {
 			jc, _ = sshx.JumpClient(route)
 		}
+		// The System page reads INFO on a connection of its own, so that
+		// the command line does not wait for it, and it for the command
+		// line (redisinfo.go).
+		stats, statsErr := redis.Dial(ctx, s.redisOpts)
 		a.post(func() {
 			if ctx.Err() != nil {
 				for _, t := range terms {
@@ -118,7 +122,16 @@ func (a *App) connectRedis(s *Session, secret string) {
 				if jc != nil {
 					jc.Close()
 				}
+				if stats != nil {
+					stats.Close()
+				}
 				return
+			}
+			if stats == nil {
+				s.redisInfoErr = statsErr
+			} else {
+				s.redisStats = stats
+				a.startRedisInfo(s, ctx, stats)
 			}
 			for i, p := range panes {
 				switch {
@@ -140,6 +153,8 @@ func (a *App) connectRedis(s *Session, secret string) {
 			s.status, s.err = statusConnected, nil
 			a.assetLogin(true)
 			a.noteConnected(s.Host)
+			// Its server's page is what one wants next, as for an SSH one.
+			a.showMonitorOfConnection()
 			if jc != nil {
 				s.client = jc
 				a.startTunnels(s, h.Tunnels)

@@ -55,6 +55,20 @@ type Session struct {
 	// redisOpts is how a Redis session reaches its server, a connection
 	// for each pane (redis_session.go); zero for the other protocols.
 	redisOpts redis.Options
+	// redisStats is the connection the System page reads INFO on, of its
+	// own so that the command line does not wait for it, and redisInfo
+	// what it said last (redisinfo.go, redispanel.go). The histories are
+	// the curves of its page, the newest sample last.
+	redisStats    *redis.Client
+	redisInfo     redis.Info
+	redisInfoErr  error
+	redisInfoAt   time.Time
+	redisOpsHist  []float64
+	redisInHist   []float64
+	redisOutHist  []float64
+	redisInBytes  uint64
+	redisOutBytes uint64
+	redisNetAt    time.Time
 
 	tunnels tunnelState // see tunnels.go
 	procs   procState   // the Processes tab, see processes.go
@@ -457,6 +471,10 @@ func (s *Session) disconnect() {
 		s.hostKeyQ = nil
 	}
 	s.stopTunnels()
+	if s.redisStats != nil {
+		s.redisStats.Close()
+		s.redisStats = nil
+	}
 	if s.sftp != nil {
 		s.sftp.Close()
 		s.sftp = nil

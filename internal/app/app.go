@@ -214,6 +214,12 @@ type App struct {
 	left     leftPanel
 	connTree managerState
 
+	// redisSection is the INFO section a Redis tab's System page shows,
+	// as the panel last chose, and redisSectionsDlg the dialog of the
+	// sections' fields (redispanel.go, redisdialog.go).
+	redisSection     string
+	redisSectionsDlg *redisSectionsDialog
+
 	// The assets window's counts (assets.go): this run's, the days kept in
 	// asset_stats.json, and the range the window shows.
 	assetRun   assetTotals

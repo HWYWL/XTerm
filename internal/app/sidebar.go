@@ -23,13 +23,20 @@ func (a *App) monitorPanel(c *ui.Context) {
 	if s != nil && s.isNewTab() {
 		s = nil
 	}
-	ui.Scroll(c).Fill().ContextMenu(a.monitorMenu).Children(func() {
-		if s.isLocal() {
+	panel := ui.Scroll(c).Fill().Children(func() {
+		switch {
+		case s.isRedis():
+			a.redisPanel(c, s)
+		case s.isLocal():
 			a.localMonitor(c)
-			return
+		default:
+			a.serverView(c, s)
 		}
-		a.serverView(c, s)
 	})
+	// The parts the menu shows are the SSH page's: a Redis page has its own.
+	if s == nil || !s.isRedis() {
+		panel.ContextMenu(a.monitorMenu)
+	}
 }
 
 // serverView is a server as the side panel shows it: its IP, the System

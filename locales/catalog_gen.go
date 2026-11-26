@@ -4958,6 +4958,186 @@ func (msgs Messages) NewConnectionThrough() string {
 	return Catalog.Format(msgs.locale, "newConnectionThrough", nil)
 }
 
+// RedisClients says "Clients"
+// in the language the app shows.
+func RedisClients() string { return In(i18n.Locale()).RedisClients() }
+
+// RedisClients says "Clients"
+// in the language of msgs.
+func (msgs Messages) RedisClients() string {
+	return Catalog.Format(msgs.locale, "redisClients", nil)
+}
+
+// RedisHitRate says "Hit rate"
+// in the language the app shows.
+func RedisHitRate() string { return In(i18n.Locale()).RedisHitRate() }
+
+// RedisHitRate says "Hit rate"
+// in the language of msgs.
+func (msgs Messages) RedisHitRate() string {
+	return Catalog.Format(msgs.locale, "redisHitRate", nil)
+}
+
+// RedisOps says "%d ops/s"
+// in the language the app shows.
+func RedisOps() string { return In(i18n.Locale()).RedisOps() }
+
+// RedisOps says "%d ops/s"
+// in the language of msgs.
+func (msgs Messages) RedisOps() string {
+	return Catalog.Format(msgs.locale, "redisOps", nil)
+}
+
+// RedisKeysSum says "%d keys"
+// in the language the app shows.
+func RedisKeysSum() string { return In(i18n.Locale()).RedisKeysSum() }
+
+// RedisKeysSum says "%d keys"
+// in the language of msgs.
+func (msgs Messages) RedisKeysSum() string {
+	return Catalog.Format(msgs.locale, "redisKeysSum", nil)
+}
+
+// RedisSection says "Section"
+// in the language the app shows.
+func RedisSection() string { return In(i18n.Locale()).RedisSection() }
+
+// RedisSection says "Section"
+// in the language of msgs.
+func (msgs Messages) RedisSection() string {
+	return Catalog.Format(msgs.locale, "redisSection", nil)
+}
+
+// RedisInfoFailed says "Cannot read INFO: %s"
+// in the language the app shows.
+func RedisInfoFailed() string { return In(i18n.Locale()).RedisInfoFailed() }
+
+// RedisInfoFailed says "Cannot read INFO: %s"
+// in the language of msgs.
+func (msgs Messages) RedisInfoFailed() string {
+	return Catalog.Format(msgs.locale, "redisInfoFailed", nil)
+}
+
+// RedisNoLimit says "no limit"
+// in the language the app shows.
+func RedisNoLimit() string { return In(i18n.Locale()).RedisNoLimit() }
+
+// RedisNoLimit says "no limit"
+// in the language of msgs.
+func (msgs Messages) RedisNoLimit() string {
+	return Catalog.Format(msgs.locale, "redisNoLimit", nil)
+}
+
+// RedisOpsTitle says "Commands"
+// in the language the app shows.
+func RedisOpsTitle() string { return In(i18n.Locale()).RedisOpsTitle() }
+
+// RedisOpsTitle says "Commands"
+// in the language of msgs.
+func (msgs Messages) RedisOpsTitle() string {
+	return Catalog.Format(msgs.locale, "redisOpsTitle", nil)
+}
+
+// RedisNetTitle says "Traffic"
+// in the language the app shows.
+func RedisNetTitle() string { return In(i18n.Locale()).RedisNetTitle() }
+
+// RedisNetTitle says "Traffic"
+// in the language of msgs.
+func (msgs Messages) RedisNetTitle() string {
+	return Catalog.Format(msgs.locale, "redisNetTitle", nil)
+}
+
+// RedisKeysTitle says "Keys"
+// in the language the app shows.
+func RedisKeysTitle() string { return In(i18n.Locale()).RedisKeysTitle() }
+
+// RedisKeysTitle says "Keys"
+// in the language of msgs.
+func (msgs Messages) RedisKeysTitle() string {
+	return Catalog.Format(msgs.locale, "redisKeysTitle", nil)
+}
+
+// RedisKeyRow says "%d keys, %d expiring"
+// in the language the app shows.
+func RedisKeyRow() string { return In(i18n.Locale()).RedisKeyRow() }
+
+// RedisKeyRow says "%d keys, %d expiring"
+// in the language of msgs.
+func (msgs Messages) RedisKeyRow() string {
+	return Catalog.Format(msgs.locale, "redisKeyRow", nil)
+}
+
+// RedisClientsNow says "%d clients"
+// in the language the app shows.
+func RedisClientsNow() string { return In(i18n.Locale()).RedisClientsNow() }
+
+// RedisClientsNow says "%d clients"
+// in the language of msgs.
+func (msgs Messages) RedisClientsNow() string {
+	return Catalog.Format(msgs.locale, "redisClientsNow", nil)
+}
+
+// RedisSectionsHint says "Every field of the section, and what it means"
+// in the language the app shows.
+func RedisSectionsHint() string { return In(i18n.Locale()).RedisSectionsHint() }
+
+// RedisSectionsHint says "Every field of the section, and what it means"
+// in the language of msgs.
+func (msgs Messages) RedisSectionsHint() string {
+	return Catalog.Format(msgs.locale, "redisSectionsHint", nil)
+}
+
+// RedisSectionsTitle says "INFO sections"
+// in the language the app shows.
+func RedisSectionsTitle() string { return In(i18n.Locale()).RedisSectionsTitle() }
+
+// RedisSectionsTitle says "INFO sections"
+// in the language of msgs.
+func (msgs Messages) RedisSectionsTitle() string {
+	return Catalog.Format(msgs.locale, "redisSectionsTitle", nil)
+}
+
+// RedisColField says "Field"
+// in the language the app shows.
+func RedisColField() string { return In(i18n.Locale()).RedisColField() }
+
+// RedisColField says "Field"
+// in the language of msgs.
+func (msgs Messages) RedisColField() string {
+	return Catalog.Format(msgs.locale, "redisColField", nil)
+}
+
+// RedisColValue says "Value"
+// in the language the app shows.
+func RedisColValue() string { return In(i18n.Locale()).RedisColValue() }
+
+// RedisColValue says "Value"
+// in the language of msgs.
+func (msgs Messages) RedisColValue() string {
+	return Catalog.Format(msgs.locale, "redisColValue", nil)
+}
+
+// RedisColMeaning says "Meaning"
+// in the language the app shows.
+func RedisColMeaning() string { return In(i18n.Locale()).RedisColMeaning() }
+
+// RedisColMeaning says "Meaning"
+// in the language of msgs.
+func (msgs Messages) RedisColMeaning() string {
+	return Catalog.Format(msgs.locale, "redisColMeaning", nil)
+}
+
+// RedisNoMeaning says "not documented yet"
+// in the language the app shows.
+func RedisNoMeaning() string { return In(i18n.Locale()).RedisNoMeaning() }
+
+// RedisNoMeaning says "not documented yet"
+// in the language of msgs.
+func (msgs Messages) RedisNoMeaning() string {
+	return Catalog.Format(msgs.locale, "redisNoMeaning", nil)
+}
+
 // RedisHelpIntro says "Redis commands, as in redis-cli:"
 // in the language the app shows.
 func RedisHelpIntro() string { return In(i18n.Locale()).RedisHelpIntro() }

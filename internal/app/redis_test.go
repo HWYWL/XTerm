@@ -246,6 +246,48 @@ func TestRedisSession(t *testing.T) {
 	}
 }
 
+// A connected Redis tab reads INFO every redisInfoPoll on a connection of
+// its own, which its System page shows; disconnecting closes it.
+func TestRedisPanelPolling(t *testing.T) {
+	if err := terminal.Load(); err != nil {
+		t.Skip("no terminal:", err)
+	}
+	addr := redisServer(t, func(args []string) string {
+		if strings.EqualFold(args[0], "INFO") {
+			return "$" + strconv.Itoa(len(cacheInfo)) + "\r\n" + cacheInfo + "\r\n"
+		}
+		return redisReply(args)
+	})
+	a, p, _, _ := startApp(t)
+	h := redisHost(t, addr)
+	a.hosts.Add(h)
+	a.setLeftPage(leftConnections)
+	a.openSessionIn(nil, h)
+	p.until(t, "the session to connect", func() bool {
+		s := a.current()
+		return s != nil && s.isRedis() && s.status == statusConnected
+	})
+	s := a.current()
+	// Connected, the left column shows its server, as it does for SSH.
+	p.until(t, "the system page", func() bool { return a.left.page == leftSystem })
+	p.until(t, "INFO", func() bool { return len(s.redisInfo.Sections) > 0 })
+	if got := s.redisInfo.Value("Server", "redis_version"); got != "7.2.4" {
+		t.Errorf("the version %q, sections %+v", got, s.redisInfo.Sections)
+	}
+	// The curves fill as the samples come: the commands of each, and the
+	// traffic, from the totals of two of them.
+	p.until(t, "the curves", func() bool {
+		return len(s.redisOpsHist) >= 2 && len(s.redisInHist) >= 1 && len(s.redisOutHist) >= 1
+	})
+	if s.redisStats == nil {
+		t.Fatal("no connection for INFO")
+	}
+	s.disconnect()
+	if s.redisStats != nil {
+		t.Error("the connection for INFO is still open")
+	}
+}
+
 // A Redis host that cannot be reached directly connects through its SOCKS5
 // proxy: the connection, and a cluster's each, goes through it.
 func TestRedisSessionThroughProxy(t *testing.T) {

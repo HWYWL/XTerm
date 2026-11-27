@@ -5808,6 +5808,856 @@ func (msgs Messages) TelnetBadSub() string {
 	return Catalog.Format(msgs.locale, "telnetBadSub", nil)
 }
 
+// EditorPageADB says "ADB device"
+// in the language the app shows.
+func EditorPageADB() string { return In(i18n.Locale()).EditorPageADB() }
+
+// EditorPageADB says "ADB device"
+// in the language of msgs.
+func (msgs Messages) EditorPageADB() string {
+	return Catalog.Format(msgs.locale, "editorPageADB", nil)
+}
+
+// FieldADBConnection says "Connection"
+// in the language the app shows.
+func FieldADBConnection() string { return In(i18n.Locale()).FieldADBConnection() }
+
+// FieldADBConnection says "Connection"
+// in the language of msgs.
+func (msgs Messages) FieldADBConnection() string {
+	return Catalog.Format(msgs.locale, "fieldADBConnection", nil)
+}
+
+// FieldADBDevice says "Device"
+// in the language the app shows.
+func FieldADBDevice() string { return In(i18n.Locale()).FieldADBDevice() }
+
+// FieldADBDevice says "Device"
+// in the language of msgs.
+func (msgs Messages) FieldADBDevice() string {
+	return Catalog.Format(msgs.locale, "fieldADBDevice", nil)
+}
+
+// FieldADBDeviceHint says "The serial `adb devices` shows; empty takes the first"
+// in the language the app shows.
+func FieldADBDeviceHint() string { return In(i18n.Locale()).FieldADBDeviceHint() }
+
+// FieldADBDeviceHint says "The serial `adb devices` shows; empty takes the first"
+// in the language of msgs.
+func (msgs Messages) FieldADBDeviceHint() string {
+	return Catalog.Format(msgs.locale, "fieldADBDeviceHint", nil)
+}
+
+// AdbWiredHint says "Through this computer's ADB server (`adb start-server`)."
+// in the language the app shows.
+func AdbWiredHint() string { return In(i18n.Locale()).AdbWiredHint() }
+
+// AdbWiredHint says "Through this computer's ADB server (`adb start-server`)."
+// in the language of msgs.
+func (msgs Messages) AdbWiredHint() string {
+	return Catalog.Format(msgs.locale, "adbWiredHint", nil)
+}
+
+// AdbPair says "Pairing"
+// in the language the app shows.
+func AdbPair() string { return In(i18n.Locale()).AdbPair() }
+
+// AdbPair says "Pairing"
+// in the language of msgs.
+func (msgs Messages) AdbPair() string {
+	return Catalog.Format(msgs.locale, "adbPair", nil)
+}
+
+// AdbPairPort says "Pairing port"
+// in the language the app shows.
+func AdbPairPort() string { return In(i18n.Locale()).AdbPairPort() }
+
+// AdbPairPort says "Pairing port"
+// in the language of msgs.
+func (msgs Messages) AdbPairPort() string {
+	return Catalog.Format(msgs.locale, "adbPairPort", nil)
+}
+
+// AdbPairCode says "Pairing code"
+// in the language the app shows.
+func AdbPairCode() string { return In(i18n.Locale()).AdbPairCode() }
+
+// AdbPairCode says "Pairing code"
+// in the language of msgs.
+func (msgs Messages) AdbPairCode() string {
+	return Catalog.Format(msgs.locale, "adbPairCode", nil)
+}
+
+// AdbPairButton says "Pair"
+// in the language the app shows.
+func AdbPairButton() string { return In(i18n.Locale()).AdbPairButton() }
+
+// AdbPairButton says "Pair"
+// in the language of msgs.
+func (msgs Messages) AdbPairButton() string {
+	return Catalog.Format(msgs.locale, "adbPairButton", nil)
+}
+
+// AdbPairHint says "From the device’s pairing screen"
+// in the language the app shows.
+func AdbPairHint() string { return In(i18n.Locale()).AdbPairHint() }
+
+// AdbPairHint says "From the device’s pairing screen"
+// in the language of msgs.
+func (msgs Messages) AdbPairHint() string {
+	return Catalog.Format(msgs.locale, "adbPairHint", nil)
+}
+
+// AdbPairingNow says "Pairing…"
+// in the language the app shows.
+func AdbPairingNow() string { return In(i18n.Locale()).AdbPairingNow() }
+
+// AdbPairingNow says "Pairing…"
+// in the language of msgs.
+func (msgs Messages) AdbPairingNow() string {
+	return Catalog.Format(msgs.locale, "adbPairingNow", nil)
+}
+
+// AdbPairOK says "Paired. Connect to the debugging port above."
+// in the language the app shows.
+func AdbPairOK() string { return In(i18n.Locale()).AdbPairOK() }
+
+// AdbPairOK says "Paired. Connect to the debugging port above."
+// in the language of msgs.
+func (msgs Messages) AdbPairOK() string {
+	return Catalog.Format(msgs.locale, "adbPairOK", nil)
+}
+
+// AdbPairFailed says "Pairing failed: {error}"
+// in the language the app shows.
+func AdbPairFailed(error string) string { return In(i18n.Locale()).AdbPairFailed(error) }
+
+// AdbPairFailed says "Pairing failed: {error}"
+// in the language of msgs.
+func (msgs Messages) AdbPairFailed(error string) string {
+	return Catalog.Format(msgs.locale, "adbPairFailed", map[string]any{"error": error})
+}
+
+// AdbWired says "USB cable"
+// in the language the app shows.
+func AdbWired() string { return In(i18n.Locale()).AdbWired() }
+
+// AdbWired says "USB cable"
+// in the language of msgs.
+func (msgs Messages) AdbWired() string {
+	return Catalog.Format(msgs.locale, "adbWired", nil)
+}
+
+// AdbWireless says "Network"
+// in the language the app shows.
+func AdbWireless() string { return In(i18n.Locale()).AdbWireless() }
+
+// AdbWireless says "Network"
+// in the language of msgs.
+func (msgs Messages) AdbWireless() string {
+	return Catalog.Format(msgs.locale, "adbWireless", nil)
+}
+
+// AdbDevice says "Device"
+// in the language the app shows.
+func AdbDevice() string { return In(i18n.Locale()).AdbDevice() }
+
+// AdbDevice says "Device"
+// in the language of msgs.
+func (msgs Messages) AdbDevice() string {
+	return Catalog.Format(msgs.locale, "adbDevice", nil)
+}
+
+// AdbConnection says "Connection"
+// in the language the app shows.
+func AdbConnection() string { return In(i18n.Locale()).AdbConnection() }
+
+// AdbConnection says "Connection"
+// in the language of msgs.
+func (msgs Messages) AdbConnection() string {
+	return Catalog.Format(msgs.locale, "adbConnection", nil)
+}
+
+// AdbAddress says "Address"
+// in the language the app shows.
+func AdbAddress() string { return In(i18n.Locale()).AdbAddress() }
+
+// AdbAddress says "Address"
+// in the language of msgs.
+func (msgs Messages) AdbAddress() string {
+	return Catalog.Format(msgs.locale, "adbAddress", nil)
+}
+
+// AdbPort says "Port"
+// in the language the app shows.
+func AdbPort() string { return In(i18n.Locale()).AdbPort() }
+
+// AdbPort says "Port"
+// in the language of msgs.
+func (msgs Messages) AdbPort() string {
+	return Catalog.Format(msgs.locale, "adbPort", nil)
+}
+
+// AdbSerial says "Serial"
+// in the language the app shows.
+func AdbSerial() string { return In(i18n.Locale()).AdbSerial() }
+
+// AdbSerial says "Serial"
+// in the language of msgs.
+func (msgs Messages) AdbSerial() string {
+	return Catalog.Format(msgs.locale, "adbSerial", nil)
+}
+
+// AdbAnyDevice says "the first device"
+// in the language the app shows.
+func AdbAnyDevice() string { return In(i18n.Locale()).AdbAnyDevice() }
+
+// AdbAnyDevice says "the first device"
+// in the language of msgs.
+func (msgs Messages) AdbAnyDevice() string {
+	return Catalog.Format(msgs.locale, "adbAnyDevice", nil)
+}
+
+// AdbHint says "Wireless debugging on Android 11+ must be paired first."
+// in the language the app shows.
+func AdbHint() string { return In(i18n.Locale()).AdbHint() }
+
+// AdbHint says "Wireless debugging on Android 11+ must be paired first."
+// in the language of msgs.
+func (msgs Messages) AdbHint() string {
+	return Catalog.Format(msgs.locale, "adbHint", nil)
+}
+
+// AdbNoPanel says "An ADB device has no bottom panel: its terminal is a shell of the device."
+// in the language the app shows.
+func AdbNoPanel() string { return In(i18n.Locale()).AdbNoPanel() }
+
+// AdbNoPanel says "An ADB device has no bottom panel: its terminal is a shell of the device."
+// in the language of msgs.
+func (msgs Messages) AdbNoPanel() string {
+	return Catalog.Format(msgs.locale, "adbNoPanel", nil)
+}
+
+// AdbTools says "adb"
+// in the language the app shows.
+func AdbTools() string { return In(i18n.Locale()).AdbTools() }
+
+// AdbTools says "adb"
+// in the language of msgs.
+func (msgs Messages) AdbTools() string {
+	return Catalog.Format(msgs.locale, "adbTools", nil)
+}
+
+// AdbToolsDownload says "Download adb"
+// in the language the app shows.
+func AdbToolsDownload() string { return In(i18n.Locale()).AdbToolsDownload() }
+
+// AdbToolsDownload says "Download adb"
+// in the language of msgs.
+func (msgs Messages) AdbToolsDownload() string {
+	return Catalog.Format(msgs.locale, "adbToolsDownload", nil)
+}
+
+// AdbToolsHint says "Fetched from Google into the settings folder; a device on a cable needs it on Windows and macOS."
+// in the language the app shows.
+func AdbToolsHint() string { return In(i18n.Locale()).AdbToolsHint() }
+
+// AdbToolsHint says "Fetched from Google into the settings folder; a device on a cable needs it on Windows and macOS."
+// in the language of msgs.
+func (msgs Messages) AdbToolsHint() string {
+	return Catalog.Format(msgs.locale, "adbToolsHint", nil)
+}
+
+// AdbToolsUnpacking says "unpacking…"
+// in the language the app shows.
+func AdbToolsUnpacking() string { return In(i18n.Locale()).AdbToolsUnpacking() }
+
+// AdbToolsUnpacking says "unpacking…"
+// in the language of msgs.
+func (msgs Messages) AdbToolsUnpacking() string {
+	return Catalog.Format(msgs.locale, "adbToolsUnpacking", nil)
+}
+
+// AdbToolsReady says "adb is ready: reconnect to use the cable."
+// in the language the app shows.
+func AdbToolsReady() string { return In(i18n.Locale()).AdbToolsReady() }
+
+// AdbToolsReady says "adb is ready: reconnect to use the cable."
+// in the language of msgs.
+func (msgs Messages) AdbToolsReady() string {
+	return Catalog.Format(msgs.locale, "adbToolsReady", nil)
+}
+
+// AdbToolsFailed says "The download failed: {error}"
+// in the language the app shows.
+func AdbToolsFailed(error string) string { return In(i18n.Locale()).AdbToolsFailed(error) }
+
+// AdbToolsFailed says "The download failed: {error}"
+// in the language of msgs.
+func (msgs Messages) AdbToolsFailed(error string) string {
+	return Catalog.Format(msgs.locale, "adbToolsFailed", map[string]any{"error": error})
+}
+
+// AdbToolsRetry says "Retry"
+// in the language the app shows.
+func AdbToolsRetry() string { return In(i18n.Locale()).AdbToolsRetry() }
+
+// AdbToolsRetry says "Retry"
+// in the language of msgs.
+func (msgs Messages) AdbToolsRetry() string {
+	return Catalog.Format(msgs.locale, "adbToolsRetry", nil)
+}
+
+// AdbState says "Device state"
+// in the language the app shows.
+func AdbState() string { return In(i18n.Locale()).AdbState() }
+
+// AdbState says "Device state"
+// in the language of msgs.
+func (msgs Messages) AdbState() string {
+	return Catalog.Format(msgs.locale, "adbState", nil)
+}
+
+// AdbProtocol says "ADB protocol"
+// in the language the app shows.
+func AdbProtocol() string { return In(i18n.Locale()).AdbProtocol() }
+
+// AdbProtocol says "ADB protocol"
+// in the language of msgs.
+func (msgs Messages) AdbProtocol() string {
+	return Catalog.Format(msgs.locale, "adbProtocol", nil)
+}
+
+// AdbTimeouts says "Timeouts"
+// in the language the app shows.
+func AdbTimeouts() string { return In(i18n.Locale()).AdbTimeouts() }
+
+// AdbTimeouts says "Timeouts"
+// in the language of msgs.
+func (msgs Messages) AdbTimeouts() string {
+	return Catalog.Format(msgs.locale, "adbTimeouts", nil)
+}
+
+// AdbIOErrs says "I/O errors"
+// in the language the app shows.
+func AdbIOErrs() string { return In(i18n.Locale()).AdbIOErrs() }
+
+// AdbIOErrs says "I/O errors"
+// in the language of msgs.
+func (msgs Messages) AdbIOErrs() string {
+	return Catalog.Format(msgs.locale, "adbIOErrs", nil)
+}
+
+// AdbLastData says "Last data"
+// in the language the app shows.
+func AdbLastData() string { return In(i18n.Locale()).AdbLastData() }
+
+// AdbLastData says "Last data"
+// in the language of msgs.
+func (msgs Messages) AdbLastData() string {
+	return Catalog.Format(msgs.locale, "adbLastData", nil)
+}
+
+// AdbMaxIdle says "Longest quiet"
+// in the language the app shows.
+func AdbMaxIdle() string { return In(i18n.Locale()).AdbMaxIdle() }
+
+// AdbMaxIdle says "Longest quiet"
+// in the language of msgs.
+func (msgs Messages) AdbMaxIdle() string {
+	return Catalog.Format(msgs.locale, "adbMaxIdle", nil)
+}
+
+// AdbGap says "Last gap"
+// in the language the app shows.
+func AdbGap() string { return In(i18n.Locale()).AdbGap() }
+
+// AdbGap says "Last gap"
+// in the language of msgs.
+func (msgs Messages) AdbGap() string {
+	return Catalog.Format(msgs.locale, "adbGap", nil)
+}
+
+// AdbPackets says "Data packets"
+// in the language the app shows.
+func AdbPackets() string { return In(i18n.Locale()).AdbPackets() }
+
+// AdbPackets says "Data packets"
+// in the language of msgs.
+func (msgs Messages) AdbPackets() string {
+	return Catalog.Format(msgs.locale, "adbPackets", nil)
+}
+
+// AdbPacketsTitle says "ADB packets and channels"
+// in the language the app shows.
+func AdbPacketsTitle() string { return In(i18n.Locale()).AdbPacketsTitle() }
+
+// AdbPacketsTitle says "ADB packets and channels"
+// in the language of msgs.
+func (msgs Messages) AdbPacketsTitle() string {
+	return Catalog.Format(msgs.locale, "adbPacketsTitle", nil)
+}
+
+// AdbAbnormal says "Failures"
+// in the language the app shows.
+func AdbAbnormal() string { return In(i18n.Locale()).AdbAbnormal() }
+
+// AdbAbnormal says "Failures"
+// in the language of msgs.
+func (msgs Messages) AdbAbnormal() string {
+	return Catalog.Format(msgs.locale, "adbAbnormal", nil)
+}
+
+// AdbActiveChannels says "Active channels"
+// in the language the app shows.
+func AdbActiveChannels() string { return In(i18n.Locale()).AdbActiveChannels() }
+
+// AdbActiveChannels says "Active channels"
+// in the language of msgs.
+func (msgs Messages) AdbActiveChannels() string {
+	return Catalog.Format(msgs.locale, "adbActiveChannels", nil)
+}
+
+// AdbChannelCount says "%d"
+// in the language the app shows.
+func AdbChannelCount() string { return In(i18n.Locale()).AdbChannelCount() }
+
+// AdbChannelCount says "%d"
+// in the language of msgs.
+func (msgs Messages) AdbChannelCount() string {
+	return Catalog.Format(msgs.locale, "adbChannelCount", nil)
+}
+
+// AdbLogTitle says "Log stream"
+// in the language the app shows.
+func AdbLogTitle() string { return In(i18n.Locale()).AdbLogTitle() }
+
+// AdbLogTitle says "Log stream"
+// in the language of msgs.
+func (msgs Messages) AdbLogTitle() string {
+	return Catalog.Format(msgs.locale, "adbLogTitle", nil)
+}
+
+// AdbLogHint says "a channel of its own"
+// in the language the app shows.
+func AdbLogHint() string { return In(i18n.Locale()).AdbLogHint() }
+
+// AdbLogHint says "a channel of its own"
+// in the language of msgs.
+func (msgs Messages) AdbLogHint() string {
+	return Catalog.Format(msgs.locale, "adbLogHint", nil)
+}
+
+// AdbLogOn says "Read the device's log"
+// in the language the app shows.
+func AdbLogOn() string { return In(i18n.Locale()).AdbLogOn() }
+
+// AdbLogOn says "Read the device's log"
+// in the language of msgs.
+func (msgs Messages) AdbLogOn() string {
+	return Catalog.Format(msgs.locale, "adbLogOn", nil)
+}
+
+// AdbLogAlive says "Stream"
+// in the language the app shows.
+func AdbLogAlive() string { return In(i18n.Locale()).AdbLogAlive() }
+
+// AdbLogAlive says "Stream"
+// in the language of msgs.
+func (msgs Messages) AdbLogAlive() string {
+	return Catalog.Format(msgs.locale, "adbLogAlive", nil)
+}
+
+// AdbLogLines says "Lines"
+// in the language the app shows.
+func AdbLogLines() string { return In(i18n.Locale()).AdbLogLines() }
+
+// AdbLogLines says "Lines"
+// in the language of msgs.
+func (msgs Messages) AdbLogLines() string {
+	return Catalog.Format(msgs.locale, "adbLogLines", nil)
+}
+
+// AdbLogBytes says "Bytes"
+// in the language the app shows.
+func AdbLogBytes() string { return In(i18n.Locale()).AdbLogBytes() }
+
+// AdbLogBytes says "Bytes"
+// in the language of msgs.
+func (msgs Messages) AdbLogBytes() string {
+	return Catalog.Format(msgs.locale, "adbLogBytes", nil)
+}
+
+// AdbLogErrors says "Errors (E/F)"
+// in the language the app shows.
+func AdbLogErrors() string { return In(i18n.Locale()).AdbLogErrors() }
+
+// AdbLogErrors says "Errors (E/F)"
+// in the language of msgs.
+func (msgs Messages) AdbLogErrors() string {
+	return Catalog.Format(msgs.locale, "adbLogErrors", nil)
+}
+
+// AdbMetricsTitle says "Device metrics"
+// in the language the app shows.
+func AdbMetricsTitle() string { return In(i18n.Locale()).AdbMetricsTitle() }
+
+// AdbMetricsTitle says "Device metrics"
+// in the language of msgs.
+func (msgs Messages) AdbMetricsTitle() string {
+	return Catalog.Format(msgs.locale, "adbMetricsTitle", nil)
+}
+
+// AdbMetricsOn says "Collect from the device every 5s"
+// in the language the app shows.
+func AdbMetricsOn() string { return In(i18n.Locale()).AdbMetricsOn() }
+
+// AdbMetricsOn says "Collect from the device every 5s"
+// in the language of msgs.
+func (msgs Messages) AdbMetricsOn() string {
+	return Catalog.Format(msgs.locale, "adbMetricsOn", nil)
+}
+
+// AdbCollecting says "Collecting…"
+// in the language the app shows.
+func AdbCollecting() string { return In(i18n.Locale()).AdbCollecting() }
+
+// AdbCollecting says "Collecting…"
+// in the language of msgs.
+func (msgs Messages) AdbCollecting() string {
+	return Catalog.Format(msgs.locale, "adbCollecting", nil)
+}
+
+// AdbSampled says "%s ago"
+// in the language the app shows.
+func AdbSampled() string { return In(i18n.Locale()).AdbSampled() }
+
+// AdbSampled says "%s ago"
+// in the language of msgs.
+func (msgs Messages) AdbSampled() string {
+	return Catalog.Format(msgs.locale, "adbSampled", nil)
+}
+
+// AdbModel says "Model"
+// in the language the app shows.
+func AdbModel() string { return In(i18n.Locale()).AdbModel() }
+
+// AdbModel says "Model"
+// in the language of msgs.
+func (msgs Messages) AdbModel() string {
+	return Catalog.Format(msgs.locale, "adbModel", nil)
+}
+
+// AdbAndroid says "Android"
+// in the language the app shows.
+func AdbAndroid() string { return In(i18n.Locale()).AdbAndroid() }
+
+// AdbAndroid says "Android"
+// in the language of msgs.
+func (msgs Messages) AdbAndroid() string {
+	return Catalog.Format(msgs.locale, "adbAndroid", nil)
+}
+
+// AdbUptime says "Uptime"
+// in the language the app shows.
+func AdbUptime() string { return In(i18n.Locale()).AdbUptime() }
+
+// AdbUptime says "Uptime"
+// in the language of msgs.
+func (msgs Messages) AdbUptime() string {
+	return Catalog.Format(msgs.locale, "adbUptime", nil)
+}
+
+// AdbStorage says "Data partition"
+// in the language the app shows.
+func AdbStorage() string { return In(i18n.Locale()).AdbStorage() }
+
+// AdbStorage says "Data partition"
+// in the language of msgs.
+func (msgs Messages) AdbStorage() string {
+	return Catalog.Format(msgs.locale, "adbStorage", nil)
+}
+
+// AdbProcs says "Processes"
+// in the language the app shows.
+func AdbProcs() string { return In(i18n.Locale()).AdbProcs() }
+
+// AdbProcs says "Processes"
+// in the language of msgs.
+func (msgs Messages) AdbProcs() string {
+	return Catalog.Format(msgs.locale, "adbProcs", nil)
+}
+
+// AdbRoot says "Root"
+// in the language the app shows.
+func AdbRoot() string { return In(i18n.Locale()).AdbRoot() }
+
+// AdbRoot says "Root"
+// in the language of msgs.
+func (msgs Messages) AdbRoot() string {
+	return Catalog.Format(msgs.locale, "adbRoot", nil)
+}
+
+// AdbBattery says "Battery"
+// in the language the app shows.
+func AdbBattery() string { return In(i18n.Locale()).AdbBattery() }
+
+// AdbBattery says "Battery"
+// in the language of msgs.
+func (msgs Messages) AdbBattery() string {
+	return Catalog.Format(msgs.locale, "adbBattery", nil)
+}
+
+// AdbCharging says "charging"
+// in the language the app shows.
+func AdbCharging() string { return In(i18n.Locale()).AdbCharging() }
+
+// AdbCharging says "charging"
+// in the language of msgs.
+func (msgs Messages) AdbCharging() string {
+	return Catalog.Format(msgs.locale, "adbCharging", nil)
+}
+
+// AdbSoCTemp says "SoC temp"
+// in the language the app shows.
+func AdbSoCTemp() string { return In(i18n.Locale()).AdbSoCTemp() }
+
+// AdbSoCTemp says "SoC temp"
+// in the language of msgs.
+func (msgs Messages) AdbSoCTemp() string {
+	return Catalog.Format(msgs.locale, "adbSoCTemp", nil)
+}
+
+// TabApps says "Apps"
+// in the language the app shows.
+func TabApps() string { return In(i18n.Locale()).TabApps() }
+
+// TabApps says "Apps"
+// in the language of msgs.
+func (msgs Messages) TabApps() string {
+	return Catalog.Format(msgs.locale, "tabApps", nil)
+}
+
+// AdbInstallHint says "Drop an APK here, or choose one: it is copied to the device and installed."
+// in the language the app shows.
+func AdbInstallHint() string { return In(i18n.Locale()).AdbInstallHint() }
+
+// AdbInstallHint says "Drop an APK here, or choose one: it is copied to the device and installed."
+// in the language of msgs.
+func (msgs Messages) AdbInstallHint() string {
+	return Catalog.Format(msgs.locale, "adbInstallHint", nil)
+}
+
+// AdbInstallDrop says "Drop an APK here"
+// in the language the app shows.
+func AdbInstallDrop() string { return In(i18n.Locale()).AdbInstallDrop() }
+
+// AdbInstallDrop says "Drop an APK here"
+// in the language of msgs.
+func (msgs Messages) AdbInstallDrop() string {
+	return Catalog.Format(msgs.locale, "adbInstallDrop", nil)
+}
+
+// AdbInstallPick says "Choose APK"
+// in the language the app shows.
+func AdbInstallPick() string { return In(i18n.Locale()).AdbInstallPick() }
+
+// AdbInstallPick says "Choose APK"
+// in the language of msgs.
+func (msgs Messages) AdbInstallPick() string {
+	return Catalog.Format(msgs.locale, "adbInstallPick", nil)
+}
+
+// AdbInstallOK says "Installed."
+// in the language the app shows.
+func AdbInstallOK() string { return In(i18n.Locale()).AdbInstallOK() }
+
+// AdbInstallOK says "Installed."
+// in the language of msgs.
+func (msgs Messages) AdbInstallOK() string {
+	return Catalog.Format(msgs.locale, "adbInstallOK", nil)
+}
+
+// AdbInstallFailed says "Install failed: {error}"
+// in the language the app shows.
+func AdbInstallFailed(error string) string { return In(i18n.Locale()).AdbInstallFailed(error) }
+
+// AdbInstallFailed says "Install failed: {error}"
+// in the language of msgs.
+func (msgs Messages) AdbInstallFailed(error string) string {
+	return Catalog.Format(msgs.locale, "adbInstallFailed", map[string]any{"error": error})
+}
+
+// AdbInstallNoDevice says "No device is connected."
+// in the language the app shows.
+func AdbInstallNoDevice() string { return In(i18n.Locale()).AdbInstallNoDevice() }
+
+// AdbInstallNoDevice says "No device is connected."
+// in the language of msgs.
+func (msgs Messages) AdbInstallNoDevice() string {
+	return Catalog.Format(msgs.locale, "adbInstallNoDevice", nil)
+}
+
+// AdbInstallCount says "%d installed"
+// in the language the app shows.
+func AdbInstallCount() string { return In(i18n.Locale()).AdbInstallCount() }
+
+// AdbInstallCount says "%d installed"
+// in the language of msgs.
+func (msgs Messages) AdbInstallCount() string {
+	return Catalog.Format(msgs.locale, "adbInstallCount", nil)
+}
+
+// AdbUp says "Up"
+// in the language the app shows.
+func AdbUp() string { return In(i18n.Locale()).AdbUp() }
+
+// AdbUp says "Up"
+// in the language of msgs.
+func (msgs Messages) AdbUp() string {
+	return Catalog.Format(msgs.locale, "adbUp", nil)
+}
+
+// AdbNewFolder says "New folder"
+// in the language the app shows.
+func AdbNewFolder() string { return In(i18n.Locale()).AdbNewFolder() }
+
+// AdbNewFolder says "New folder"
+// in the language of msgs.
+func (msgs Messages) AdbNewFolder() string {
+	return Catalog.Format(msgs.locale, "adbNewFolder", nil)
+}
+
+// AdbUpload says "Upload"
+// in the language the app shows.
+func AdbUpload() string { return In(i18n.Locale()).AdbUpload() }
+
+// AdbUpload says "Upload"
+// in the language of msgs.
+func (msgs Messages) AdbUpload() string {
+	return Catalog.Format(msgs.locale, "adbUpload", nil)
+}
+
+// AdbDownload says "Download"
+// in the language the app shows.
+func AdbDownload() string { return In(i18n.Locale()).AdbDownload() }
+
+// AdbDownload says "Download"
+// in the language of msgs.
+func (msgs Messages) AdbDownload() string {
+	return Catalog.Format(msgs.locale, "adbDownload", nil)
+}
+
+// AdbDelete says "Delete"
+// in the language the app shows.
+func AdbDelete() string { return In(i18n.Locale()).AdbDelete() }
+
+// AdbDelete says "Delete"
+// in the language of msgs.
+func (msgs Messages) AdbDelete() string {
+	return Catalog.Format(msgs.locale, "adbDelete", nil)
+}
+
+// AdbFilesEmpty says "This folder is empty."
+// in the language the app shows.
+func AdbFilesEmpty() string { return In(i18n.Locale()).AdbFilesEmpty() }
+
+// AdbFilesEmpty says "This folder is empty."
+// in the language of msgs.
+func (msgs Messages) AdbFilesEmpty() string {
+	return Catalog.Format(msgs.locale, "adbFilesEmpty", nil)
+}
+
+// AdbFolderMade says "Made {name}."
+// in the language the app shows.
+func AdbFolderMade(name string) string { return In(i18n.Locale()).AdbFolderMade(name) }
+
+// AdbFolderMade says "Made {name}."
+// in the language of msgs.
+func (msgs Messages) AdbFolderMade(name string) string {
+	return Catalog.Format(msgs.locale, "adbFolderMade", map[string]any{"name": name})
+}
+
+// AdbUploaded says "Uploaded."
+// in the language the app shows.
+func AdbUploaded() string { return In(i18n.Locale()).AdbUploaded() }
+
+// AdbUploaded says "Uploaded."
+// in the language of msgs.
+func (msgs Messages) AdbUploaded() string {
+	return Catalog.Format(msgs.locale, "adbUploaded", nil)
+}
+
+// AdbDownloaded says "Saved {name}."
+// in the language the app shows.
+func AdbDownloaded(name string) string { return In(i18n.Locale()).AdbDownloaded(name) }
+
+// AdbDownloaded says "Saved {name}."
+// in the language of msgs.
+func (msgs Messages) AdbDownloaded(name string) string {
+	return Catalog.Format(msgs.locale, "adbDownloaded", map[string]any{"name": name})
+}
+
+// AdbRemoved says "Deleted {name}."
+// in the language the app shows.
+func AdbRemoved(name string) string { return In(i18n.Locale()).AdbRemoved(name) }
+
+// AdbRemoved says "Deleted {name}."
+// in the language of msgs.
+func (msgs Messages) AdbRemoved(name string) string {
+	return Catalog.Format(msgs.locale, "adbRemoved", map[string]any{"name": name})
+}
+
+// ErrADBNoServer says "A device on a cable needs the ADB server of this computer: install Android platform-tools and run `adb start-server`,…"
+// in the language the app shows.
+func ErrADBNoServer() string { return In(i18n.Locale()).ErrADBNoServer() }
+
+// ErrADBNoServer says "A device on a cable needs the ADB server of this computer: install Android platform-tools and run `adb start-server`,…"
+// in the language of msgs.
+func (msgs Messages) ErrADBNoServer() string {
+	return Catalog.Format(msgs.locale, "errADBNoServer", nil)
+}
+
+// ErrADBUnauthorized says "The device did not allow this computer's key: accept it on the device's screen, then connect again."
+// in the language the app shows.
+func ErrADBUnauthorized() string { return In(i18n.Locale()).ErrADBUnauthorized() }
+
+// ErrADBUnauthorized says "The device did not allow this computer's key: accept it on the device's screen, then connect again."
+// in the language of msgs.
+func (msgs Messages) ErrADBUnauthorized() string {
+	return Catalog.Format(msgs.locale, "errADBUnauthorized", nil)
+}
+
+// ErrADBRejected says "The device dropped the connection: wireless debugging on Android 11 and later needs `adb pair` first, or an `adb tcpi…"
+// in the language the app shows.
+func ErrADBRejected() string { return In(i18n.Locale()).ErrADBRejected() }
+
+// ErrADBRejected says "The device dropped the connection: wireless debugging on Android 11 and later needs `adb pair` first, or an `adb tcpi…"
+// in the language of msgs.
+func (msgs Messages) ErrADBRejected() string {
+	return Catalog.Format(msgs.locale, "errADBRejected", nil)
+}
+
+// ErrADBNoDevice says "No device was found: check the cable, and that USB debugging is on."
+// in the language the app shows.
+func ErrADBNoDevice() string { return In(i18n.Locale()).ErrADBNoDevice() }
+
+// ErrADBNoDevice says "No device was found: check the cable, and that USB debugging is on."
+// in the language of msgs.
+func (msgs Messages) ErrADBNoDevice() string {
+	return Catalog.Format(msgs.locale, "errADBNoDevice", nil)
+}
+
+// ErrADBDeviceNotReady says "The device is not ready: unlock it, allow this computer's debugging request, and try again."
+// in the language the app shows.
+func ErrADBDeviceNotReady() string { return In(i18n.Locale()).ErrADBDeviceNotReady() }
+
+// ErrADBDeviceNotReady says "The device is not ready: unlock it, allow this computer's debugging request, and try again."
+// in the language of msgs.
+func (msgs Messages) ErrADBDeviceNotReady() string {
+	return Catalog.Format(msgs.locale, "errADBDeviceNotReady", nil)
+}
+
 // ProtocolRedis says "Redis"
 // in the language the app shows.
 func ProtocolRedis() string { return In(i18n.Locale()).ProtocolRedis() }

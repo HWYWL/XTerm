@@ -48,6 +48,7 @@ const (
 	editorObject   = "object"
 	editorSerial   = "serial"
 	editorTelnet   = "telnet"
+	editorADB      = "adb"
 	editorTerminal = "terminal"
 	editorProxy    = "proxy"
 	editorTunnels  = "tunnels"
@@ -68,6 +69,7 @@ var editorProtocols = []struct {
 	{"vnc", func() string { return "VNC" }},
 	{editorSerial, locales.ProtocolSerial},
 	{editorTelnet, func() string { return "Telnet" }},
+	{editorADB, func() string { return "ADB" }},
 }
 
 // editorField names a field of the editor that can be wrong.
@@ -163,6 +165,18 @@ type connEditor struct {
 	// list shows.
 	serialPortCustom bool
 
+	// The ADB page's fields (editor_adb.go): whether the device is on a
+	// cable or the network, the serial of one on a cable, and the pairing
+	// port and code a device on the network asks for the first time
+	// (adb_pair.go).
+	adbMode     string
+	adbDevice   string
+	adbPairPort string
+	adbPairCode string
+	adbPairing  bool
+	adbPairMsg  string
+	adbPairErr  bool
+
 	// readingSecret is set while the host's saved password, or
 	// passphrase, is read from the credential store into the fields.
 	readingSecret bool
@@ -247,6 +261,11 @@ func (a *App) openEditor(h *config.Host, from WindowKind) {
 		} else if h.IsTelnet() {
 			ed.port = strconv.Itoa(h.PortOr23())
 			ed.auth = config.AuthPassword
+		} else if h.IsADB() {
+			cfg := h.ADBConfig()
+			ed.adbMode, ed.adbDevice = cfg.Mode, cfg.Device
+			ed.port = strconv.Itoa(h.PortOr5555())
+			ed.auth = config.AuthPassword
 		} else if h.IsObject() {
 			p := h.ObjectProvider()
 			ed.objectProvider = p.ID
@@ -306,6 +325,10 @@ func (ed *connEditor) problems() map[editorField]string {
 		ed.telnetProblems(errs)
 		return errs
 	}
+	if ed.protocol == editorADB {
+		ed.adbProblems(errs)
+		return errs
+	}
 	if ed.protocol == editorObject {
 		ed.objectProblems(errs)
 		return errs
@@ -345,6 +368,8 @@ func (ed *connEditor) pageOf(f editorField) string {
 		return editorSerial
 	case editorTelnet:
 		return editorTelnet
+	case editorADB:
+		return editorADB
 	}
 	return f.page()
 }
@@ -389,8 +414,10 @@ func (a *App) saveEditor() {
 		a.saveSerial(h, ed)
 	case editorTelnet:
 		a.saveTelnet(h, ed)
+	case editorADB:
+		a.saveADB(h, ed)
 	default:
-		h.Protocol, h.Redis, h.Object = "", nil, nil
+		h.Protocol, h.Redis, h.Object, h.Serial, h.ADB = "", nil, nil, nil, nil
 		port, _ := strconv.Atoi(strings.TrimSpace(ed.port))
 		h.Name, h.Addr, h.Port, h.Notes = strings.TrimSpace(ed.name), strings.TrimSpace(ed.addr), port, ed.notes
 		h.User, h.Auth = strings.TrimSpace(ed.user), ed.auth
@@ -464,7 +491,7 @@ func (a *App) protocolRow(c *ui.Context, ed *connEditor) {
 		for _, p := range editorProtocols {
 			active := p.id == ed.protocol
 			supported := p.id == editorSSH || p.id == editorRedis || p.id == editorObject ||
-				p.id == editorSerial || p.id == editorTelnet
+				p.id == editorSerial || p.id == editorTelnet || p.id == editorADB
 			pill := ui.Row(c).Height(26).Padding(0, 14).Radius(13).
 				AlignItems(ui.Center).Justify(ui.Center)
 			if active {
@@ -508,6 +535,8 @@ func (a *App) chooseProtocol(ed *connEditor, id string) {
 		ed.port = "6379"
 	case id == editorTelnet && (strings.TrimSpace(ed.port) == "22" || strings.TrimSpace(ed.port) == "6379"):
 		ed.port = "23"
+	case id == editorADB && (strings.TrimSpace(ed.port) == "22" || strings.TrimSpace(ed.port) == "23" || strings.TrimSpace(ed.port) == "6379"):
+		ed.port = strconv.Itoa(config.ADBPort)
 	case id == editorSSH && (strings.TrimSpace(ed.port) == "6379" || strings.TrimSpace(ed.port) == "23"):
 		ed.port = "22"
 	}
@@ -571,12 +600,15 @@ func (a *App) editorView(c *ui.Context) {
 		main = widgets.NavPage{ID: editorSerial, Hidden: true, Title: locales.EditorPageSerial, View: func(c *ui.Context) { a.serialPage(c, ed, errs, input) }}
 	case editorTelnet:
 		main = widgets.NavPage{ID: editorTelnet, Hidden: true, Title: locales.EditorPageTelnet, View: func(c *ui.Context) { a.telnetPage(c, ed, errs, input) }}
+	case editorADB:
+		main = widgets.NavPage{ID: editorADB, Hidden: true, Title: locales.EditorPageADB, View: func(c *ui.Context) { a.adbPage(c, ed, errs, input) }}
 	}
 	pages := []widgets.NavPage{main}
 	// A serial port and a Telnet server have no shell of their own to
 	// configure and nothing to tunnel: their page is all there is. An
 	// object storage is the same, though its shell would be a terminal.
-	if ed.protocol != editorObject && ed.protocol != editorSerial && ed.protocol != editorTelnet {
+	if ed.protocol != editorObject && ed.protocol != editorSerial &&
+		ed.protocol != editorTelnet && ed.protocol != editorADB {
 		pages = append(pages,
 			widgets.NavPage{ID: editorTerminal, Title: locales.EditorPageTerminal, View: func(c *ui.Context) { a.terminalPage(c, ed, errs, input) }},
 			widgets.NavPage{ID: editorProxy, Title: locales.EditorPageProxy, View: func(c *ui.Context) { a.proxyPage(c, ed, errs, input) }},

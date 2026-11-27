@@ -17,14 +17,14 @@ const (
 const dialogRise = 8
 
 // The dialog's glass: these round its corners, and blur what it shows of
-// what it dims.
+// the window under it.
 const (
 	dialogRadius = 18
 	dialogBlur   = 30
 )
 
 // dialogGlass is the fill and the stroke of a dialog in t: a sheet of
-// light over what it dims, in the night and in the day.
+// light over the window, in the night and in the day.
 func dialogGlass(t *ui.Theme) (from, to, stroke ui.Color) {
 	if t.Dark {
 		return ui.RGBA(20, 26, 44, 0.72), ui.RGBA(16, 20, 34, 0.62), ui.RGBA(255, 255, 255, 0.115)
@@ -68,7 +68,8 @@ func (m *dialogMotion) fade(now time.Time) float32 {
 func clamp01(v float32) float32 { return max(0, min(v, 1)) }
 
 // dialogModal shows the dialog fn builds over the window, as ui.Modal does,
-// as a pane of glass that comes in and goes out as m says.
+// as a pane of glass that comes in and goes out as m says. The window
+// behind it keeps its colors: it is not dimmed.
 //
 // ui.Modal's own panel cannot move: it sits on a backdrop that is new in
 // every frame, so no Enter of a Transition plays for it, and it is gone in
@@ -85,7 +86,6 @@ func (a *App) dialogModal(c *ui.Context, m *dialogMotion, open *bool, fn func())
 	t := theme
 	from, to, stroke := dialogGlass(t)
 	ui.DialogBase(c, open, func(back, panel ui.Element) {
-		back.Background(ui.RGBA(0, 0, 0, 0.42*p))
 		panel.Padding(t.Space(6)).Gap(t.Space(3)).Radius(dialogRadius).
 			Gradient(from, to, 180).
 			Border(1, stroke).

@@ -28,6 +28,26 @@ var errNoSecret = errors.New("no saved password or passphrase")
 // runOnSession runs script on s's connection, off the UI thread, and calls
 // then on it with what the command wrote.
 func (a *App) runOnSession(s *Session, script string, then func(out string, err error)) {
+	// A device's shell runs a command over a channel of its own.
+	if s.isADB() {
+		m := a.adbMeter(s)
+		m.mu.Lock()
+		conn := m.conn
+		m.mu.Unlock()
+		if conn == nil {
+			then("", errNoClient)
+			return
+		}
+		ctx := s.ctx
+		if ctx == nil {
+			ctx = context.Background()
+		}
+		go func() {
+			out, err := conn.Exec(ctx, script)
+			a.post(func() { then(out, err) })
+		}()
+		return
+	}
 	client := s.client
 	if client == nil {
 		then("", errNoClient)

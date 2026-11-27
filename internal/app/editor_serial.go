@@ -102,7 +102,7 @@ func (ed *connEditor) serialProblems(errs map[editorField]string) {
 // line's settings.
 func (a *App) saveSerial(h *config.Host, ed *connEditor) {
 	h.Protocol = config.ProtocolSerial
-	h.Redis, h.Object = nil, nil
+	h.Redis, h.Object, h.ADB = nil, nil, nil
 	if h.Serial == nil {
 		h.Serial = &config.SerialSettings{}
 	}

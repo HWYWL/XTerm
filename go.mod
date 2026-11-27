@@ -3,8 +3,10 @@ module finallyshell
 go 1.27.3
 
 require (
+	filippo.io/edwards25519 v1.2.0
 	github.com/egoist/mygo v0.10.0
 	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20261028042204-6a276cc7c4f9
+	github.com/pgaskin/go-adb v0.0.0-20260909040028-2bc9b939919d
 	github.com/pkg/sftp v1.13.12
 	github.com/tdewolff/font v0.0.0-20261010204837-88a7f6b56918
 	go.bug.st/serial v1.8.0
@@ -24,9 +26,11 @@ require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/klauspost/compress v1.18.6 // indirect
 	github.com/kr/fs v0.1.0 // indirect
+	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	github.com/tdewolff/parse/v2 v2.8.16 // indirect
 	github.com/ulikunitz/xz v0.5.15 // indirect
 	go.digitalxero.dev/rpm v0.3.4 // indirect
+	google.golang.org/protobuf v1.36.6 // indirect
 )
 
 tool github.com/egoist/mygo/cmd/mygo

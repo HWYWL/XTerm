@@ -70,17 +70,26 @@ func (a *App) statusBanner(c *ui.Context, s *Session) {
 	if s.status == statusConnecting {
 		bg = ui.Hex("#713f12")
 	}
-	ui.Row(c).Background(bg).Padding(6, 10).Gap(10).Children(func() {
-		msg := s.statusText()
-		if s.err != nil {
-			msg = describeError(s.err)
-		}
-		ui.Text(c, msg).TextColor(ui.Hex("#fef2f2")).Grow(1).MinWidth(0)
-		if s.status != statusConnecting && isAgentError(s.err) && ui.Button(c, locales.AgentSettings()).Clicked() {
-			a.openAgentSettings()
-		}
-		if s.status != statusConnecting && ui.Button(c, locales.Reconnect()).Clicked() {
-			a.reconnect(s)
+	ui.Column(c).Background(bg).Children(func() {
+		ui.Row(c).Padding(6, 10).Gap(10).Children(func() {
+			msg := s.statusText()
+			if s.err != nil {
+				msg = describeError(s.err)
+			}
+			ui.Text(c, msg).TextColor(ui.Hex("#fef2f2")).Grow(1).MinWidth(0)
+			if s.status != statusConnecting && isAgentError(s.err) && ui.Button(c, locales.AgentSettings()).Clicked() {
+				a.openAgentSettings()
+			}
+			if s.status != statusConnecting && ui.Button(c, locales.Reconnect()).Clicked() {
+				a.reconnect(s)
+			}
+		})
+		// A device on a cable has no ADB server yet: platform-tools is a
+		// download away, and the bar says how it is coming.
+		if s.adbNeedsTools() {
+			ui.Row(c).Padding(0, 10, 6, 10).Children(func() {
+				a.adbToolsRow(c)
+			})
 		}
 	})
 }

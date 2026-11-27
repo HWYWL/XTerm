@@ -203,6 +203,7 @@ func fullHost() *Host {
 			Bucket: "cache", AccessKey: "AK", Root: "backups", PathStyle: true, Insecure: true,
 		},
 		Serial: &SerialSettings{Port: "COM3", Baud: 9600, DataBits: 7, Parity: "even", StopBits: "2"},
+		ADB:    &ADBSettings{Mode: ADBTCP, Device: "R58M12345"},
 		Proxy:  &ProxyConfig{Kind: ProxySOCKS5, Addr: "198.51.100.7", Port: 1081, User: "proxyuser", JumpHost: "h9"},
 		Tunnels: []Tunnel{
 			{Kind: TunnelLocal, ListenPort: 8080, TargetHost: "10.0.0.5", TargetPort: 80},

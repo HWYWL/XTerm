@@ -169,7 +169,7 @@ func (a *App) aiClient() (*ai.Client, string) {
 // aiToolsEnabled says whether the assistant may use tools on the session:
 // it is connected, and the options allow commands.
 func (a *App) aiToolsEnabled(s *Session) bool {
-	return a.settings.AI.ExecTool() && s != nil && s.client != nil
+	return a.settings.AI.ExecTool() && s != nil && (s.client != nil || s.isADB())
 }
 
 // aiAsk sends prompt as the next question of s's conversation.
@@ -343,7 +343,7 @@ func (a *App) aiNextCall(s *Session) {
 // aiExec runs cmd on s's host, on a channel of its own, and goes on with
 // the conversation when it ends.
 func (a *App) aiExec(s *Session, call ai.ToolCall, cmd string) {
-	if s == nil || s.client == nil {
+	if s == nil || (s.client == nil && !s.isADB()) {
 		a.aiToolResult(s, call, locales.AiNoSession())
 		a.aiNextCall(s)
 		return
@@ -525,7 +525,7 @@ func (a *App) aiSystem(s *Session) string {
 			sys += "\n\n[终端当前屏幕内容]\n" + text
 		}
 	}
-	if s != nil && s.client != nil && cfg.ExecTool() {
+	if s != nil && (s.client != nil || s.isADB()) && cfg.ExecTool() {
 		host := s.label()
 		sys += "\n\n[当前环境] 用户已通过 SSH 连接主机「" + host + "」。" +
 			"你可以调用 exec_command 工具在该主机上执行命令来获取真实信息（系统版本、内核、资源占用等）。" +

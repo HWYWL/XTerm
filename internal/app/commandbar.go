@@ -273,7 +273,7 @@ func (a *App) sendLine(s *Session, line string, enter bool) {
 // the word at the caret. A local terminal has neither: it reads the
 // server's folders and commands.
 func (a *App) complete(s *Session, e barEdit, caret int) {
-	if s.isLocal() {
+	if s.isLocal() || s.isADB() { // no folders or commands to read of a device
 		return
 	}
 	b := &s.bar

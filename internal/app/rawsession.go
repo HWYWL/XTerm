@@ -23,16 +23,23 @@ var openSerialPort = serial.Open
 
 // connectSerial connects s to a device on a serial port: its terminal is
 // the port, and what the device answers is what it shows.
-func (a *App) connectSerial(s *Session) { a.connectRaw(s) }
+func (a *App) connectSerial(s *Session) { a.connectDirect(s) }
 
 // connectTelnet connects s to a Telnet server: the terminal is the
 // connection, once its negotiations are answered (internal/telnet).
-func (a *App) connectTelnet(s *Session) { a.connectRaw(s) }
+func (a *App) connectTelnet(s *Session) { a.connectDirect(s) }
 
-// dialRaw is a connection of s's protocol: the port of a serial host, or
-// a Telnet server's socket.
-func (a *App) dialRaw(ctx context.Context, s *Session) (io.ReadWriteCloser, error) {
+// connectADB connects s to an Android device: the terminal is a shell of
+// the device, over its cable or the network (adb_session.go).
+func (a *App) connectADB(s *Session) { a.connectDirect(s) }
+
+// dialDirect is a connection of s's protocol: the port of a serial host, a
+// Telnet server's socket, or a device's ADB shell.
+func (a *App) dialDirect(ctx context.Context, s *Session) (io.ReadWriteCloser, error) {
 	h := s.Host
+	if h.IsADB() {
+		return a.dialADB(ctx, s)
+	}
 	if h.IsSerial() {
 		c := h.SerialPort()
 		conn, err := openSerialPort(serial.Config{
@@ -62,7 +69,7 @@ func (a *App) dialRaw(ctx context.Context, s *Session) (io.ReadWriteCloser, erro
 		m.attach(conn, addr)
 		return conn, nil
 	}
-	return nil, fmt.Errorf("no raw connection for %q", h.Protocol)
+	return nil, fmt.Errorf("no direct connection for %q", h.Protocol)
 }
 
 // rawConsole is what a serial or Telnet tab keeps for its console bar: the
@@ -172,11 +179,12 @@ func stampPrefix(at time.Time) string {
 	return "【" + at.Format("2006-01-02 15:04:05.000") + "】"
 }
 
-// connectRaw connects s, with a connection of its own for each of the
+// connectDirect connects s, with a connection of its own for each of the
 // session's panes, as the shells of an SSH session are: the terminals take
-// the connections as their own streams, with no shell to follow.
-func (a *App) connectRaw(s *Session) {
-	dial := func() (io.ReadWriteCloser, error) { return a.dialRaw(s.ctx, s) }
+// the connections as their own streams, with no shell to follow. A serial
+// port, a Telnet socket and a device's ADB shell all reach here.
+func (a *App) connectDirect(s *Session) {
+	dial := func() (io.ReadWriteCloser, error) { return a.dialDirect(s.ctx, s) }
 	console := s.rawConsole()
 	if s.cancel != nil {
 		s.cancel()
@@ -189,6 +197,9 @@ func (a *App) connectRaw(s *Session) {
 	}
 	if s.isTelnet() {
 		a.telnetMeter(s).noteAttempt()
+	}
+	if s.isADB() {
+		a.adbMeter(s).noteAttempt()
 	}
 	spec := a.shellSpec(s.Host) // here, on the UI thread
 	if s.panes.root == nil {
@@ -220,7 +231,7 @@ func (a *App) connectRaw(s *Session) {
 				fail(err)
 				return
 			}
-			term, err := a.openRawTerminal(s, p, conn, console, spec.topts)
+			term, err := a.openDirectTerminal(s, p, conn, console, spec.topts)
 			if err != nil {
 				conn.Close()
 				closeTerms()
@@ -257,13 +268,22 @@ func (a *App) connectRaw(s *Session) {
 			a.autoRecord(s)
 			// The System page is what a port or a Telnet server has to
 			// show: the left column opens on it as the connection comes
-			// up, whichever page it was on.
-			a.setLeftPage(leftSystem)
+			// up, whichever page it was on. A device's page comes up as
+			// a server's does, when the connection was opened from the
+			// tree.
+			if s.isADB() {
+				a.showMonitorOfConnection()
+			} else {
+				a.setLeftPage(leftSystem)
+			}
 			if s.isSerial() {
 				a.startSerialMeter(s, ctx)
 			}
 			if s.isTelnet() {
 				a.startTelnetMeter(s, ctx)
+			}
+			if s.isADB() {
+				a.startADBMeter(s, ctx)
 			}
 		})
 	}()
@@ -375,7 +395,7 @@ func (c *asyncConn) Resize(cols, rows int) error {
 // openRawTerminal is the terminal of p over conn: the connection is its
 // stream, stamped by console's switch, and no shell of an SSH server
 // stands behind it.
-func (a *App) openRawTerminal(s *Session, p *pane, conn io.ReadWriteCloser, console *rawConsole, topts terminal.Options) (*terminal.Terminal, error) {
+func (a *App) openDirectTerminal(s *Session, p *pane, conn io.ReadWriteCloser, console *rawConsole, topts terminal.Options) (*terminal.Terminal, error) {
 	serial := s.Host != nil && s.Host.IsSerial()
 	meter := s.serial
 	async := newAsyncConn(conn)

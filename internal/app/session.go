@@ -101,6 +101,10 @@ type Session struct {
 	// (telnetmeter.go).
 	serial *serialMeter
 	telnet *telnetMeter
+	adb    *adbMeter
+
+	// adbFiles is the files tab's state of an ADB session (adbfiles.go).
+	adbFiles adbFiles
 
 	// name is the tab's name for this run, "" for the host's title: never
 	// saved (rename.go).
@@ -136,6 +140,7 @@ func (e *stepError) Unwrap() error { return e.err }
 func newSession(h *config.Host) *Session {
 	s := &Session{ID: nextSessionID.Add(1), Host: h, start: startState{row: -1}}
 	s.files.init()
+	s.adbFiles.init()
 	return s
 }
 
@@ -149,15 +154,21 @@ func (s *Session) isRedis() bool { return s != nil && s.Host.IsRedis() }
 // terminal (object_session.go).
 func (s *Session) isObject() bool { return s != nil && s.Host.IsObject() }
 
-// isSerial tells whether s is a device on a serial port, and isTelnet a
-// server reached over Telnet: their terminal is the connection itself
-// (rawsession.go).
+// isSerial tells whether s is a device on a serial port, isTelnet a server
+// reached over Telnet and isADB a device reached over ADB: their terminal
+// is the connection itself (rawsession.go, adb_session.go).
 func (s *Session) isSerial() bool { return s != nil && s.Host.IsSerial() }
 func (s *Session) isTelnet() bool { return s != nil && s.Host.IsTelnet() }
+func (s *Session) isADB() bool    { return s != nil && s.Host.IsADB() }
 
 // isRaw tells whether s's terminal is the connection itself, a serial port
 // or a Telnet server, rather than a shell an SSH server opened.
 func (s *Session) isRaw() bool { return s.isSerial() || s.isTelnet() }
+
+// isDirect tells whether s holds its connection of its own, a serial port,
+// a Telnet server or a device's ADB shell, rather than channels of an SSH
+// client: it has no server to monitor, no files, and no shell to follow.
+func (s *Session) isDirect() bool { return s.isRaw() || s.isADB() }
 
 // jumpedFrom tells whether a program of s's shell went to another host, as
 // ssh does from a jump host's menu: the terminal then shows a session the
@@ -208,6 +219,10 @@ func (a *App) connect(s *Session, secret string) {
 	}
 	if s.isTelnet() {
 		a.connectTelnet(s)
+		return
+	}
+	if s.isADB() {
+		a.connectADB(s)
 		return
 	}
 	if s.cancel != nil {
@@ -525,10 +540,10 @@ func (s *Session) disconnect() {
 		s.sftp.Close()
 		s.sftp = nil
 	}
-	// A serial port or a Telnet socket lives in its panes' terminals, not
-	// in the SSH client: it is closed here, or the port stays taken and the
-	// server keeps a session nobody reads.
-	if s.isRaw() {
+	// A serial port, a Telnet socket or a device's shell lives in its
+	// panes' terminals, not in the SSH client: it is closed here, or the
+	// port stays taken and the server keeps a session nobody reads.
+	if s.isDirect() {
 		for _, p := range s.panes.panes() {
 			p.closeWire()
 		}
@@ -538,6 +553,9 @@ func (s *Session) disconnect() {
 	}
 	if s.telnet != nil {
 		s.telnet.detach()
+	}
+	if s.adb != nil {
+		s.adb.detach()
 	}
 	for _, p := range s.panes.panes() {
 		p.stopFollower()
@@ -596,6 +614,9 @@ func describeError(err error) string {
 	var step *stepError
 	var local *localStartError
 	if msg, ok := describeRoute(err); ok { // a proxy or jump host on the way
+		return msg
+	}
+	if msg, ok := describeADB(err); ok { // a device that would not open
 		return msg
 	}
 	if msg, ok := describeAgentError(err); ok {

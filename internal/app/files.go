@@ -2,9 +2,8 @@ package app
 
 import (
 	"cmp"
-	"fmt"
+	"context"
 	"path"
-	"slices"
 	"strings"
 
 	"finallyshell/internal/remotefs"
@@ -12,33 +11,13 @@ import (
 	"finallyshell/locales"
 
 	"github.com/egoist/mygo/ui"
+	"github.com/pkg/sftp"
 )
 
-// fileState is the file panel of a session.
+// fileState is the file panel of a session: what its folders hold, and
+// the tree beside them (filebrowser.go).
 type fileState struct {
-	cwd      string
-	pathEdit string
-	entries  []remotefs.Entry
-	loading  bool
-	err      error
-	table    ui.ListState
-	chosen   ui.Selection[string] // names in cwd
-	row      int
-
-	// sort is the order the user chose with a click on a column's header,
-	// and applied the one the entries are in: they are sorted again as
-	// the two differ.
-	sort    ui.SortOrder
-	applied ui.SortOrder
-
-	// reveal is a name to choose in the table once cwd is read again: a
-	// file just renamed or made.
-	reveal string
-
-	tree     ui.OutlineState[string]
-	treeRow  int
-	subdirs  map[string][]string // the directories in each loaded directory
-	treeBusy map[string]bool
+	browserState
 }
 
 type sftpError struct{ err error }
@@ -62,23 +41,13 @@ func fileErrorText(err error) string {
 	return err.Error()
 }
 
-func (f *fileState) init() {
-	f.subdirs = map[string][]string{}
-	f.treeBusy = map[string]bool{}
-	f.row = -1
-	f.treeRow = -1
-	f.tree.Open.Add("/")
-}
+func (f *fileState) init() { f.browserState.init() }
 
-// chosenNames are the names of the rows chosen in the table.
-func (f *fileState) chosenNames() []string {
-	var names []string
-	for _, e := range f.entries {
-		if f.chosen.Has(e.Name) {
-			names = append(names, e.Name)
-		}
+// sftpDir reads a folder of the server the client is on.
+func sftpDir(sc *sftp.Client) browserDir {
+	return func(ctx context.Context, dir string) ([]remotefs.Entry, error) {
+		return remotefs.ReadDir(sc, dir)
 	}
-	return names
 }
 
 // openDir lists dir in the table and makes it the current directory.
@@ -88,60 +57,12 @@ func (a *App) openDir(s *Session, dir string) { a.listDir(s, dir, false) }
 // when dir can't be read, as when it follows the shell into a folder
 // SFTP can't open.
 func (a *App) listDir(s *Session, dir string, quiet bool) {
-	if s.sftp == nil {
+	sc := s.sftp
+	if sc == nil {
 		return
 	}
-	dir = path.Clean(dir)
-	f := &s.files
-	f.loading = true
-	if !quiet {
-		f.err = nil
-		f.pathEdit = dir
-	}
-	sc := s.sftp
-	go func() {
-		entries, err := remotefs.ReadDir(sc, dir)
-		a.post(func() {
-			f.loading = false
-			if err != nil {
-				if !quiet {
-					f.err = &dirError{dir, err}
-					f.pathEdit = f.cwd
-				}
-				return
-			}
-			f.err = nil
-			if dir != f.cwd {
-				f.chosen.Clear()
-				f.row = -1
-			}
-			f.cwd, f.pathEdit, f.entries = dir, dir, entries
-			f.subdirs[dir] = dirNames(dir, entries) // the tree keeps its order
-			f.sortEntries()
-			if f.reveal != "" {
-				if i := slices.IndexFunc(f.entries, func(e remotefs.Entry) bool { return e.Name == f.reveal }); i >= 0 {
-					f.chosen.Clear()
-					f.chosen.Add(f.reveal)
-					f.row = i
-					f.table.ScrollIntoView(i)
-				}
-			}
-			f.reveal = ""
-			// Open the tree down to the directory.
-			for p := dir; ; p = path.Dir(p) {
-				f.tree.Open.Add(p)
-				if p == "/" {
-					break
-				}
-			}
-			for p := path.Dir(dir); p != "/" && f.subdirs[p] == nil; p = path.Dir(p) {
-				a.loadSubdirs(s, p)
-			}
-			if dir != "/" && f.subdirs["/"] == nil {
-				a.loadSubdirs(s, "/")
-			}
-		})
-	}()
+	a.listFolder(&s.files.browserState, sftpDir(sc), s.ctx, dir, quiet,
+		func(dir string) { a.loadSubdirs(s, dir) })
 }
 
 // refreshIfShowing lists dir again when the session shows it.
@@ -154,23 +75,11 @@ func (a *App) refreshIfShowing(s *Session, dir string) {
 
 // loadSubdirs reads the directories in dir, for the tree.
 func (a *App) loadSubdirs(s *Session, dir string) {
-	f := &s.files
-	if s.sftp == nil || f.treeBusy[dir] {
+	sc := s.sftp
+	if sc == nil {
 		return
 	}
-	f.treeBusy[dir] = true
-	sc := s.sftp
-	go func() {
-		entries, err := remotefs.ReadDir(sc, dir)
-		a.post(func() {
-			delete(f.treeBusy, dir)
-			if err != nil {
-				f.subdirs[dir] = []string{}
-				return
-			}
-			f.subdirs[dir] = dirNames(dir, entries)
-		})
-	}()
+	a.loadSubdirsInto(&s.files.browserState, sftpDir(sc), s.ctx, dir)
 }
 
 func dirNames(dir string, entries []remotefs.Entry) []string {
@@ -181,42 +90,6 @@ func dirNames(dir string, entries []remotefs.Entry) []string {
 		}
 	}
 	return names
-}
-
-// sortEntries puts f.entries in the order the table asks: the folders
-// first, as the server lists them, then by the column of the sort, and by
-// name among the entries the column cannot tell apart. The row the cursor
-// is on stays on the same file.
-func (f *fileState) sortEntries() {
-	f.applied = f.sort
-	by, desc := f.sort.Column, f.sort.Descending
-	var row string
-	if f.row >= 0 && f.row < len(f.entries) {
-		row = f.entries[f.row].Name
-	}
-	slices.SortStableFunc(f.entries, func(x, y remotefs.Entry) int {
-		if x.IsDir() != y.IsDir() {
-			if x.IsDir() {
-				return -1
-			}
-			return 1
-		}
-		c := compareEntries(by, x, y)
-		if desc {
-			c = -c
-		}
-		if c == 0 {
-			return strings.Compare(strings.ToLower(x.Name), strings.ToLower(y.Name))
-		}
-		return c
-	})
-	if row == "" {
-		return
-	}
-	if i := slices.IndexFunc(f.entries, func(e remotefs.Entry) bool { return e.Name == row }); i >= 0 {
-		f.row = i
-		f.table.ScrollIntoView(i)
-	}
 }
 
 // compareEntries orders two entries of the same kind, two files or two
@@ -340,100 +213,26 @@ func (a *App) dropZone(e ui.Element, s *Session, dir string) {
 
 func (a *App) dirTree(c *ui.Context, s *Session) {
 	f := &s.files
-	f.tree.List.Selected = &f.treeRow
-	tree := ui.Outline(c, &f.tree, []string{"/"}, func(dir string) []string {
-		subs, loaded := f.subdirs[dir]
-		if !loaded {
-			if f.tree.Open.Has(dir) {
-				a.loadSubdirs(s, dir)
-			}
-			return []string{}
-		}
-		if len(subs) == 0 {
-			return nil
-		}
-		return subs
-	}, func(dir string) {
-		row := ui.Row(c).Gap(5).Grow(1).Radius(4)
-		a.dropZone(row, s, dir)
-		row.ContextMenu(func(m *ui.Menu) { a.treeMenu(c, m, s, dir) })
-		row.Children(func() {
-			name := path.Base(dir)
-			// "/" is a folder like any other, not a workspace's root,
-			// which themes give an icon of its own.
-			a.fileIcon(c, name, true, f.tree.Open.Has(dir), false)
-			t := ui.Text(c, name).SingleLine()
-			if dir == f.cwd {
-				t.Bold()
-			}
-		})
-	}).Fill()
-	if tree.Changed() {
-		if dir := f.tree.Item(f.treeRow); dir != "" && dir != f.cwd {
-			a.openDir(s, dir)
-		}
-	}
+	a.folderTree(c, &f.browserState, func(dir string) { a.loadSubdirs(s, dir) },
+		func(row ui.Element, dir string) {
+			a.dropZone(row, s, dir)
+			row.ContextMenu(func(m *ui.Menu) { a.treeMenu(c, m, s, dir) })
+		},
+		func(dir string) { a.openDir(s, dir) })
 }
 
 func (a *App) fileTable(c *ui.Context, s *Session) {
 	f := &s.files
-	f.table.Sort = &f.sort
-	if f.sort != f.applied {
-		f.sortEntries()
-	}
-	entries := f.entries
-	f.table.Selected = &f.row
-	f.table.Selection = &f.chosen
-	f.table.Key = func(i int) any { return entries[i].Name }
-	f.table.Label = func(i int) string { return entries[i].Name }
 	zone := ui.Column(c).Fill()
 	a.dropZone(zone, s, f.cwd)
-	over := zone.FileDragOver() && f.cwd != ""
-	zone.Children(func() {
-		t := ui.Table(c, &f.table, fileColumns(), len(entries), func(row, col int) {
-			e := entries[row]
-			switch col {
-			case 0:
-				// A chosen row keeps the table's text color, which shows on
-				// the accent.
-				chosen := f.chosen.Has(e.Name)
-				ui.Row(c).Gap(6).Children(func() {
-					a.entryIcon(c, e)
-					name := ui.Text(c, e.Name).SingleLine()
-					if e.Broken && !chosen {
-						name.TextColor(theme.Danger)
-					}
-					if e.Target != "" {
-						// As ls -l shows it; cut before the name.
-						target := ui.Text(c, "→ "+e.Target).SingleLine().Shrink(1).MinWidth(0)
-						if !chosen {
-							target.TextColor(theme.TextMuted)
-						}
-					}
-				})
-			case 1:
-				// A broken link has no file to measure.
-				if !e.IsDir() && !e.Broken {
-					ui.Text(c, formatSize(e.Size))
-				}
-			case 2:
-				ui.Text(c, entryKind(e)).SingleLine()
-			case 3:
-				ui.Text(c, e.ModTime.Format("2006/01/02 15:04")).SingleLine()
-			case 4:
-				ui.Text(c, e.Mode.Perm().String()).Font("monospace")
-			case 5:
-				ui.Text(c, fmt.Sprintf("%d/%d", e.UID, e.GID))
-			}
-		}).Grow(1)
+	a.browserTable(c, &f.browserState, fileColumns(), zone, func(e remotefs.Entry) {
 		// A double click or Enter opens a folder, or a file in the editor.
-		if t.Submitted() && f.row >= 0 && f.row < len(entries) {
-			if e := entries[f.row]; e.IsDir() {
-				a.openDir(s, path.Join(f.cwd, e.Name))
-			} else if editable(e) {
-				a.openRemoteFile(s, path.Join(f.cwd, e.Name))
-			}
+		if e.IsDir() {
+			a.openDir(s, path.Join(f.cwd, e.Name))
+		} else if editable(e) {
+			a.openRemoteFile(s, path.Join(f.cwd, e.Name))
 		}
+	}, func(t ui.Element) {
 		// F2 renames the row chosen; Delete, or Cmd+Backspace as in
 		// Finder, deletes those chosen.
 		rename := f.table.Shortcut(c, 0, ui.KeyF2)
@@ -479,10 +278,5 @@ func (a *App) fileTable(c *ui.Context, s *Session) {
 				c.WriteClipboard(path.Join(f.cwd, names[0]))
 			}
 		})
-		if over {
-			ui.Text(c, locales.DropToUpload(f.cwd)).Padding(6, 12).Radius(6).
-				Background(theme.Accent).TextColor(theme.AccentText).
-				Attach(ui.AnchorBottom, ui.AnchorBottom).Bottom(12)
-		}
 	})
 }

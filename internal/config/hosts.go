@@ -60,6 +60,8 @@ type Host struct {
 	// Serial holds the port and the line's settings when Protocol is
 	// ProtocolSerial.
 	Serial *SerialSettings `json:"serial,omitempty"`
+	// ADB holds how the device is reached when Protocol is ProtocolADB.
+	ADB *ADBSettings `json:"adb,omitempty"`
 
 	// Folder is the ID of the folder the host is in, "" for the top level.
 	Folder string `json:"folder,omitempty"`
@@ -145,6 +147,9 @@ func (h *Host) Title() string {
 	if h.IsSerial() {
 		return h.SerialPort().Port
 	}
+	if h.IsADB() {
+		return h.ADBTarget()
+	}
 	return h.Addr
 }
 
@@ -167,6 +172,9 @@ func (h *Host) Target() string {
 	}
 	if h.IsSerial() {
 		return h.SerialPort().Port
+	}
+	if h.IsADB() {
+		return h.ADBTarget()
 	}
 	if h.IsTelnet() {
 		return h.AddrPort(23)

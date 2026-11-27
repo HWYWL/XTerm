@@ -23,7 +23,7 @@ func (a *App) dialogs(c *ui.Context) {
 		}
 	}
 	if d := a.fileDlg; d != nil {
-		if d.sess.sftp == nil { // its session is gone
+		if a.fileBackendOf(d.sess) == nil { // its session is gone
 			a.hideFileDialog(d)
 		} else {
 			open := true

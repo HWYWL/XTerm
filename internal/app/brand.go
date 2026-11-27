@@ -60,6 +60,8 @@ func (a *App) hostIcon(c *ui.Context, h *config.Host, size float32, color ui.Col
 			glyph = "cable"
 		case h != nil && h.IsTelnet():
 			glyph = "network"
+		case h != nil && h.IsADB():
+			glyph = "plug"
 		}
 		ui.Icon(c, icons.Get(glyph)).FontSize(size).TextColor(color.Alpha(0.75))
 		return

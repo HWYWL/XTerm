@@ -148,6 +148,12 @@ type App struct {
 	serialDayRead  bool
 	serialDaySaved time.Time
 
+	// adbtools is the fetch of Android's platform-tools, which a device on
+	// a cable needs on Windows and macOS (adbtools.go), and adbInstall the
+	// APK its apps tab installs (adbinstall.go).
+	adbtools   adbTools
+	adbInstall adbInstall
+
 	hosts     *config.Store     // deleted hosts included: lists show hosts.Live()
 	passwords map[string]string // by host ID: what the host logs in with, this run
 	secrets   secretStore       // the system's credential store (secrets.go)
@@ -565,6 +571,15 @@ func (a *App) bottomTabs() []bottomTab {
 	if n := a.transfers.active(); n > 0 {
 		transfersLabel = locales.TabTransfersActive(n)
 	}
+	// A device has no shell of its own to follow and no server to monitor:
+	// its panel is its apps, and the assistant.
+	if s := a.connSession(); s != nil && s.isADB() {
+		return []bottomTab{
+			{locales.TabFiles(), a.adbFilesTab},
+			{locales.TabApps(), a.adbAppsTab},
+			{locales.Ai(), a.aiPanel},
+		}
+	}
 	tunnelsLabel := locales.TabTunnels()
 	if s := a.connSession(); s != nil && s.listening() > 0 {
 		tunnelsLabel = locales.TabTunnelsActive(s.listening())
@@ -589,6 +604,9 @@ func (a *App) bottomPanel(c *ui.Context, tab *int) {
 	gap := float32(cardGap)
 	if a.panelOnRight() {
 		gap = 0
+	}
+	if len(tabs) > 0 && (*tab < 0 || *tab >= len(tabs)) {
+		*tab = 0 // a tab of a protocol with more of them
 	}
 	cardInset(c, gap, ui.Color{}, func() {
 		a.panelTabRow(c, tabs, tab, false)
@@ -621,7 +639,7 @@ func (a *App) openSessionIn(tab *Session, h *config.Host) {
 	// wants one; its proxy's and jump hosts' are asked for as SSH's are
 	// (redis_session.go). A directory of this machine has no secret at
 	// all, and an object storage's key is its own, asked for once.
-	local := (h.IsObject() && h.ObjectProvider().Local) || h.IsSerial() || h.IsTelnet()
+	local := (h.IsObject() && h.ObjectProvider().Local) || h.IsSerial() || h.IsTelnet() || h.IsADB()
 	if !local {
 		if a.readChainSecrets(h, func() { a.openSessionIn(tab, h) }) {
 			return
@@ -666,7 +684,7 @@ func (a *App) reconnect(s *Session) {
 	// was edited to go through it, or one forgotten as it did not work. A
 	// serial port and a Telnet server have no proxy, no jump host and no
 	// password of the app's.
-	if !s.isRaw() {
+	if !s.isDirect() {
 		if a.readChainSecrets(s.Host, func() { a.reconnect(s) }) {
 			return
 		}

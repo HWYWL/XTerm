@@ -45,7 +45,7 @@ func (ed *connEditor) telnetProblems(errs map[editorField]string) {
 // saveTelnet saves the Telnet page into h: its protocol and its address.
 func (a *App) saveTelnet(h *config.Host, ed *connEditor) {
 	h.Protocol = config.ProtocolTelnet
-	h.Redis, h.Object, h.Serial = nil, nil, nil
+	h.Redis, h.Object, h.Serial, h.ADB = nil, nil, nil, nil
 	h.Name, h.Notes = strings.TrimSpace(ed.name), ed.notes
 	h.Addr = strings.TrimSpace(ed.addr)
 	h.Port, _ = strconv.Atoi(strings.TrimSpace(ed.port))

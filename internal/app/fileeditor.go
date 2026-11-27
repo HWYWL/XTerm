@@ -165,19 +165,6 @@ func editable(e remotefs.Entry) bool {
 	return !e.IsDir() && (e.Mode.IsRegular() || e.Link && !e.Broken)
 }
 
-// entry is the entry of the file panel's names when it is one name, as
-// its context menu edits.
-func (f *fileState) entry(names []string) (remotefs.Entry, bool) {
-	if len(names) != 1 {
-		return remotefs.Entry{}, false
-	}
-	i := slices.IndexFunc(f.entries, func(e remotefs.Entry) bool { return e.Name == names[0] })
-	if i < 0 {
-		return remotefs.Entry{}, false
-	}
-	return f.entries[i], true
-}
-
 // fileEditorSpec is the editor's window: big, as an editor's is.
 func (a *App) fileEditorSpec() WindowSpec {
 	return WindowSpec{

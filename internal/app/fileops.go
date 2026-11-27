@@ -65,7 +65,7 @@ func (d *fileDialog) title() string {
 
 // askRename asks for a new name of the file or folder at p.
 func (a *App) askRename(s *Session, p string, isDir bool) {
-	if s.sftp == nil || p == "/" || p == "" {
+	if a.fileBackendOf(s) == nil || p == "/" || p == "" {
 		return
 	}
 	name := path.Base(p)
@@ -74,7 +74,7 @@ func (a *App) askRename(s *Session, p string, isDir bool) {
 
 // askNew asks for the name of a new folder or file in dir.
 func (a *App) askNew(s *Session, dir string, op fileOp) {
-	if s.sftp == nil || dir == "" {
+	if a.fileBackendOf(s) == nil || dir == "" {
 		return
 	}
 	a.fileDlg = &fileDialog{sess: s, op: op, dir: dir}
@@ -83,7 +83,7 @@ func (a *App) askNew(s *Session, dir string, op fileOp) {
 // askDelete asks before deleting the names in dir; dirs tells that some
 // are folders.
 func (a *App) askDelete(s *Session, dir string, names []string, dirs bool) {
-	if s.sftp == nil || dir == "" || len(names) == 0 {
+	if a.fileBackendOf(s) == nil || dir == "" || len(names) == 0 {
 		return
 	}
 	a.fileDlg = &fileDialog{sess: s, op: opDelete, dir: dir, names: names, dirs: dirs}
@@ -127,11 +127,11 @@ func (a *App) hideFileDialog(d *fileDialog) {
 	}
 }
 
-// runFileDialog does what d asks on the server, in a goroutine. The
+// runFileDialog does what d asks on the files, in a goroutine. The
 // dialog closes when it is done, or shows the error.
 func (a *App) runFileDialog(d *fileDialog) {
-	sc := d.sess.sftp
-	if sc == nil || d.busy {
+	be := a.fileBackendOf(d.sess)
+	if be == nil || d.busy {
 		return
 	}
 	name := strings.TrimSpace(d.name)
@@ -147,15 +147,15 @@ func (a *App) runFileDialog(d *fileDialog) {
 		var err error
 		switch d.op {
 		case opRename:
-			made, err = remotefs.Rename(sc, path.Join(d.dir, d.old), name)
+			made, err = be.rename(ctx, d.dir, d.old, name)
 		case opMkdir:
-			made, err = remotefs.Mkdir(sc, d.dir, name)
+			made, err = be.mkdir(ctx, d.dir, name)
 		case opCreate:
-			made, err = remotefs.CreateFile(sc, d.dir, name)
+			made, err = be.create(ctx, d.dir, name)
 		case opDelete:
 			for _, n := range d.names {
 				p := path.Join(d.dir, n)
-				if err = remotefs.RemoveAll(ctx, sc, p); err != nil {
+				if err = be.removeAll(ctx, p); err != nil {
 					break
 				}
 				gone = append(gone, p)
@@ -196,7 +196,7 @@ func within(p, dir string) bool {
 // way.
 func (a *App) filesChanged(d *fileDialog, made string, gone []string, err error) {
 	s := d.sess
-	f := &s.files
+	f := s.browserOf()
 	cwd := f.cwd
 	// moved moves the tree's folders under from to to, or forgets them
 	// for "".
@@ -244,10 +244,10 @@ func (a *App) filesChanged(d *fileDialog, made string, gone []string, err error)
 		}
 	}
 	if _, loaded := f.subdirs[d.dir]; loaded && d.dir != cwd {
-		a.loadSubdirs(s, d.dir)
+		a.reloadSubdirs(s, d.dir)
 	}
 	if cwd != "" {
-		a.openDir(s, cwd)
+		a.browse(s, cwd)
 	}
 }
 

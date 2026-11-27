@@ -158,6 +158,7 @@ func (ed *connEditor) objectProblems(errs map[editorField]string) {
 func (a *App) saveObject(h *config.Host, ed *connEditor) {
 	p := config.ObjectProviderOf(ed.objectProvider)
 	h.Protocol = config.ProtocolObject
+	h.Redis, h.Serial, h.ADB = nil, nil, nil
 	h.Name, h.Notes = strings.TrimSpace(ed.name), ed.notes
 	h.Addr, h.Port, h.User, h.KeyPath = "", 0, "", ""
 	h.Auth = config.AuthPassword

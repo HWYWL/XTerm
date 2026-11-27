@@ -33,6 +33,8 @@ func (a *App) monitorPanel(c *ui.Context) {
 			a.serialPanel(c, s)
 		case s.isTelnet():
 			a.telnetPanel(c, s)
+		case s.isADB():
+			a.adbPanel(c, s)
 		case s.isLocal():
 			a.localMonitor(c)
 		default:

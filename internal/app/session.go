@@ -103,8 +103,12 @@ type Session struct {
 	telnet *telnetMeter
 	adb    *adbMeter
 
-	// adbFiles is the files tab's state of an ADB session (adbfiles.go).
+	// adbFiles, adbApps, adbProcs and adbNet are the bottom panel's tabs
+	// of an ADB session (adbfiles.go, adbapps.go, adbprocs.go, adbnet.go).
 	adbFiles adbFiles
+	adbApps  adbAppsState
+	adbProcs adbProcsState
+	adbNet   adbNetState
 
 	// name is the tab's name for this run, "" for the host's title: never
 	// saved (rename.go).

@@ -268,7 +268,9 @@ func openShell(ctx context.Context, srv goadb.Dialer, term string, count *counte
 		b.Term(term)
 		sh, err := goadb.Shell2(ctx, srv, b.String())
 		if err == nil {
-			return newShell2(sh, count), nil
+			w := newShell2(sh, count)
+			_, _ = io.WriteString(w, shellSetup)
+			return w, nil
 		}
 		if ctx.Err() != nil {
 			return nil, handshakeErr(ctx, err)
@@ -280,8 +282,16 @@ func openShell(ctx context.Context, srv goadb.Dialer, term string, count *counte
 	if err != nil {
 		return nil, handshakeErr(ctx, err)
 	}
+	_, _ = io.WriteString(sh, shellSetup)
 	return sh, nil
 }
+
+// shellSetup gives the device's shell the colors an SSH host's shell shows:
+// Android's own `ls` is plain, and its aliases come from a system rc file
+// the app cannot edit. The line runs before the terminal shows it, and the
+// screen is cleared after it, so what it printed goes with it. Colors are
+// the ANSI ones of the terminal's palette, as `ls --color` uses them.
+const shellSetup = `stty -echo 2>/dev/null; export LS_COLORS='rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.zip=01;31:*.gz=01;31:*.bz2=01;31:*.xz=01;31:*.7z=01;31:*.apk=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.png=01;35:*.gif=01;35:*.bmp=01;35:*.svg=01;35:*.mp3=01;36:*.mp4=01;35:*.mkv=01;35:*.webm=01;35:'; if ls --color=auto / >/dev/null 2>&1; then alias ls='ls --color=auto'; alias ll='ls --color=auto -alF'; fi; stty echo 2>/dev/null; printf '\033[H\033[2J'` + "\n"
 
 // shell2 is a shell v2 connection as a stream: the device's output is read
 // out of its packets, what is typed goes back as its stdin, and its pty

@@ -110,11 +110,33 @@ func (a *App) stopPoll(p *sessionPoll) {
 // stopUnseenPolls stops the polls no view drew since it last ran: the
 // main window's View runs it after each frame.
 func (a *App) stopUnseenPolls() {
+	a.stopUnseenADBPolls()
 	for p := range a.polls {
 		if p.run == nil || !p.run.seen {
 			a.stopPoll(p)
 			continue
 		}
 		p.run.seen = false
+	}
+}
+
+// stopUnseenADBPolls stops the process and network reads of ADB tabs that
+// were not drawn since the last frame.
+func (a *App) stopUnseenADBPolls() {
+	for _, s := range a.sessions {
+		if s.adbProcs.started {
+			if s.adbProcs.seen {
+				s.adbProcs.seen = false
+			} else {
+				s.adbProcs.halt()
+			}
+		}
+		if s.adbNet.started {
+			if s.adbNet.seen {
+				s.adbNet.seen = false
+			} else {
+				s.adbNet.halt()
+			}
+		}
 	}
 }

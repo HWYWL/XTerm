@@ -1,8 +1,8 @@
 package adb
 
-// Installing an app: the APK is copied to the device over the sync service,
-// and `pm install` runs on it through a shell channel, which is what adb
-// install does.
+// Installing apps: the APKs are copied to the device over the sync service,
+// and `pm` installs them through a shell channel, which is what `adb
+// install` and `adb install-multiple` do.
 
 import (
 	"context"
@@ -11,10 +11,10 @@ import (
 	"io"
 	"os"
 	"path"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
-
-	"github.com/pgaskin/go-adb/adblib/adbsync"
 )
 
 // Install copies apk to the device and installs it, reporting the bytes it
@@ -23,12 +23,7 @@ func (c *Conn) Install(ctx context.Context, apk string, progress func(sent, tota
 	if c == nil || c.dial == nil {
 		return "", errors.New("adb: no connection to install over")
 	}
-	f, err := os.Open(apk)
-	if err != nil {
-		return "", err
-	}
-	defer f.Close()
-	st, err := f.Stat()
+	st, err := os.Stat(apk)
 	if err != nil {
 		return "", err
 	}
@@ -36,10 +31,116 @@ func (c *Conn) Install(ctx context.Context, apk string, progress func(sent, tota
 	// The device's own folder for it, named after the file, and safe in a
 	// shell command.
 	remote := path.Join("/data/local/tmp", "xterm-"+safeName(path.Base(apk)))
-	sync := &adbsync.Client{Server: c.dial}
-	w, err := sync.Create(ctx, remote, 0o644, time.Now())
+	err = c.pushAPK(ctx, apk, remote, func(n int64) {
+		if progress != nil {
+			progress(n, total)
+		}
+	})
+	// Whatever happened, the copy is not needed any more.
+	c.removePushed(remote)
 	if err != nil {
 		return "", err
+	}
+	out, err := c.Run(ctx, "pm install -r "+shellQuote(remote))
+	if err != nil {
+		return out, err
+	}
+	if !strings.Contains(out, "Success") {
+		return out, fmt.Errorf("%s", installText(out))
+	}
+	return out, nil
+}
+
+// InstallMultiple copies the APKs of one app - its base APK and its split
+// APKs - and installs them together, as `adb install-multiple` does. It
+// returns what `pm install-commit` printed.
+func (c *Conn) InstallMultiple(ctx context.Context, apks []string, progress func(sent, total int64)) (string, error) {
+	if c == nil || c.dial == nil {
+		return "", errors.New("adb: no connection to install over")
+	}
+	switch len(apks) {
+	case 0:
+		return "", errors.New("adb: no APK to install")
+	case 1:
+		return c.Install(ctx, apks[0], progress)
+	}
+	type pushed struct {
+		local, remote, name string
+		size                int64
+	}
+	files := make([]pushed, 0, len(apks))
+	total := int64(0)
+	for i, apk := range apks {
+		st, err := os.Stat(apk)
+		if err != nil {
+			return "", err
+		}
+		name := safeName(path.Base(apk))
+		remote := path.Join("/data/local/tmp", fmt.Sprintf("xterm-split-%d-%s", i+1, name))
+		files = append(files, pushed{apk, remote, path.Base(apk), st.Size()})
+		total += st.Size()
+	}
+	defer func() {
+		for _, f := range files {
+			c.removePushed(f.remote)
+		}
+	}()
+
+	sent := int64(0)
+	for _, f := range files {
+		base := sent
+		if err := c.pushAPK(ctx, f.local, f.remote, func(n int64) {
+			if progress != nil {
+				progress(base+n, total)
+			}
+		}); err != nil {
+			return "", err
+		}
+		sent += f.size
+	}
+
+	out, err := c.Run(ctx, fmt.Sprintf("pm install-create -r -S %d", total))
+	if err != nil {
+		return out, err
+	}
+	session := installSession(out)
+	if session == "" {
+		return out, fmt.Errorf("pm install-create: %s", installText(out))
+	}
+	for _, f := range files {
+		wout, werr := c.Run(ctx, fmt.Sprintf("pm install-write -S %d %s %s %s",
+			f.size, session, shellQuote(f.name), shellQuote(f.remote)))
+		if werr != nil {
+			c.abandonInstall(session)
+			return wout, werr
+		}
+		if !strings.Contains(wout, "Success") {
+			c.abandonInstall(session)
+			return wout, fmt.Errorf("%s", installText(wout))
+		}
+	}
+	cout, cerr := c.Run(ctx, "pm install-commit "+session)
+	if cerr != nil {
+		c.abandonInstall(session)
+		return cout, cerr
+	}
+	if !strings.Contains(cout, "Success") {
+		return cout, fmt.Errorf("%s", installText(cout))
+	}
+	return cout, nil
+}
+
+// pushAPK copies apk to remote over the sync service, reporting the bytes
+// sent so far.
+func (c *Conn) pushAPK(ctx context.Context, apk, remote string, progress func(sent int64)) error {
+	f, err := os.Open(apk)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	w, err := c.sync().Create(ctx, remote, 0o644, time.Now())
+	if err != nil {
+		return err
 	}
 	c.count.open(ChannelSync)
 	sent := int64(0)
@@ -50,11 +151,11 @@ func (c *Conn) Install(ctx context.Context, apk string, progress func(sent, tota
 			if _, werr := w.Write(buf[:n]); werr != nil {
 				w.Close()
 				c.count.closed(ChannelSync)
-				return "", werr
+				return werr
 			}
 			sent += int64(n)
 			if progress != nil {
-				progress(sent, total)
+				progress(sent)
 			}
 		}
 		if rerr == io.EOF {
@@ -63,29 +164,52 @@ func (c *Conn) Install(ctx context.Context, apk string, progress func(sent, tota
 		if rerr != nil {
 			w.Close()
 			c.count.closed(ChannelSync)
-			return "", rerr
+			return rerr
 		}
 	}
-	if err := w.Close(); err != nil {
-		c.count.closed(ChannelSync)
-		return "", err
-	}
+	err = w.Close()
 	c.count.closed(ChannelSync)
+	return err
+}
 
-	out, err := c.Exec(ctx, "pm install -r "+shellQuote(remote))
-	// Whatever happened, the copy is not needed any more.
+// removePushed removes a file copied for an install, however the install
+// went.
+func (c *Conn) removePushed(remote string) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	_, _ = c.Exec(ctx, "rm -f "+shellQuote(remote))
-	if err != nil {
-		return out, err
+}
+
+// abandonInstall throws away the session of an install that failed.
+func (c *Conn) abandonInstall(session string) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	_, _ = c.Exec(ctx, "pm install-abandon "+session)
+}
+
+// installSession is the session `pm install-create` made, from its
+// "Success: created install session [1234567]".
+var installSessionRE = regexp.MustCompile(`\[(\d+)\]`)
+
+func installSession(out string) string {
+	if m := installSessionRE.FindStringSubmatch(out); m != nil {
+		return m[1]
 	}
-	if !strings.Contains(out, "Success") {
-		msg := strings.TrimSpace(out)
-		if msg == "" {
-			msg = "pm install said nothing"
+	// Some package managers print the id alone.
+	for _, f := range strings.Fields(out) {
+		if _, err := strconv.Atoi(f); err == nil {
+			return f
 		}
-		return out, fmt.Errorf("%s", msg)
 	}
-	return out, nil
+	return ""
+}
+
+// installText is what pm printed, or a word for printing nothing.
+func installText(out string) string {
+	if msg := strings.TrimSpace(out); msg != "" {
+		return msg
+	}
+	return "pm said nothing"
 }
 
 // safeName is a file name the device can take, and a shell can read: the

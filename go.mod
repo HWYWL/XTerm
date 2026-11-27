@@ -8,6 +8,7 @@ require (
 	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20261028042204-6a276cc7c4f9
 	github.com/pgaskin/go-adb v0.0.0-20260909040028-2bc9b939919d
 	github.com/pkg/sftp v1.13.12
+	github.com/shogo82148/androidbinary v1.0.6
 	github.com/tdewolff/font v0.0.0-20261010204837-88a7f6b56918
 	go.bug.st/serial v1.8.0
 	golang.org/x/crypto v0.58.0

@@ -6508,6 +6508,512 @@ func (msgs Messages) AdbInstallCount() string {
 	return Catalog.Format(msgs.locale, "adbInstallCount", nil)
 }
 
+// AdbNetCopyLocal says "Copy local address"
+// in the language the app shows.
+func AdbNetCopyLocal() string { return In(i18n.Locale()).AdbNetCopyLocal() }
+
+// AdbNetCopyLocal says "Copy local address"
+// in the language of msgs.
+func (msgs Messages) AdbNetCopyLocal() string {
+	return Catalog.Format(msgs.locale, "adbNetCopyLocal", nil)
+}
+
+// AdbNetCopyRemote says "Copy remote address"
+// in the language the app shows.
+func AdbNetCopyRemote() string { return In(i18n.Locale()).AdbNetCopyRemote() }
+
+// AdbNetCopyRemote says "Copy remote address"
+// in the language of msgs.
+func (msgs Messages) AdbNetCopyRemote() string {
+	return Catalog.Format(msgs.locale, "adbNetCopyRemote", nil)
+}
+
+// AdbProcCopyPID says "Copy PID"
+// in the language the app shows.
+func AdbProcCopyPID() string { return In(i18n.Locale()).AdbProcCopyPID() }
+
+// AdbProcCopyPID says "Copy PID"
+// in the language of msgs.
+func (msgs Messages) AdbProcCopyPID() string {
+	return Catalog.Format(msgs.locale, "adbProcCopyPID", nil)
+}
+
+// AdbInstallMany says "%d APKs"
+// in the language the app shows.
+func AdbInstallMany() string { return In(i18n.Locale()).AdbInstallMany() }
+
+// AdbInstallMany says "%d APKs"
+// in the language of msgs.
+func (msgs Messages) AdbInstallMany() string {
+	return Catalog.Format(msgs.locale, "adbInstallMany", nil)
+}
+
+// AdbAppsFilter says "Filter apps"
+// in the language the app shows.
+func AdbAppsFilter() string { return In(i18n.Locale()).AdbAppsFilter() }
+
+// AdbAppsFilter says "Filter apps"
+// in the language of msgs.
+func (msgs Messages) AdbAppsFilter() string {
+	return Catalog.Format(msgs.locale, "adbAppsFilter", nil)
+}
+
+// AdbAppsSystem says "System apps"
+// in the language the app shows.
+func AdbAppsSystem() string { return In(i18n.Locale()).AdbAppsSystem() }
+
+// AdbAppsSystem says "System apps"
+// in the language of msgs.
+func (msgs Messages) AdbAppsSystem() string {
+	return Catalog.Format(msgs.locale, "adbAppsSystem", nil)
+}
+
+// AdbAppsCount says "%d apps"
+// in the language the app shows.
+func AdbAppsCount() string { return In(i18n.Locale()).AdbAppsCount() }
+
+// AdbAppsCount says "%d apps"
+// in the language of msgs.
+func (msgs Messages) AdbAppsCount() string {
+	return Catalog.Format(msgs.locale, "adbAppsCount", nil)
+}
+
+// AdbAppsReading says "Reading the apps…"
+// in the language the app shows.
+func AdbAppsReading() string { return In(i18n.Locale()).AdbAppsReading() }
+
+// AdbAppsReading says "Reading the apps…"
+// in the language of msgs.
+func (msgs Messages) AdbAppsReading() string {
+	return Catalog.Format(msgs.locale, "adbAppsReading", nil)
+}
+
+// AdbAppsFailed says "Couldn't read the apps: {error}"
+// in the language the app shows.
+func AdbAppsFailed(error string) string { return In(i18n.Locale()).AdbAppsFailed(error) }
+
+// AdbAppsFailed says "Couldn't read the apps: {error}"
+// in the language of msgs.
+func (msgs Messages) AdbAppsFailed(error string) string {
+	return Catalog.Format(msgs.locale, "adbAppsFailed", map[string]any{"error": error})
+}
+
+// AdbAppsNone says "No apps"
+// in the language the app shows.
+func AdbAppsNone() string { return In(i18n.Locale()).AdbAppsNone() }
+
+// AdbAppsNone says "No apps"
+// in the language of msgs.
+func (msgs Messages) AdbAppsNone() string {
+	return Catalog.Format(msgs.locale, "adbAppsNone", nil)
+}
+
+// AdbAppsKind says "Type"
+// in the language the app shows.
+func AdbAppsKind() string { return In(i18n.Locale()).AdbAppsKind() }
+
+// AdbAppsKind says "Type"
+// in the language of msgs.
+func (msgs Messages) AdbAppsKind() string {
+	return Catalog.Format(msgs.locale, "adbAppsKind", nil)
+}
+
+// AdbAppsUser says "User"
+// in the language the app shows.
+func AdbAppsUser() string { return In(i18n.Locale()).AdbAppsUser() }
+
+// AdbAppsUser says "User"
+// in the language of msgs.
+func (msgs Messages) AdbAppsUser() string {
+	return Catalog.Format(msgs.locale, "adbAppsUser", nil)
+}
+
+// AdbAppsPath says "APK"
+// in the language the app shows.
+func AdbAppsPath() string { return In(i18n.Locale()).AdbAppsPath() }
+
+// AdbAppsPath says "APK"
+// in the language of msgs.
+func (msgs Messages) AdbAppsPath() string {
+	return Catalog.Format(msgs.locale, "adbAppsPath", nil)
+}
+
+// AdbAppsName says "App"
+// in the language the app shows.
+func AdbAppsName() string { return In(i18n.Locale()).AdbAppsName() }
+
+// AdbAppsName says "App"
+// in the language of msgs.
+func (msgs Messages) AdbAppsName() string {
+	return Catalog.Format(msgs.locale, "adbAppsName", nil)
+}
+
+// AdbAppsPackage says "Package"
+// in the language the app shows.
+func AdbAppsPackage() string { return In(i18n.Locale()).AdbAppsPackage() }
+
+// AdbAppsPackage says "Package"
+// in the language of msgs.
+func (msgs Messages) AdbAppsPackage() string {
+	return Catalog.Format(msgs.locale, "adbAppsPackage", nil)
+}
+
+// AdbSplitHint says "One APK, an .apks or .xapk bundle, or a base APK with its split APKs."
+// in the language the app shows.
+func AdbSplitHint() string { return In(i18n.Locale()).AdbSplitHint() }
+
+// AdbSplitHint says "One APK, an .apks or .xapk bundle, or a base APK with its split APKs."
+// in the language of msgs.
+func (msgs Messages) AdbSplitHint() string {
+	return Catalog.Format(msgs.locale, "adbSplitHint", nil)
+}
+
+// AdbUninstall says "Uninstall"
+// in the language the app shows.
+func AdbUninstall() string { return In(i18n.Locale()).AdbUninstall() }
+
+// AdbUninstall says "Uninstall"
+// in the language of msgs.
+func (msgs Messages) AdbUninstall() string {
+	return Catalog.Format(msgs.locale, "adbUninstall", nil)
+}
+
+// AdbUninstallAsk says "Uninstall {name}? Its data goes with it."
+// in the language the app shows.
+func AdbUninstallAsk(name string) string { return In(i18n.Locale()).AdbUninstallAsk(name) }
+
+// AdbUninstallAsk says "Uninstall {name}? Its data goes with it."
+// in the language of msgs.
+func (msgs Messages) AdbUninstallAsk(name string) string {
+	return Catalog.Format(msgs.locale, "adbUninstallAsk", map[string]any{"name": name})
+}
+
+// AdbUninstalled says "Uninstalled {name}"
+// in the language the app shows.
+func AdbUninstalled(name string) string { return In(i18n.Locale()).AdbUninstalled(name) }
+
+// AdbUninstalled says "Uninstalled {name}"
+// in the language of msgs.
+func (msgs Messages) AdbUninstalled(name string) string {
+	return Catalog.Format(msgs.locale, "adbUninstalled", map[string]any{"name": name})
+}
+
+// AdbUninstallFailed says "Couldn't uninstall: {error}"
+// in the language the app shows.
+func AdbUninstallFailed(error string) string { return In(i18n.Locale()).AdbUninstallFailed(error) }
+
+// AdbUninstallFailed says "Couldn't uninstall: {error}"
+// in the language of msgs.
+func (msgs Messages) AdbUninstallFailed(error string) string {
+	return Catalog.Format(msgs.locale, "adbUninstallFailed", map[string]any{"error": error})
+}
+
+// AdbLaunch says "Open"
+// in the language the app shows.
+func AdbLaunch() string { return In(i18n.Locale()).AdbLaunch() }
+
+// AdbLaunch says "Open"
+// in the language of msgs.
+func (msgs Messages) AdbLaunch() string {
+	return Catalog.Format(msgs.locale, "adbLaunch", nil)
+}
+
+// AdbLaunched says "Opened {name}"
+// in the language the app shows.
+func AdbLaunched(name string) string { return In(i18n.Locale()).AdbLaunched(name) }
+
+// AdbLaunched says "Opened {name}"
+// in the language of msgs.
+func (msgs Messages) AdbLaunched(name string) string {
+	return Catalog.Format(msgs.locale, "adbLaunched", map[string]any{"name": name})
+}
+
+// AdbLaunchFailed says "Couldn't open {name}: {error}"
+// in the language the app shows.
+func AdbLaunchFailed(name string, error string) string {
+	return In(i18n.Locale()).AdbLaunchFailed(name, error)
+}
+
+// AdbLaunchFailed says "Couldn't open {name}: {error}"
+// in the language of msgs.
+func (msgs Messages) AdbLaunchFailed(name string, error string) string {
+	return Catalog.Format(msgs.locale, "adbLaunchFailed", map[string]any{"name": name, "error": error})
+}
+
+// AdbForceStop says "Force stop"
+// in the language the app shows.
+func AdbForceStop() string { return In(i18n.Locale()).AdbForceStop() }
+
+// AdbForceStop says "Force stop"
+// in the language of msgs.
+func (msgs Messages) AdbForceStop() string {
+	return Catalog.Format(msgs.locale, "adbForceStop", nil)
+}
+
+// AdbStopped says "Stopped {name}"
+// in the language the app shows.
+func AdbStopped(name string) string { return In(i18n.Locale()).AdbStopped(name) }
+
+// AdbStopped says "Stopped {name}"
+// in the language of msgs.
+func (msgs Messages) AdbStopped(name string) string {
+	return Catalog.Format(msgs.locale, "adbStopped", map[string]any{"name": name})
+}
+
+// AdbStopFailed says "Couldn't stop {name}: {error}"
+// in the language the app shows.
+func AdbStopFailed(name string, error string) string {
+	return In(i18n.Locale()).AdbStopFailed(name, error)
+}
+
+// AdbStopFailed says "Couldn't stop {name}: {error}"
+// in the language of msgs.
+func (msgs Messages) AdbStopFailed(name string, error string) string {
+	return Catalog.Format(msgs.locale, "adbStopFailed", map[string]any{"name": name, "error": error})
+}
+
+// AdbClearData says "Clear data"
+// in the language the app shows.
+func AdbClearData() string { return In(i18n.Locale()).AdbClearData() }
+
+// AdbClearData says "Clear data"
+// in the language of msgs.
+func (msgs Messages) AdbClearData() string {
+	return Catalog.Format(msgs.locale, "adbClearData", nil)
+}
+
+// AdbClearAsk says "Clear the data of {name}? Its settings and files go with it."
+// in the language the app shows.
+func AdbClearAsk(name string) string { return In(i18n.Locale()).AdbClearAsk(name) }
+
+// AdbClearAsk says "Clear the data of {name}? Its settings and files go with it."
+// in the language of msgs.
+func (msgs Messages) AdbClearAsk(name string) string {
+	return Catalog.Format(msgs.locale, "adbClearAsk", map[string]any{"name": name})
+}
+
+// AdbCleared says "Cleared the data of {name}"
+// in the language the app shows.
+func AdbCleared(name string) string { return In(i18n.Locale()).AdbCleared(name) }
+
+// AdbCleared says "Cleared the data of {name}"
+// in the language of msgs.
+func (msgs Messages) AdbCleared(name string) string {
+	return Catalog.Format(msgs.locale, "adbCleared", map[string]any{"name": name})
+}
+
+// AdbClearFailed says "Couldn't clear the data: {error}"
+// in the language the app shows.
+func AdbClearFailed(error string) string { return In(i18n.Locale()).AdbClearFailed(error) }
+
+// AdbClearFailed says "Couldn't clear the data: {error}"
+// in the language of msgs.
+func (msgs Messages) AdbClearFailed(error string) string {
+	return Catalog.Format(msgs.locale, "adbClearFailed", map[string]any{"error": error})
+}
+
+// AdbExportAPK says "Export APK"
+// in the language the app shows.
+func AdbExportAPK() string { return In(i18n.Locale()).AdbExportAPK() }
+
+// AdbExportAPK says "Export APK"
+// in the language of msgs.
+func (msgs Messages) AdbExportAPK() string {
+	return Catalog.Format(msgs.locale, "adbExportAPK", nil)
+}
+
+// AdbExported says "Saved {name}"
+// in the language the app shows.
+func AdbExported(name string) string { return In(i18n.Locale()).AdbExported(name) }
+
+// AdbExported says "Saved {name}"
+// in the language of msgs.
+func (msgs Messages) AdbExported(name string) string {
+	return Catalog.Format(msgs.locale, "adbExported", map[string]any{"name": name})
+}
+
+// AdbExportFailed says "Couldn't export the APK: {error}"
+// in the language the app shows.
+func AdbExportFailed(error string) string { return In(i18n.Locale()).AdbExportFailed(error) }
+
+// AdbExportFailed says "Couldn't export the APK: {error}"
+// in the language of msgs.
+func (msgs Messages) AdbExportFailed(error string) string {
+	return Catalog.Format(msgs.locale, "adbExportFailed", map[string]any{"error": error})
+}
+
+// AdbCopyPackage says "Copy package name"
+// in the language the app shows.
+func AdbCopyPackage() string { return In(i18n.Locale()).AdbCopyPackage() }
+
+// AdbCopyPackage says "Copy package name"
+// in the language of msgs.
+func (msgs Messages) AdbCopyPackage() string {
+	return Catalog.Format(msgs.locale, "adbCopyPackage", nil)
+}
+
+// AdbProcFailed says "Couldn't read the processes: {error}"
+// in the language the app shows.
+func AdbProcFailed(error string) string { return In(i18n.Locale()).AdbProcFailed(error) }
+
+// AdbProcFailed says "Couldn't read the processes: {error}"
+// in the language of msgs.
+func (msgs Messages) AdbProcFailed(error string) string {
+	return Catalog.Format(msgs.locale, "adbProcFailed", map[string]any{"error": error})
+}
+
+// AdbProcNone says "No processes"
+// in the language the app shows.
+func AdbProcNone() string { return In(i18n.Locale()).AdbProcNone() }
+
+// AdbProcNone says "No processes"
+// in the language of msgs.
+func (msgs Messages) AdbProcNone() string {
+	return Catalog.Format(msgs.locale, "adbProcNone", nil)
+}
+
+// AdbProcKill says "End process"
+// in the language the app shows.
+func AdbProcKill() string { return In(i18n.Locale()).AdbProcKill() }
+
+// AdbProcKill says "End process"
+// in the language of msgs.
+func (msgs Messages) AdbProcKill() string {
+	return Catalog.Format(msgs.locale, "adbProcKill", nil)
+}
+
+// AdbProcKillForce says "Force end"
+// in the language the app shows.
+func AdbProcKillForce() string { return In(i18n.Locale()).AdbProcKillForce() }
+
+// AdbProcKillForce says "Force end"
+// in the language of msgs.
+func (msgs Messages) AdbProcKillForce() string {
+	return Catalog.Format(msgs.locale, "adbProcKillForce", nil)
+}
+
+// AdbProcKillAsk says "End {name} (PID {pid})?"
+// in the language the app shows.
+func AdbProcKillAsk(name string, pid string) string {
+	return In(i18n.Locale()).AdbProcKillAsk(name, pid)
+}
+
+// AdbProcKillAsk says "End {name} (PID {pid})?"
+// in the language of msgs.
+func (msgs Messages) AdbProcKillAsk(name string, pid string) string {
+	return Catalog.Format(msgs.locale, "adbProcKillAsk", map[string]any{"name": name, "pid": pid})
+}
+
+// AdbProcKilled says "Ended {name}"
+// in the language the app shows.
+func AdbProcKilled(name string) string { return In(i18n.Locale()).AdbProcKilled(name) }
+
+// AdbProcKilled says "Ended {name}"
+// in the language of msgs.
+func (msgs Messages) AdbProcKilled(name string) string {
+	return Catalog.Format(msgs.locale, "adbProcKilled", map[string]any{"name": name})
+}
+
+// AdbProcKillFailed says "Couldn't end the process: {error}"
+// in the language the app shows.
+func AdbProcKillFailed(error string) string { return In(i18n.Locale()).AdbProcKillFailed(error) }
+
+// AdbProcKillFailed says "Couldn't end the process: {error}"
+// in the language of msgs.
+func (msgs Messages) AdbProcKillFailed(error string) string {
+	return Catalog.Format(msgs.locale, "adbProcKillFailed", map[string]any{"error": error})
+}
+
+// AdbNetFailed says "Couldn't read the connections: {error}"
+// in the language the app shows.
+func AdbNetFailed(error string) string { return In(i18n.Locale()).AdbNetFailed(error) }
+
+// AdbNetFailed says "Couldn't read the connections: {error}"
+// in the language of msgs.
+func (msgs Messages) AdbNetFailed(error string) string {
+	return Catalog.Format(msgs.locale, "adbNetFailed", map[string]any{"error": error})
+}
+
+// AdbNetNone says "No connections"
+// in the language the app shows.
+func AdbNetNone() string { return In(i18n.Locale()).AdbNetNone() }
+
+// AdbNetNone says "No connections"
+// in the language of msgs.
+func (msgs Messages) AdbNetNone() string {
+	return Catalog.Format(msgs.locale, "adbNetNone", nil)
+}
+
+// AdbNetNoTools says "The device has neither ss nor netstat."
+// in the language the app shows.
+func AdbNetNoTools() string { return In(i18n.Locale()).AdbNetNoTools() }
+
+// AdbNetNoTools says "The device has neither ss nor netstat."
+// in the language of msgs.
+func (msgs Messages) AdbNetNoTools() string {
+	return Catalog.Format(msgs.locale, "adbNetNoTools", nil)
+}
+
+// AdbNetListenOnly says "Listening only"
+// in the language the app shows.
+func AdbNetListenOnly() string { return In(i18n.Locale()).AdbNetListenOnly() }
+
+// AdbNetListenOnly says "Listening only"
+// in the language of msgs.
+func (msgs Messages) AdbNetListenOnly() string {
+	return Catalog.Format(msgs.locale, "adbNetListenOnly", nil)
+}
+
+// AdbNetLocal says "Local"
+// in the language the app shows.
+func AdbNetLocal() string { return In(i18n.Locale()).AdbNetLocal() }
+
+// AdbNetLocal says "Local"
+// in the language of msgs.
+func (msgs Messages) AdbNetLocal() string {
+	return Catalog.Format(msgs.locale, "adbNetLocal", nil)
+}
+
+// AdbNetRemote says "Remote"
+// in the language the app shows.
+func AdbNetRemote() string { return In(i18n.Locale()).AdbNetRemote() }
+
+// AdbNetRemote says "Remote"
+// in the language of msgs.
+func (msgs Messages) AdbNetRemote() string {
+	return Catalog.Format(msgs.locale, "adbNetRemote", nil)
+}
+
+// AdbNetProgram says "Program"
+// in the language the app shows.
+func AdbNetProgram() string { return In(i18n.Locale()).AdbNetProgram() }
+
+// AdbNetProgram says "Program"
+// in the language of msgs.
+func (msgs Messages) AdbNetProgram() string {
+	return Catalog.Format(msgs.locale, "adbNetProgram", nil)
+}
+
+// AdbNetReading says "Reading the connections…"
+// in the language the app shows.
+func AdbNetReading() string { return In(i18n.Locale()).AdbNetReading() }
+
+// AdbNetReading says "Reading the connections…"
+// in the language of msgs.
+func (msgs Messages) AdbNetReading() string {
+	return Catalog.Format(msgs.locale, "adbNetReading", nil)
+}
+
+// AdbNetCount says "%d sockets"
+// in the language the app shows.
+func AdbNetCount() string { return In(i18n.Locale()).AdbNetCount() }
+
+// AdbNetCount says "%d sockets"
+// in the language of msgs.
+func (msgs Messages) AdbNetCount() string {
+	return Catalog.Format(msgs.locale, "adbNetCount", nil)
+}
+
 // AdbUp says "Up"
 // in the language the app shows.
 func AdbUp() string { return In(i18n.Locale()).AdbUp() }

@@ -577,6 +577,8 @@ func (a *App) bottomTabs() []bottomTab {
 		return []bottomTab{
 			{locales.TabFiles(), a.adbFilesTab},
 			{locales.TabApps(), a.adbAppsTab},
+			{locales.TabProcesses(), a.adbProcessesTab},
+			{locales.TabNetwork(), a.adbNetworkTab},
 			{locales.Ai(), a.aiPanel},
 		}
 	}

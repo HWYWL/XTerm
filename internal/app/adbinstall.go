@@ -1,20 +1,22 @@
 package app
 
-// The apps tab of an ADB tab's bottom panel: an APK dropped on it, or
-// chosen with a picker, is copied to the device and installed.
+// Installing an app on an ADB tab: an APK or a base with its split APKs is
+// copied to the device and installed. The apps tab shows the install, and
+// the apps already there (adbapps.go).
 
 import (
+	"archive/zip"
 	"context"
 	"fmt"
+	"io"
+	"os"
 	"path"
+	"path/filepath"
+	"strconv"
 	"strings"
 
 	"finallyshell/internal/adb"
-	"finallyshell/internal/icons"
-	"finallyshell/internal/widgets"
 	"finallyshell/locales"
-
-	"github.com/egoist/mygo/ui"
 )
 
 // adbInstall is the install the apps tab shows: how far it has come, and
@@ -34,47 +36,10 @@ var installAPK = func(c *adb.Conn, ctx context.Context, apk string, progress fun
 	return c.Install(ctx, apk, progress)
 }
 
-// adbAppsTab is the bottom panel's page for installing an app: a drop
-// zone, and the last install's progress and result.
-func (a *App) adbAppsTab(c *ui.Context) {
-	s := a.connSession()
-	st := &a.adbInstall
-	ui.Column(c).Fill().Padding(12, 14).Gap(10).Children(func() {
-		widgets.Muted(c, locales.AdbInstallHint()).FontSize(12).Wrap()
-		zone := ui.Column(c).Grow(1).MinHeight(60).Center().Gap(8).Radius(8).
-			Border(2, theme.Border).Padding(18)
-		if zone.FileDragOver() {
-			zone.Border(2, theme.Accent).Background(theme.Accent.Alpha(0.06))
-		}
-		zone.Children(func() {
-			ui.Icon(c, icons.Get("upload")).FontSize(26).TextColor(theme.TextMuted)
-			ui.Text(c, locales.AdbInstallDrop()).FontSize(12).TextColor(theme.TextMuted)
-			if ui.Button(c, locales.AdbInstallPick()).Clicked() {
-				a.pickAPK(s)
-			}
-		})
-		if files := zone.DroppedFiles(); len(files) > 0 {
-			a.installAPKs(s, apkFiles(files))
-		}
-		switch {
-		case st.busy:
-			frac := 0.0
-			if st.total > 0 {
-				frac = float64(st.sent) / float64(st.total)
-			}
-			widgets.UsageBar(c, st.name, frac, fmt.Sprintf("%.0f%% · %s / %s",
-				frac*100, formatBytes(float64(st.sent)), formatBytes(float64(st.total))), theme.Accent)
-		case st.msg != "":
-			color := theme.Success
-			if st.failed {
-				color = theme.Danger
-			}
-			ui.Text(c, st.msg).FontSize(11.5).TextColor(color).Wrap()
-		}
-		if st.installed > 0 {
-			widgets.Muted(c, fmt.Sprintf(locales.AdbInstallCount(), st.installed)).FontSize(11)
-		}
-	})
+// installMultipleAPK is (*adb.Conn).InstallMultiple, for a base APK with
+// its splits.
+var installMultipleAPK = func(c *adb.Conn, ctx context.Context, apks []string, progress func(sent, total int64)) (string, error) {
+	return c.InstallMultiple(ctx, apks, progress)
 }
 
 // pickAPK asks for APKs and installs them.
@@ -88,57 +53,144 @@ func (a *App) pickAPK(s *Session) {
 	}()
 }
 
-// apkFiles are the APKs of a drop or a choice: the rest are left alone.
+// apkFiles are the APKs and APK bundles of a drop or a choice: the rest
+// are left alone.
 func apkFiles(files []string) []string {
 	var out []string
 	for _, f := range files {
-		if strings.EqualFold(path.Ext(f), ".apk") {
+		switch strings.ToLower(path.Ext(f)) {
+		case ".apk", ".apks", ".xapk":
 			out = append(out, f)
 		}
 	}
 	return out
 }
 
-// installAPKs installs apks one after the other, on a goroutine, showing
-// each one's progress in the panel.
+// expandAPKs are the APK files to install: those given, and the ones in a
+// bundle (.apks or .xapk, which are zips of a base APK and its splits). It
+// returns the folder of the ones it unpacked, to remove after.
+func expandAPKs(paths []string) ([]string, func(), error) {
+	var (
+		apks   []string
+		root   string
+		bundle int
+	)
+	cleanup := func() {
+		if root != "" {
+			os.RemoveAll(root)
+		}
+	}
+	for _, p := range paths {
+		if strings.EqualFold(path.Ext(p), ".apk") {
+			apks = append(apks, p)
+			continue
+		}
+		zr, err := zip.OpenReader(p)
+		if err != nil {
+			cleanup()
+			return nil, func() {}, err
+		}
+		if root == "" {
+			if root, err = os.MkdirTemp("", "xterm-apks-"); err != nil {
+				zr.Close()
+				return nil, func() {}, err
+			}
+		}
+		bundle++
+		dir := filepath.Join(root, strconv.Itoa(bundle))
+		if err := os.MkdirAll(dir, 0o755); err != nil {
+			zr.Close()
+			cleanup()
+			return nil, func() {}, err
+		}
+		for _, f := range zr.File {
+			if f.FileInfo().IsDir() || !strings.EqualFold(path.Ext(f.Name), ".apk") {
+				continue
+			}
+			in, err := f.Open()
+			if err != nil {
+				zr.Close()
+				cleanup()
+				return nil, func() {}, err
+			}
+			out, err := os.Create(filepath.Join(dir, filepath.Base(f.Name)))
+			if err != nil {
+				in.Close()
+				zr.Close()
+				cleanup()
+				return nil, func() {}, err
+			}
+			_, err = io.Copy(out, in)
+			in.Close()
+			out.Close()
+			if err != nil {
+				zr.Close()
+				cleanup()
+				return nil, func() {}, err
+			}
+			apks = append(apks, filepath.Join(dir, filepath.Base(f.Name)))
+		}
+		zr.Close()
+	}
+	if len(apks) == 0 {
+		cleanup()
+		return nil, func() {}, fmt.Errorf("no APK in the selection")
+	}
+	return apks, cleanup, nil
+}
+
+// installAPKs installs apks on a goroutine, showing their progress in the
+// tab: one APK on its own, or the base and its splits together.
 func (a *App) installAPKs(s *Session, apks []string) {
 	st := &a.adbInstall
 	if st.busy || len(apks) == 0 {
 		return
 	}
-	m := a.adbMeter(s)
-	m.mu.Lock()
-	conn := m.conn
-	m.mu.Unlock()
+	conn := a.adbConn(s)
 	if conn == nil {
 		st.msg, st.failed = locales.AdbInstallNoDevice(), true
 		a.redraw()
 		return
 	}
 	st.busy, st.failed, st.msg, st.installed = true, false, "", 0
+	st.sent, st.total = 0, 0
 	a.redraw()
-	ctx := s.ctx
-	if ctx == nil {
-		ctx = context.Background()
-	}
+	ctx := adbCtx(s)
 	go func() {
+		apks, cleanup, err := expandAPKs(apks)
+		defer cleanup()
+		if err != nil {
+			a.post(func() {
+				st.busy = false
+				st.msg, st.failed = locales.AdbInstallFailed(err.Error()), true
+				a.redraw()
+			})
+			return
+		}
 		var lastErr string
 		done := 0
-		for _, apk := range apks {
-			st.name = path.Base(apk)
-			st.sent, st.total = 0, 0
-			a.post(func() { a.redraw() })
-			_, err := installAPK(conn, ctx, apk, func(sent, total int64) {
-				a.post(func() {
-					st.sent, st.total = sent, total
-					a.redraw()
-				})
+		report := func(sent, total int64) {
+			a.post(func() {
+				st.sent, st.total = sent, total
+				a.redraw()
 			})
-			if err != nil {
+		}
+		if len(apks) > 1 {
+			st.name = fmt.Sprintf(locales.AdbInstallMany(), len(apks))
+			a.post(func() { a.redraw() })
+			if _, err := installMultipleAPK(conn, ctx, apks, report); err != nil {
 				lastErr = err.Error()
-				continue
+			} else {
+				done = 1
 			}
-			done++
+		} else {
+			st.name = path.Base(apks[0])
+			a.post(func() { a.redraw() })
+			if _, err := installAPK(conn, ctx, apks[0], report); err != nil {
+				lastErr = err.Error()
+			} else {
+				done = 1
+			}
 		}
 		a.post(func() {
 			st.busy, st.installed = false, done
@@ -146,6 +198,7 @@ func (a *App) installAPKs(s *Session, apks []string) {
 				st.msg, st.failed = locales.AdbInstallFailed(lastErr), true
 			} else {
 				st.msg, st.failed = locales.AdbInstallOK(), false
+				a.loadADBApps(s)
 			}
 			a.redraw()
 		})

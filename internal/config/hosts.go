@@ -57,6 +57,9 @@ type Host struct {
 	Object *ObjectSettings `json:"object,omitempty"`
 	// Redis holds the host's Redis fields when Protocol is ProtocolRedis.
 	Redis *RedisSettings `json:"redis,omitempty"`
+	// Serial holds the port and the line's settings when Protocol is
+	// ProtocolSerial.
+	Serial *SerialSettings `json:"serial,omitempty"`
 
 	// Folder is the ID of the folder the host is in, "" for the top level.
 	Folder string `json:"folder,omitempty"`
@@ -139,6 +142,9 @@ func (h *Host) Title() string {
 	if h.Name != "" {
 		return h.Name
 	}
+	if h.IsSerial() {
+		return h.SerialPort().Port
+	}
 	return h.Addr
 }
 
@@ -158,6 +164,12 @@ func (h *Host) Target() string {
 			return o.Bucket + "/" + root
 		}
 		return o.Bucket
+	}
+	if h.IsSerial() {
+		return h.SerialPort().Port
+	}
+	if h.IsTelnet() {
+		return h.AddrPort(23)
 	}
 	if h.IsRedis() {
 		if h.Redis != nil && h.Redis.Cluster {
@@ -206,6 +218,10 @@ func (h *Host) Clone() *Host {
 		p := *h.Proxy
 		p.extra = maps.Clone(h.Proxy.extra)
 		c.Proxy = &p
+	}
+	if h.Serial != nil {
+		s := *h.Serial
+		c.Serial = &s
 	}
 	c.Tunnels = slices.Clone(h.Tunnels)
 	c.MonitorIfaces = slices.Clone(h.MonitorIfaces)

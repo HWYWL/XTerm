@@ -32,6 +32,8 @@ func (a *App) noBottomPanel() string {
 		return locales.ObjectNoPanel()
 	case s.isRedis():
 		return locales.RedisNoPanel()
+	case s.isRaw():
+		return locales.RawNoPanel()
 	}
 	return ""
 }

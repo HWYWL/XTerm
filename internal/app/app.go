@@ -142,6 +142,12 @@ type App struct {
 	plat     Platform
 	settings config.Settings
 
+	// serialDay is today's bytes of the serial ports, by host, read and
+	// kept in the config directory (serialmeter.go).
+	serialDay      serialDay
+	serialDayRead  bool
+	serialDaySaved time.Time
+
 	hosts     *config.Store     // deleted hosts included: lists show hosts.Live()
 	passwords map[string]string // by host ID: what the host logs in with, this run
 	secrets   secretStore       // the system's credential store (secrets.go)
@@ -488,9 +494,10 @@ func (a *App) mainArea(c *ui.Context) {
 // monitor on the right, the right column holds it too, on top, over the
 // panel when that is there.
 func (a *App) mainContent(c *ui.Context) {
-	// A Redis tab shows its command line alone: the panel's tabs, the
-	// monitor and the rest are the shell's, which the protocol has not.
-	if s := a.current(); s.isRedis() {
+	// A Redis tab shows its command line alone, and a serial or Telnet tab
+	// its terminal: the panel's tabs, the monitor and the rest are the
+	// shell's, which these protocols have not.
+	if s := a.current(); s.isRedis() || s.isRaw() {
 		a.terminalArea(c)
 		return
 	}
@@ -614,7 +621,7 @@ func (a *App) openSessionIn(tab *Session, h *config.Host) {
 	// wants one; its proxy's and jump hosts' are asked for as SSH's are
 	// (redis_session.go). A directory of this machine has no secret at
 	// all, and an object storage's key is its own, asked for once.
-	local := h.IsObject() && h.ObjectProvider().Local
+	local := (h.IsObject() && h.ObjectProvider().Local) || h.IsSerial() || h.IsTelnet()
 	if !local {
 		if a.readChainSecrets(h, func() { a.openSessionIn(tab, h) }) {
 			return
@@ -656,17 +663,21 @@ func (a *App) reconnect(s *Session) {
 		return
 	}
 	// A jump host or a proxy with a password not known yet, as the host
-	// was edited to go through it, or one forgotten as it did not work.
-	if a.readChainSecrets(s.Host, func() { a.reconnect(s) }) {
-		return
-	}
-	need := a.missingSecret(s.Host)
-	if s.isRedis() {
-		need = a.chainSecret(s.Host)
-	}
-	if need != nil {
-		a.askSecret(need, func() { a.reconnect(s) })
-		return
+	// was edited to go through it, or one forgotten as it did not work. A
+	// serial port and a Telnet server have no proxy, no jump host and no
+	// password of the app's.
+	if !s.isRaw() {
+		if a.readChainSecrets(s.Host, func() { a.reconnect(s) }) {
+			return
+		}
+		need := a.missingSecret(s.Host)
+		if s.isRedis() {
+			need = a.chainSecret(s.Host)
+		}
+		if need != nil {
+			a.askSecret(need, func() { a.reconnect(s) })
+			return
+		}
 	}
 	if s.isRedis() { // its server again, with the password known
 		s.disconnect()

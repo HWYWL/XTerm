@@ -3,6 +3,7 @@ package app
 import (
 	"bytes"
 	"context"
+	"io"
 	"slices"
 	"sync/atomic"
 
@@ -64,6 +65,9 @@ type pane struct {
 	// redis is the pane's Redis command line, when the session is a Redis
 	// one (redis_session.go).
 	redis *redisCLI
+	// wire is where the console bar writes what it sends, when the session
+	// is a serial or Telnet one (rawsession.go); nil otherwise.
+	wire io.Writer
 	// stop ends its shell's follower: nil while none runs.
 	stop context.CancelFunc
 	// pick is which of the connection's shells this pane's is, as its
@@ -79,6 +83,17 @@ type pane struct {
 }
 
 func newPane() *pane { return &pane{id: nextPaneID.Add(1)} }
+
+// closeWire closes where the console bar writes, which for a serial or
+// Telnet session is the connection itself: the port is released, or the
+// socket closed, rather than left open under a screen that stays. It is
+// safe to call more than once.
+func (p *pane) closeWire() {
+	if c, ok := p.wire.(io.Closer); ok {
+		c.Close()
+	}
+	p.wire = nil
+}
 
 // paneHistory is the screen and the scrollback of a pane's terminal as its
 // connection went, as escape sequences, and the size they were laid out

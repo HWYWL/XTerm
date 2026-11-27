@@ -202,7 +202,8 @@ func fullHost() *Host {
 			Provider: ObjectMinIO, Endpoint: "http://127.0.0.1:9000", Region: "us-east-1",
 			Bucket: "cache", AccessKey: "AK", Root: "backups", PathStyle: true, Insecure: true,
 		},
-		Proxy: &ProxyConfig{Kind: ProxySOCKS5, Addr: "198.51.100.7", Port: 1081, User: "proxyuser", JumpHost: "h9"},
+		Serial: &SerialSettings{Port: "COM3", Baud: 9600, DataBits: 7, Parity: "even", StopBits: "2"},
+		Proxy:  &ProxyConfig{Kind: ProxySOCKS5, Addr: "198.51.100.7", Port: 1081, User: "proxyuser", JumpHost: "h9"},
 		Tunnels: []Tunnel{
 			{Kind: TunnelLocal, ListenPort: 8080, TargetHost: "10.0.0.5", TargetPort: 80},
 			{Kind: TunnelRemote, ListenHost: "0.0.0.0", ListenPort: 9000, TargetHost: "localhost", TargetPort: 3000, Disabled: true},

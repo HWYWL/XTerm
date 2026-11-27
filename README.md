@@ -26,7 +26,7 @@
 
 | 模块 | 它替你做的事 |
 |---|---|
-| **连接** | 主窗口里就有连接树，双击开会话；支持 SOCKS5 / HTTP 代理与跳板机（`ssh -J`，可多级，能检测环路），跳板机也可以单独一页来选。对象存储也能当主机连：阿里云 OSS、腾讯云 COS、华为云 OBS、七牛云 Kodo、AWS S3、Google Cloud、Azure Blob、MinIO、RustFS 和本地目录，连上就是它的文件管理器。从 FinalShell、Xshell、SecureCRT、MobaXterm、`~/.ssh/config`、CSV/Excel 导入连接，也能把连接导出成 JSON。 |
+| **连接** | 主窗口里就有连接树，双击开会话；支持 SOCKS5 / HTTP 代理与跳板机（`ssh -J`，可多级，能检测环路），跳板机也可以单独一页来选。对象存储也能当主机连：阿里云 OSS、腾讯云 COS、华为云 OBS、七牛云 Kodo、AWS S3、Google Cloud、Azure Blob、MinIO、RustFS 和本地目录，连上就是它的文件管理器。串口（`COM3`、`/dev/ttyUSB0`）和 Telnet 服务器也是主机，连上就是终端。从 FinalShell、Xshell、SecureCRT、MobaXterm、`~/.ssh/config`、CSV/Excel 导入连接，也能把连接导出成 JSON。 |
 | **终端** | Ghostty 的 libghostty-vt：分屏、查找、选中即复制、几百套配色、背景图片、连字、GBK/GB18030/Big5/Shift_JIS 等编码转换、可改的退格键与快捷键。 |
 | **文件** | SFTP 面板跟着终端的 `cd` 走；拖进来就上传，三个传输并行、可续、可打包 tar.gz；内置编辑器有语法高亮、查找替换、多光标、折叠，编码和换行符原样保存。 |
 | **监控** | 负载、CPU、内存、磁盘、网速与延迟两张曲线卡片，每 2 秒刷新；进程页可排序筛选，进程详情里一路显示**因果链**——从 init 到目标的每一层父进程与风险提示；网络页看谁在监听、谁连着、各自身份与归属地。 |
@@ -152,7 +152,7 @@ XTerm 有自己的版本号，从 0.0.1 开始；上游 FinallyShell 的版本�
 
 **主机和密码存在哪里？** 主机与设置是用户配置目录里的 JSON（macOS 在 `~/Library/Application Support/XTerm`，Windows 在 `%AppData%\XTerm`，Linux 在 `~/.config/XTerm`），密码在系统钥匙串里，服务名是 `xterm`。
 
-**支持 Telnet、RDP 或串口吗？** 不支持，只有 SSH 和 SFTP。
+**支持 Telnet、RDP 或串口吗？** Telnet 和串口支持：串口用本机的 `COM3`、`/dev/ttyUSB0`，可以设波特率、数据位、校验位和停止位；Telnet 是明文协议，登录在连上后的终端里做，左栏“系统”页显示链路状态、ECHO / SGA / LINEMODE 协商、NOP 心跳、收发流量和 IAC 协议计数。RDP 和 VNC 还不支持。
 
 ## 从源码构建
 

@@ -9,6 +9,30 @@ Each version's notes, newest first, in English and Simplified Chinese. A
 release's notes on GitHub and in the app's update window are its section
 here; see [发布](docs/zh-CN/development.md#发布).
 
+## 0.4.0
+
+### English
+
+- Connect to Android devices as hosts: over a cable through the ADB server of this computer, or over the network with wireless debugging, whose pairing (TLS 1.3 with SPAKE2) is built in; where a cable needs platform-tools, the page fetches them.
+- An ADB tab is the device's shell, with the window's size going to its pty; a split opens a shell of its own.
+- Its System page shows the link, the traffic, the ADB packets and the channels left open, a logcat stream, and the device's model, Android version, uptime, CPU, memory, data storage, processes, battery and temperatures.
+- Its Files tab is the file panel's over the device: a folder tree, a sortable table of name, size, kind, time and permissions, uploading files or folders by drop, download, new folder, rename and delete.
+- Its Apps tab installs the APKs dropped on it or chosen.
+- The assistant can run commands on a device, as on an SSH host.
+- Options › About names this project's source code, and keeps a Download from GitHub button for an update that fails.
+- The rename, new and delete dialogs no longer dim the window behind them.
+
+### 简体中文
+
+- 可以把 Android 设备当作主机来连接：通过本机的 ADB 服务走 USB，或者在局域网里用“无线调试”，配对（TLS 1.3 + SPAKE2）由应用自己完成；USB 需要 platform-tools 时，页面上可以直接下载。
+- ADB 标签页就是设备的 shell，窗口大小会同步给设备的 pty；分屏时每一格有自己的 shell。
+- 它的系统页显示链路、流量、ADB 协议包和没关掉的通道、logcat 日志流，以及设备的型号、Android 版本、运行时间、CPU、内存、data 分区、进程数、电量和温度。
+- 它的文件页就是文件面板：目录树、可按列排序的表格（名称、大小、类型、时间、权限），拖入文件或文件夹上传，下载、新建、重命名、删除。
+- 它的应用页安装拖入或选中的 APK。
+- AI 助手可以像在 SSH 主机上一样在设备上执行命令。
+- “选项 › 关于”显示本项目的开源地址，并为更新失败准备“从 GitHub 下载”按钮。
+- 重命名、新建和删除的弹窗不再把后面的窗口压暗。
+
 ## 0.3.3
 
 ### English

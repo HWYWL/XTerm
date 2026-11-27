@@ -42,7 +42,7 @@ func TestUpdatesRowEnabled(t *testing.T) {
 	a, p := testApp(t)
 	p.status = UpdateStatus{Version: "0.0.1", Automatic: true}
 	tt := aboutPageUpdates(t, a, p)
-	for _, s := range []string{locales.OptionsAbout(), locales.AboutIntro(), locales.AboutUpstream(), "TooonyChen/finallyshell", locales.OptionsUpdates(), "Current version: 0.0.1", locales.CheckForUpdates(), locales.OptionCheckUpdatesAutomatically()} {
+	for _, s := range []string{locales.OptionsAbout(), locales.AboutIntro(), locales.AboutSource(), "HWYWL/XTerm", locales.AboutUpstream(), "TooonyChen/finallyshell", locales.OptionsUpdates(), "Current version: 0.0.1", locales.CheckForUpdates(), locales.UpdatesDownload(), locales.OptionCheckUpdatesAutomatically()} {
 		if !tt.HasText(s) {
 			t.Errorf("no %q; texts %q", s, tt.Texts())
 		}
@@ -51,6 +51,14 @@ func TestUpdatesRowEnabled(t *testing.T) {
 		t.Errorf("an install that updates links to the releases; texts %q", tt.Texts())
 	}
 	saveShot(t, tt, "options-updates-en.png")
+
+	// The releases stay one button away, for an update that fails.
+	if err := tt.Click(locales.UpdatesDownload()); err != nil {
+		t.Fatal(err)
+	}
+	if got := tt.OpenedURLs(); !slices.Equal(got, []string{releasesURL}) {
+		t.Errorf("opened %q", got)
+	}
 
 	if err := tt.Click(locales.CheckForUpdates()); err != nil {
 		t.Fatal(err)
@@ -81,7 +89,7 @@ func TestUpdatesRowEnabled(t *testing.T) {
 
 	p.SetLocale("zh-Hans")
 	tt.Frame()
-	for _, s := range []string{"更新", "当前版本：0.0.1", "检查更新…", "自动检查更新", "新版本 0.0.2 已推出"} {
+	for _, s := range []string{"更新", "当前版本：0.0.1", "检查更新…", "自动检查更新", "新版本 0.0.2 已推出", "从 GitHub 下载", "开源地址"} {
 		if !tt.HasText(s) {
 			t.Errorf("no %q in Chinese; texts %q", s, tt.Texts())
 		}

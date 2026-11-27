@@ -11822,6 +11822,26 @@ func (msgs Messages) UpdatesReleasesPage() string {
 	return Catalog.Format(msgs.locale, "updatesReleasesPage", nil)
 }
 
+// UpdatesDownload says "Download from GitHub"
+// in the language the app shows.
+func UpdatesDownload() string { return In(i18n.Locale()).UpdatesDownload() }
+
+// UpdatesDownload says "Download from GitHub"
+// in the language of msgs.
+func (msgs Messages) UpdatesDownload() string {
+	return Catalog.Format(msgs.locale, "updatesDownload", nil)
+}
+
+// UpdatesDownloadHint says "If an update fails, download the new version here yourself."
+// in the language the app shows.
+func UpdatesDownloadHint() string { return In(i18n.Locale()).UpdatesDownloadHint() }
+
+// UpdatesDownloadHint says "If an update fails, download the new version here yourself."
+// in the language of msgs.
+func (msgs Messages) UpdatesDownloadHint() string {
+	return Catalog.Format(msgs.locale, "updatesDownloadHint", nil)
+}
+
 // ScTerminalCopy says "Terminal: copy"
 // in the language the app shows.
 func ScTerminalCopy() string { return In(i18n.Locale()).ScTerminalCopy() }
@@ -13930,6 +13950,16 @@ func AboutUpstream() string { return In(i18n.Locale()).AboutUpstream() }
 // in the language of msgs.
 func (msgs Messages) AboutUpstream() string {
 	return Catalog.Format(msgs.locale, "aboutUpstream", nil)
+}
+
+// AboutSource says "Source code"
+// in the language the app shows.
+func AboutSource() string { return In(i18n.Locale()).AboutSource() }
+
+// AboutSource says "Source code"
+// in the language of msgs.
+func (msgs Messages) AboutSource() string {
+	return Catalog.Format(msgs.locale, "aboutSource", nil)
 }
 
 // OptionsSync says "Sync"

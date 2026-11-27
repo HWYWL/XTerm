@@ -57,7 +57,11 @@ func (a *App) updatesSection(c *ui.Context) {
 				why = locales.UpdatesDevelopment()
 			}
 			widgets.Muted(c, why).FontSize(12)
-			ui.Link(c, locales.UpdatesReleasesPage(), releasesURL)
+			ui.Row(c).Children(func() {
+				if ui.Button(c, locales.UpdatesReleasesPage()).Clicked() {
+					c.OpenURL(releasesURL)
+				}
+			})
 			return
 		}
 		ui.Row(c).Gap(12).AlignItems(ui.Center).Children(func() {
@@ -67,6 +71,15 @@ func (a *App) updatesSection(c *ui.Context) {
 			if st.Available != "" {
 				ui.Text(c, locales.UpdatesAvailable(st.Available)).TextColor(c.Theme().Accent)
 			}
+		})
+		// A check or an install that fails says so in the updater's own
+		// window, with no way from there to the download: the releases
+		// are here, to fetch the new version by hand.
+		ui.Row(c).Gap(8).AlignItems(ui.Center).Children(func() {
+			if ui.Button(c, locales.UpdatesDownload()).Clicked() {
+				c.OpenURL(releasesURL)
+			}
+			widgets.Muted(c, locales.UpdatesDownloadHint()).FontSize(11.5)
 		})
 		auto := st.Automatic
 		if ui.Checkbox(c, &auto, locales.OptionCheckUpdatesAutomatically()).Changed() {

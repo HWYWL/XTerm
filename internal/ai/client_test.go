@@ -133,3 +133,44 @@ func TestTest(t *testing.T) {
 		t.Errorf("test: %v", err)
 	}
 }
+
+// The longest answer is asked for where the service wants it said, as
+// Anthropic's compatibility layer does, and left out elsewhere.
+func TestMaxTokens(t *testing.T) {
+	var bodies []map[string]any
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var m map[string]any
+		json.NewDecoder(r.Body).Decode(&m)
+		bodies = append(bodies, m)
+		if stream, _ := m["stream"].(bool); !stream {
+			io.WriteString(w, `{"choices":[{"message":{"content":"pong"}}]}`)
+			return
+		}
+		w.Header().Set("Content-Type", "text/event-stream")
+		fmt.Fprint(w, "data: {\"choices\":[{\"delta\":{\"content\":\"pong\"}}]}\n\n")
+		fmt.Fprint(w, "data: [DONE]\n\n")
+	}))
+	defer srv.Close()
+	c := &Client{BaseURL: srv.URL + "/v1", Model: "m", MaxTokens: 8192}
+	if _, err := c.Chat(context.Background(), []Message{{Role: "user", Content: "hi"}}, nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got := bodies[0]["max_tokens"]; got != float64(8192) {
+		t.Errorf("the answer was capped at %v", got)
+	}
+	// The connection's test carries it too, as the service checks the same
+	// fields.
+	if err := c.Test(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if got := bodies[1]["max_tokens"]; got != float64(8192) {
+		t.Errorf("the test capped at %v", got)
+	}
+	c.MaxTokens = 0
+	if err := c.Test(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	if got, ok := bodies[2]["max_tokens"]; ok {
+		t.Errorf("a service without a cap is sent %v", got)
+	}
+}

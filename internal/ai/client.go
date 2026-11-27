@@ -70,6 +70,10 @@ type Client struct {
 	Key string
 	// Model is the name the service knows the model by.
 	Model string
+	// MaxTokens is the longest answer asked for, where the service wants
+	// it said: Anthropic's compatibility layer does. Zero leaves it to
+	// the service's own default.
+	MaxTokens int
 	// HTTP is the client to use; nil is http.DefaultClient.
 	HTTP *http.Client
 }
@@ -97,6 +101,9 @@ func (c *Client) Chat(ctx context.Context, msgs []Message, tools []Tool, onDelta
 	defer cancel()
 
 	payload := map[string]any{"model": c.Model, "messages": msgs, "stream": true}
+	if c.MaxTokens > 0 {
+		payload["max_tokens"] = c.MaxTokens
+	}
 	if len(tools) > 0 {
 		payload["tools"] = tools
 		payload["tool_choice"] = "auto"
@@ -148,15 +155,19 @@ func (c *Client) Chat(ctx context.Context, msgs []Message, tools []Tool, onDelta
 // Test sends one short message without streaming, to find out whether the
 // service answers with this key at all.
 func (c *Client) Test(ctx context.Context) error {
-	payload, err := json.Marshal(map[string]any{
+	payload := map[string]any{
 		"model":    c.Model,
 		"messages": []Message{{Role: "user", Content: "ping"}},
 		"stream":   false,
-	})
+	}
+	if c.MaxTokens > 0 {
+		payload["max_tokens"] = c.MaxTokens
+	}
+	body, err := json.Marshal(payload)
 	if err != nil {
 		return err
 	}
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, strings.TrimRight(c.BaseURL, "/")+"/chat/completions", bytes.NewReader(payload))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, strings.TrimRight(c.BaseURL, "/")+"/chat/completions", bytes.NewReader(body))
 	if err != nil {
 		return err
 	}

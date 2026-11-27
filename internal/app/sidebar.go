@@ -29,6 +29,10 @@ func (a *App) monitorPanel(c *ui.Context) {
 			a.redisPanel(c, s)
 		case s.isObject():
 			a.objectPanel(c, s)
+		case s.isSerial():
+			a.serialPanel(c, s)
+		case s.isTelnet():
+			a.telnetPanel(c, s)
 		case s.isLocal():
 			a.localMonitor(c)
 		default:

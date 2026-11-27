@@ -684,13 +684,33 @@ func TestEditorProtocols(t *testing.T) {
 	if err := tt.Click(locales.EditorPageTerminal()); err != nil {
 		t.Fatal(err)
 	}
-	for _, pill := range []string{"RDP", "VNC", locales.ProtocolSerial(), "Telnet"} {
+	for _, pill := range []string{"RDP", "VNC"} {
 		if err := tt.Click(pill); err != nil {
 			t.Fatal(err)
 		}
 		if a.editor.nav.Page != editorTerminal || a.editor.protocol != editorSSH {
 			t.Errorf("%s chose the page %q, protocol %q", pill, a.editor.nav.Page, a.editor.protocol)
 		}
+	}
+	// A serial port and a Telnet server are configured on their own pages,
+	// and the pages of a shell go away.
+	if err := tt.Click(locales.ProtocolSerial()); err != nil {
+		t.Fatal(err)
+	}
+	if a.editor.nav.Page != editorSerial || a.editor.protocol != editorSerial {
+		t.Errorf("a serial port: page %q, protocol %q", a.editor.nav.Page, a.editor.protocol)
+	}
+	if tt.HasText(locales.EditorPageProxy()) || tt.HasText(locales.EditorPageTerminal()) {
+		t.Errorf("the shell's pages of a serial port; texts %q", tt.Texts())
+	}
+	if err := tt.Click("Telnet"); err != nil {
+		t.Fatal(err)
+	}
+	if a.editor.nav.Page != editorTelnet || a.editor.protocol != editorTelnet {
+		t.Errorf("Telnet: page %q, protocol %q", a.editor.nav.Page, a.editor.protocol)
+	}
+	if a.editor.port != "23" {
+		t.Errorf("Telnet's port %q", a.editor.port)
 	}
 	// An object storage is configured as the other two are: its page opens,
 	// and the pages of a shell go away.

@@ -49,11 +49,17 @@ func hostBrand(h *config.Host) (name string, tint ui.Color) {
 func (a *App) hostIcon(c *ui.Context, h *config.Host, size float32, color ui.Color) {
 	name, tint := hostBrand(h)
 	if name == "" {
-		// A directory of this machine has no cloud's logo: a folder says
-		// where it is.
+		// A directory of this machine has no cloud's logo — a folder says
+		// where it is — and a port or a Telnet server no vendor's: a cable
+		// and a network do.
 		glyph := "server"
-		if h != nil && h.IsObject() {
+		switch {
+		case h != nil && h.IsObject():
 			glyph = "folder"
+		case h != nil && h.IsSerial():
+			glyph = "cable"
+		case h != nil && h.IsTelnet():
+			glyph = "network"
 		}
 		ui.Icon(c, icons.Get(glyph)).FontSize(size).TextColor(color.Alpha(0.75))
 		return

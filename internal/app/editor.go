@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"finallyshell/internal/config"
+	"finallyshell/internal/serial"
 	"finallyshell/internal/sshx"
 	"finallyshell/internal/widgets"
 	"finallyshell/locales"
@@ -45,6 +46,8 @@ const (
 	editorSSH      = "ssh"
 	editorRedis    = "redis"
 	editorObject   = "object"
+	editorSerial   = "serial"
+	editorTelnet   = "telnet"
 	editorTerminal = "terminal"
 	editorProxy    = "proxy"
 	editorTunnels  = "tunnels"
@@ -63,8 +66,8 @@ var editorProtocols = []struct {
 	{editorObject, locales.ProtocolObject},
 	{"rdp", func() string { return "RDP" }},
 	{"vnc", func() string { return "VNC" }},
-	{"serial", locales.ProtocolSerial},
-	{"telnet", func() string { return "Telnet" }},
+	{editorSerial, locales.ProtocolSerial},
+	{editorTelnet, func() string { return "Telnet" }},
 }
 
 // editorField names a field of the editor that can be wrong.
@@ -78,6 +81,7 @@ const (
 	fieldTermType
 	fieldSeeds
 	fieldDB
+	fieldSerialPort
 )
 
 // page is the editor's page that shows f.
@@ -93,6 +97,8 @@ func (f editorField) page() string {
 		return editorRedis
 	case f == fieldEndpoint || f == fieldBucket || f == fieldAccessKey || f == fieldLocalPath:
 		return editorObject
+	case f == fieldSerialPort:
+		return editorSerial
 	}
 	return editorSSH
 }
@@ -144,6 +150,18 @@ type connEditor struct {
 	localPath      string
 	pathStyle      bool
 	regionCustom   bool // the region is typed, not one of the cloud's
+
+	// The serial page's fields (editor_serial.go): the port, and the line
+	// as the lists name it.
+	serialPort     string
+	serialBaud     string
+	serialDataBits string
+	serialParity   string
+	serialStopBits string
+	serialPorts    []string // the ports this computer has, as hints
+	// serialPortCustom says the port is typed, not one of the ones the
+	// list shows.
+	serialPortCustom bool
 
 	// readingSecret is set while the host's saved password, or
 	// passphrase, is read from the credential store into the fields.
@@ -219,6 +237,16 @@ func (a *App) openEditor(h *config.Host, from WindowKind) {
 			}
 			ed.password = a.passwords[h.ID]
 			ed.auth = config.AuthPassword
+		} else if h.IsSerial() {
+			s := h.SerialPort()
+			ed.serialPort, ed.serialBaud = s.Port, strconv.Itoa(s.Baud)
+			ed.serialDataBits, ed.serialParity = strconv.Itoa(s.DataBits), s.Parity
+			ed.serialStopBits = s.StopBits
+			ed.serialPorts = serial.Ports()
+			ed.serialPortCustom = s.Port == "" || !hasSerialPort(ed.serialPorts, s.Port)
+		} else if h.IsTelnet() {
+			ed.port = strconv.Itoa(h.PortOr23())
+			ed.auth = config.AuthPassword
 		} else if h.IsObject() {
 			p := h.ObjectProvider()
 			ed.objectProvider = p.ID
@@ -270,6 +298,14 @@ func validTermType(s string) bool {
 // problems are what is wrong with the fields, said in the language shown.
 func (ed *connEditor) problems() map[editorField]string {
 	errs := map[editorField]string{}
+	if ed.protocol == editorSerial {
+		ed.serialProblems(errs)
+		return errs
+	}
+	if ed.protocol == editorTelnet {
+		ed.telnetProblems(errs)
+		return errs
+	}
 	if ed.protocol == editorObject {
 		ed.objectProblems(errs)
 		return errs
@@ -301,6 +337,18 @@ func (ed *connEditor) problems() map[editorField]string {
 	return errs
 }
 
+// pageOf is the page a field's error is shown on: a protocol that has a
+// page of its own keeps its errors there, whatever field they are about.
+func (ed *connEditor) pageOf(f editorField) string {
+	switch ed.protocol {
+	case editorSerial:
+		return editorSerial
+	case editorTelnet:
+		return editorTelnet
+	}
+	return f.page()
+}
+
 // saveEditor checks the editor's fields and saves them, closing the
 // editor; when something is wrong it shows the first page with an error,
 // and keeps the editor open.
@@ -309,10 +357,10 @@ func (a *App) saveEditor() {
 	ed.checked = true
 	if errs := ed.problems(); len(errs) > 0 {
 		first, here := "", false
-		for _, f := range append([]editorField{fieldAddr, fieldPort, fieldUser, fieldKeyPath, fieldTermType, fieldSeeds, fieldDB}, proxyFieldOrder...) {
+		for _, f := range append([]editorField{fieldAddr, fieldPort, fieldUser, fieldKeyPath, fieldTermType, fieldSeeds, fieldDB, fieldSerialPort}, proxyFieldOrder...) {
 			if errs[f] != "" {
-				first = cmp.Or(first, f.page())
-				here = here || f.page() == ed.nav.Page
+				first = cmp.Or(first, ed.pageOf(f))
+				here = here || ed.pageOf(f) == ed.nav.Page
 			}
 		}
 		if !here {
@@ -337,6 +385,10 @@ func (a *App) saveEditor() {
 		a.saveRedis(h, ed)
 	case editorObject:
 		a.saveObject(h, ed)
+	case editorSerial:
+		a.saveSerial(h, ed)
+	case editorTelnet:
+		a.saveTelnet(h, ed)
 	default:
 		h.Protocol, h.Redis, h.Object = "", nil, nil
 		port, _ := strconv.Atoi(strings.TrimSpace(ed.port))
@@ -411,7 +463,8 @@ func (a *App) protocolRow(c *ui.Context, ed *connEditor) {
 	ui.Row(c).Padding(10, 14).Gap(6).AlignItems(ui.Center).Justify(ui.Center).Children(func() {
 		for _, p := range editorProtocols {
 			active := p.id == ed.protocol
-			supported := p.id == editorSSH || p.id == editorRedis || p.id == editorObject
+			supported := p.id == editorSSH || p.id == editorRedis || p.id == editorObject ||
+				p.id == editorSerial || p.id == editorTelnet
 			pill := ui.Row(c).Height(26).Padding(0, 14).Radius(13).
 				AlignItems(ui.Center).Justify(ui.Center)
 			if active {
@@ -448,13 +501,34 @@ func (a *App) chooseProtocol(ed *connEditor, id string) {
 	}
 	ed.protocol = id
 	ed.nav.Page = id
-	// The ports of the two protocols differ: the one typed is kept only
-	// when it is not the other protocol's.
-	if id == editorRedis && strings.TrimSpace(ed.port) == "22" {
+	// The ports of the protocols differ: the one typed is kept only when
+	// it is not another protocol's.
+	switch {
+	case id == editorRedis && strings.TrimSpace(ed.port) == "22":
 		ed.port = "6379"
-	}
-	if id == editorSSH && strings.TrimSpace(ed.port) == "6379" {
+	case id == editorTelnet && (strings.TrimSpace(ed.port) == "22" || strings.TrimSpace(ed.port) == "6379"):
+		ed.port = "23"
+	case id == editorSSH && (strings.TrimSpace(ed.port) == "6379" || strings.TrimSpace(ed.port) == "23"):
 		ed.port = "22"
+	}
+	// A serial port starts as a console's: 115200, 8 data bits, no parity,
+	// one stop bit.
+	if id == editorSerial {
+		if ed.serialPorts == nil {
+			ed.serialPorts = serial.Ports()
+		}
+		if ed.serialBaud == "" {
+			ed.serialBaud = strconv.Itoa(config.SerialBaud)
+		}
+		if ed.serialDataBits == "" {
+			ed.serialDataBits = strconv.Itoa(config.SerialDataBits)
+		}
+		if ed.serialParity == "" {
+			ed.serialParity = config.SerialParity
+		}
+		if ed.serialStopBits == "" {
+			ed.serialStopBits = config.SerialStopBits
+		}
 	}
 	if id == editorObject && strings.TrimSpace(ed.endpoint) == "" {
 		ed.setObjectProvider(config.ObjectProviderOf(ed.objectProvider))
@@ -493,11 +567,16 @@ func (a *App) editorView(c *ui.Context) {
 		main = widgets.NavPage{ID: editorRedis, Hidden: true, Title: locales.EditorPageRedis, View: func(c *ui.Context) { a.redisPage(c, ed, errs, input) }}
 	case editorObject:
 		main = widgets.NavPage{ID: editorObject, Hidden: true, Title: locales.EditorPageObject, View: func(c *ui.Context) { a.objectPage(c, ed, errs, input) }}
+	case editorSerial:
+		main = widgets.NavPage{ID: editorSerial, Hidden: true, Title: locales.EditorPageSerial, View: func(c *ui.Context) { a.serialPage(c, ed, errs, input) }}
+	case editorTelnet:
+		main = widgets.NavPage{ID: editorTelnet, Hidden: true, Title: locales.EditorPageTelnet, View: func(c *ui.Context) { a.telnetPage(c, ed, errs, input) }}
 	}
 	pages := []widgets.NavPage{main}
-	// An object storage has no shell to configure, no proxy of its own and
-	// no SSH connection for tunnels or a jump host.
-	if ed.protocol != editorObject {
+	// A serial port and a Telnet server have no shell of their own to
+	// configure and nothing to tunnel: their page is all there is. An
+	// object storage is the same, though its shell would be a terminal.
+	if ed.protocol != editorObject && ed.protocol != editorSerial && ed.protocol != editorTelnet {
 		pages = append(pages,
 			widgets.NavPage{ID: editorTerminal, Title: locales.EditorPageTerminal, View: func(c *ui.Context) { a.terminalPage(c, ed, errs, input) }},
 			widgets.NavPage{ID: editorProxy, Title: locales.EditorPageProxy, View: func(c *ui.Context) { a.proxyPage(c, ed, errs, input) }},

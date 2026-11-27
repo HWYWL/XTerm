@@ -30,7 +30,10 @@ func (a *App) terminalArea(c *ui.Context) {
 		}
 		if s.term() != nil {
 			a.paneArea(c, s)
-			if a.commandBarOn() && !s.isRedis() {
+			if s.isRaw() {
+				a.rawBar(c, s)
+			}
+			if a.commandBarOn() && !s.isRedis() && !s.isRaw() {
 				a.commandBar(c, s)
 			}
 			return
@@ -49,7 +52,7 @@ func (a *App) terminalArea(c *ui.Context) {
 				ui.Text(c, s.statusText()).TextColor(termText).FontSize(15)
 			}
 		})
-		if a.commandBarOn() && !s.isRedis() {
+		if a.commandBarOn() && !s.isRedis() && !s.isRaw() {
 			a.commandBar(c, s) // disabled, until the shell is there
 		}
 	})

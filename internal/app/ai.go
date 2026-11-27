@@ -163,7 +163,7 @@ func (a *App) aiClient() (*ai.Client, string) {
 	if st.key == "" && !config.LocalEndpoint(p.BaseURL) {
 		return nil, locales.AiKeyMissing()
 	}
-	return &ai.Client{BaseURL: p.BaseURL, Key: st.key, Model: m.Name}, ""
+	return &ai.Client{BaseURL: p.BaseURL, Key: st.key, Model: m.Name, MaxTokens: p.MaxTokens}, ""
 }
 
 // aiToolsEnabled says whether the assistant may use tools on the session:

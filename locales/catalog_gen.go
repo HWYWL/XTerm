@@ -4788,6 +4788,1026 @@ func (msgs Messages) ProtocolUnsupported() string {
 	return Catalog.Format(msgs.locale, "protocolUnsupported", nil)
 }
 
+// EditorPageSerial says "Serial"
+// in the language the app shows.
+func EditorPageSerial() string { return In(i18n.Locale()).EditorPageSerial() }
+
+// EditorPageSerial says "Serial"
+// in the language of msgs.
+func (msgs Messages) EditorPageSerial() string {
+	return Catalog.Format(msgs.locale, "editorPageSerial", nil)
+}
+
+// EditorPageTelnet says "Telnet"
+// in the language the app shows.
+func EditorPageTelnet() string { return In(i18n.Locale()).EditorPageTelnet() }
+
+// EditorPageTelnet says "Telnet"
+// in the language of msgs.
+func (msgs Messages) EditorPageTelnet() string {
+	return Catalog.Format(msgs.locale, "editorPageTelnet", nil)
+}
+
+// FieldSerialPort says "Port"
+// in the language the app shows.
+func FieldSerialPort() string { return In(i18n.Locale()).FieldSerialPort() }
+
+// FieldSerialPort says "Port"
+// in the language of msgs.
+func (msgs Messages) FieldSerialPort() string {
+	return Catalog.Format(msgs.locale, "fieldSerialPort", nil)
+}
+
+// FieldSerialPortHint says "COM3, or /dev/ttyUSB0"
+// in the language the app shows.
+func FieldSerialPortHint() string { return In(i18n.Locale()).FieldSerialPortHint() }
+
+// FieldSerialPortHint says "COM3, or /dev/ttyUSB0"
+// in the language of msgs.
+func (msgs Messages) FieldSerialPortHint() string {
+	return Catalog.Format(msgs.locale, "fieldSerialPortHint", nil)
+}
+
+// FieldSerialPorts says "Ports: %s"
+// in the language the app shows.
+func FieldSerialPorts() string { return In(i18n.Locale()).FieldSerialPorts() }
+
+// FieldSerialPorts says "Ports: %s"
+// in the language of msgs.
+func (msgs Messages) FieldSerialPorts() string {
+	return Catalog.Format(msgs.locale, "fieldSerialPorts", nil)
+}
+
+// FieldSerialPortCustom says "Custom…"
+// in the language the app shows.
+func FieldSerialPortCustom() string { return In(i18n.Locale()).FieldSerialPortCustom() }
+
+// FieldSerialPortCustom says "Custom…"
+// in the language of msgs.
+func (msgs Messages) FieldSerialPortCustom() string {
+	return Catalog.Format(msgs.locale, "fieldSerialPortCustom", nil)
+}
+
+// FieldSerialBaud says "Baud rate"
+// in the language the app shows.
+func FieldSerialBaud() string { return In(i18n.Locale()).FieldSerialBaud() }
+
+// FieldSerialBaud says "Baud rate"
+// in the language of msgs.
+func (msgs Messages) FieldSerialBaud() string {
+	return Catalog.Format(msgs.locale, "fieldSerialBaud", nil)
+}
+
+// FieldSerialDataBits says "Data bits"
+// in the language the app shows.
+func FieldSerialDataBits() string { return In(i18n.Locale()).FieldSerialDataBits() }
+
+// FieldSerialDataBits says "Data bits"
+// in the language of msgs.
+func (msgs Messages) FieldSerialDataBits() string {
+	return Catalog.Format(msgs.locale, "fieldSerialDataBits", nil)
+}
+
+// FieldSerialParity says "Parity"
+// in the language the app shows.
+func FieldSerialParity() string { return In(i18n.Locale()).FieldSerialParity() }
+
+// FieldSerialParity says "Parity"
+// in the language of msgs.
+func (msgs Messages) FieldSerialParity() string {
+	return Catalog.Format(msgs.locale, "fieldSerialParity", nil)
+}
+
+// FieldSerialStopBits says "Stop bits"
+// in the language the app shows.
+func FieldSerialStopBits() string { return In(i18n.Locale()).FieldSerialStopBits() }
+
+// FieldSerialStopBits says "Stop bits"
+// in the language of msgs.
+func (msgs Messages) FieldSerialStopBits() string {
+	return Catalog.Format(msgs.locale, "fieldSerialStopBits", nil)
+}
+
+// SerialParityNone says "None"
+// in the language the app shows.
+func SerialParityNone() string { return In(i18n.Locale()).SerialParityNone() }
+
+// SerialParityNone says "None"
+// in the language of msgs.
+func (msgs Messages) SerialParityNone() string {
+	return Catalog.Format(msgs.locale, "serialParityNone", nil)
+}
+
+// SerialParityEven says "Even"
+// in the language the app shows.
+func SerialParityEven() string { return In(i18n.Locale()).SerialParityEven() }
+
+// SerialParityEven says "Even"
+// in the language of msgs.
+func (msgs Messages) SerialParityEven() string {
+	return Catalog.Format(msgs.locale, "serialParityEven", nil)
+}
+
+// SerialParityOdd says "Odd"
+// in the language the app shows.
+func SerialParityOdd() string { return In(i18n.Locale()).SerialParityOdd() }
+
+// SerialParityOdd says "Odd"
+// in the language of msgs.
+func (msgs Messages) SerialParityOdd() string {
+	return Catalog.Format(msgs.locale, "serialParityOdd", nil)
+}
+
+// SerialParityMark says "Mark"
+// in the language the app shows.
+func SerialParityMark() string { return In(i18n.Locale()).SerialParityMark() }
+
+// SerialParityMark says "Mark"
+// in the language of msgs.
+func (msgs Messages) SerialParityMark() string {
+	return Catalog.Format(msgs.locale, "serialParityMark", nil)
+}
+
+// SerialParitySpace says "Space"
+// in the language the app shows.
+func SerialParitySpace() string { return In(i18n.Locale()).SerialParitySpace() }
+
+// SerialParitySpace says "Space"
+// in the language of msgs.
+func (msgs Messages) SerialParitySpace() string {
+	return Catalog.Format(msgs.locale, "serialParitySpace", nil)
+}
+
+// ErrSerialPortRequired says "Enter the port"
+// in the language the app shows.
+func ErrSerialPortRequired() string { return In(i18n.Locale()).ErrSerialPortRequired() }
+
+// ErrSerialPortRequired says "Enter the port"
+// in the language of msgs.
+func (msgs Messages) ErrSerialPortRequired() string {
+	return Catalog.Format(msgs.locale, "errSerialPortRequired", nil)
+}
+
+// TelnetLoginHint says "The login is the terminal's, once connected."
+// in the language the app shows.
+func TelnetLoginHint() string { return In(i18n.Locale()).TelnetLoginHint() }
+
+// TelnetLoginHint says "The login is the terminal's, once connected."
+// in the language of msgs.
+func (msgs Messages) TelnetLoginHint() string {
+	return Catalog.Format(msgs.locale, "telnetLoginHint", nil)
+}
+
+// RawNoPanel says "A serial or Telnet connection has no bottom panel."
+// in the language the app shows.
+func RawNoPanel() string { return In(i18n.Locale()).RawNoPanel() }
+
+// RawNoPanel says "A serial or Telnet connection has no bottom panel."
+// in the language of msgs.
+func (msgs Messages) RawNoPanel() string {
+	return Catalog.Format(msgs.locale, "rawNoPanel", nil)
+}
+
+// RawInputLabel says "Line to send"
+// in the language the app shows.
+func RawInputLabel() string { return In(i18n.Locale()).RawInputLabel() }
+
+// RawInputLabel says "Line to send"
+// in the language of msgs.
+func (msgs Messages) RawInputLabel() string {
+	return Catalog.Format(msgs.locale, "rawInputLabel", nil)
+}
+
+// RawInputPlaceholder says "Type a line to send, Enter sends it"
+// in the language the app shows.
+func RawInputPlaceholder() string { return In(i18n.Locale()).RawInputPlaceholder() }
+
+// RawInputPlaceholder says "Type a line to send, Enter sends it"
+// in the language of msgs.
+func (msgs Messages) RawInputPlaceholder() string {
+	return Catalog.Format(msgs.locale, "rawInputPlaceholder", nil)
+}
+
+// RawSend says "Send"
+// in the language the app shows.
+func RawSend() string { return In(i18n.Locale()).RawSend() }
+
+// RawSend says "Send"
+// in the language of msgs.
+func (msgs Messages) RawSend() string {
+	return Catalog.Format(msgs.locale, "rawSend", nil)
+}
+
+// RawClear says "Clear"
+// in the language the app shows.
+func RawClear() string { return In(i18n.Locale()).RawClear() }
+
+// RawClear says "Clear"
+// in the language of msgs.
+func (msgs Messages) RawClear() string {
+	return Catalog.Format(msgs.locale, "rawClear", nil)
+}
+
+// RawTimestamps says "Timestamp each line"
+// in the language the app shows.
+func RawTimestamps() string { return In(i18n.Locale()).RawTimestamps() }
+
+// RawTimestamps says "Timestamp each line"
+// in the language of msgs.
+func (msgs Messages) RawTimestamps() string {
+	return Catalog.Format(msgs.locale, "rawTimestamps", nil)
+}
+
+// RawNoMonitor says "A serial port and a Telnet server have no server to monitor: the terminal is the connection."
+// in the language the app shows.
+func RawNoMonitor() string { return In(i18n.Locale()).RawNoMonitor() }
+
+// RawNoMonitor says "A serial port and a Telnet server have no server to monitor: the terminal is the connection."
+// in the language of msgs.
+func (msgs Messages) RawNoMonitor() string {
+	return Catalog.Format(msgs.locale, "rawNoMonitor", nil)
+}
+
+// SerialLink says "Link"
+// in the language the app shows.
+func SerialLink() string { return In(i18n.Locale()).SerialLink() }
+
+// SerialLink says "Link"
+// in the language of msgs.
+func (msgs Messages) SerialLink() string {
+	return Catalog.Format(msgs.locale, "serialLink", nil)
+}
+
+// SerialStatus says "Status"
+// in the language the app shows.
+func SerialStatus() string { return In(i18n.Locale()).SerialStatus() }
+
+// SerialStatus says "Status"
+// in the language of msgs.
+func (msgs Messages) SerialStatus() string {
+	return Catalog.Format(msgs.locale, "serialStatus", nil)
+}
+
+// SerialLineState says "Line state"
+// in the language the app shows.
+func SerialLineState() string { return In(i18n.Locale()).SerialLineState() }
+
+// SerialLineState says "Line state"
+// in the language of msgs.
+func (msgs Messages) SerialLineState() string {
+	return Catalog.Format(msgs.locale, "serialLineState", nil)
+}
+
+// SerialLineOK says "OK"
+// in the language the app shows.
+func SerialLineOK() string { return In(i18n.Locale()).SerialLineOK() }
+
+// SerialLineOK says "OK"
+// in the language of msgs.
+func (msgs Messages) SerialLineOK() string {
+	return Catalog.Format(msgs.locale, "serialLineOK", nil)
+}
+
+// SerialLine says "Line"
+// in the language the app shows.
+func SerialLine() string { return In(i18n.Locale()).SerialLine() }
+
+// SerialLine says "Line"
+// in the language of msgs.
+func (msgs Messages) SerialLine() string {
+	return Catalog.Format(msgs.locale, "serialLine", nil)
+}
+
+// SerialDTR says "DTR"
+// in the language the app shows.
+func SerialDTR() string { return In(i18n.Locale()).SerialDTR() }
+
+// SerialDTR says "DTR"
+// in the language of msgs.
+func (msgs Messages) SerialDTR() string {
+	return Catalog.Format(msgs.locale, "serialDTR", nil)
+}
+
+// SerialRTS says "RTS"
+// in the language the app shows.
+func SerialRTS() string { return In(i18n.Locale()).SerialRTS() }
+
+// SerialRTS says "RTS"
+// in the language of msgs.
+func (msgs Messages) SerialRTS() string {
+	return Catalog.Format(msgs.locale, "serialRTS", nil)
+}
+
+// SerialDSR says "DSR"
+// in the language the app shows.
+func SerialDSR() string { return In(i18n.Locale()).SerialDSR() }
+
+// SerialDSR says "DSR"
+// in the language of msgs.
+func (msgs Messages) SerialDSR() string {
+	return Catalog.Format(msgs.locale, "serialDSR", nil)
+}
+
+// SerialCTS says "CTS"
+// in the language the app shows.
+func SerialCTS() string { return In(i18n.Locale()).SerialCTS() }
+
+// SerialCTS says "CTS"
+// in the language of msgs.
+func (msgs Messages) SerialCTS() string {
+	return Catalog.Format(msgs.locale, "serialCTS", nil)
+}
+
+// SerialDCD says "CD"
+// in the language the app shows.
+func SerialDCD() string { return In(i18n.Locale()).SerialDCD() }
+
+// SerialDCD says "CD"
+// in the language of msgs.
+func (msgs Messages) SerialDCD() string {
+	return Catalog.Format(msgs.locale, "serialDCD", nil)
+}
+
+// SerialRI says "RI"
+// in the language the app shows.
+func SerialRI() string { return In(i18n.Locale()).SerialRI() }
+
+// SerialRI says "RI"
+// in the language of msgs.
+func (msgs Messages) SerialRI() string {
+	return Catalog.Format(msgs.locale, "serialRI", nil)
+}
+
+// SerialHigh says "High"
+// in the language the app shows.
+func SerialHigh() string { return In(i18n.Locale()).SerialHigh() }
+
+// SerialHigh says "High"
+// in the language of msgs.
+func (msgs Messages) SerialHigh() string {
+	return Catalog.Format(msgs.locale, "serialHigh", nil)
+}
+
+// SerialLow says "Low"
+// in the language the app shows.
+func SerialLow() string { return In(i18n.Locale()).SerialLow() }
+
+// SerialLow says "Low"
+// in the language of msgs.
+func (msgs Messages) SerialLow() string {
+	return Catalog.Format(msgs.locale, "serialLow", nil)
+}
+
+// SerialPinHint says "Click to raise or lower it"
+// in the language the app shows.
+func SerialPinHint() string { return In(i18n.Locale()).SerialPinHint() }
+
+// SerialPinHint says "Click to raise or lower it"
+// in the language of msgs.
+func (msgs Messages) SerialPinHint() string {
+	return Catalog.Format(msgs.locale, "serialPinHint", nil)
+}
+
+// SerialTraffic says "Traffic"
+// in the language the app shows.
+func SerialTraffic() string { return In(i18n.Locale()).SerialTraffic() }
+
+// SerialTraffic says "Traffic"
+// in the language of msgs.
+func (msgs Messages) SerialTraffic() string {
+	return Catalog.Format(msgs.locale, "serialTraffic", nil)
+}
+
+// SerialTotal says "Total"
+// in the language the app shows.
+func SerialTotal() string { return In(i18n.Locale()).SerialTotal() }
+
+// SerialTotal says "Total"
+// in the language of msgs.
+func (msgs Messages) SerialTotal() string {
+	return Catalog.Format(msgs.locale, "serialTotal", nil)
+}
+
+// SerialToday says "Today"
+// in the language the app shows.
+func SerialToday() string { return In(i18n.Locale()).SerialToday() }
+
+// SerialToday says "Today"
+// in the language of msgs.
+func (msgs Messages) SerialToday() string {
+	return Catalog.Format(msgs.locale, "serialToday", nil)
+}
+
+// SerialPeak says "Peak"
+// in the language the app shows.
+func SerialPeak() string { return In(i18n.Locale()).SerialPeak() }
+
+// SerialPeak says "Peak"
+// in the language of msgs.
+func (msgs Messages) SerialPeak() string {
+	return Catalog.Format(msgs.locale, "serialPeak", nil)
+}
+
+// SerialErrors says "Errors"
+// in the language the app shows.
+func SerialErrors() string { return In(i18n.Locale()).SerialErrors() }
+
+// SerialErrors says "Errors"
+// in the language of msgs.
+func (msgs Messages) SerialErrors() string {
+	return Catalog.Format(msgs.locale, "serialErrors", nil)
+}
+
+// SerialFrameErr says "Framing"
+// in the language the app shows.
+func SerialFrameErr() string { return In(i18n.Locale()).SerialFrameErr() }
+
+// SerialFrameErr says "Framing"
+// in the language of msgs.
+func (msgs Messages) SerialFrameErr() string {
+	return Catalog.Format(msgs.locale, "serialFrameErr", nil)
+}
+
+// SerialParityErr says "Parity"
+// in the language the app shows.
+func SerialParityErr() string { return In(i18n.Locale()).SerialParityErr() }
+
+// SerialParityErr says "Parity"
+// in the language of msgs.
+func (msgs Messages) SerialParityErr() string {
+	return Catalog.Format(msgs.locale, "serialParityErr", nil)
+}
+
+// SerialOverrunErr says "Overrun"
+// in the language the app shows.
+func SerialOverrunErr() string { return In(i18n.Locale()).SerialOverrunErr() }
+
+// SerialOverrunErr says "Overrun"
+// in the language of msgs.
+func (msgs Messages) SerialOverrunErr() string {
+	return Catalog.Format(msgs.locale, "serialOverrunErr", nil)
+}
+
+// SerialBreakErr says "Break"
+// in the language the app shows.
+func SerialBreakErr() string { return In(i18n.Locale()).SerialBreakErr() }
+
+// SerialBreakErr says "Break"
+// in the language of msgs.
+func (msgs Messages) SerialBreakErr() string {
+	return Catalog.Format(msgs.locale, "serialBreakErr", nil)
+}
+
+// SerialReadErr says "Read errors"
+// in the language the app shows.
+func SerialReadErr() string { return In(i18n.Locale()).SerialReadErr() }
+
+// SerialReadErr says "Read errors"
+// in the language of msgs.
+func (msgs Messages) SerialReadErr() string {
+	return Catalog.Format(msgs.locale, "serialReadErr", nil)
+}
+
+// SerialDrops says "Dropped writes"
+// in the language the app shows.
+func SerialDrops() string { return In(i18n.Locale()).SerialDrops() }
+
+// SerialDrops says "Dropped writes"
+// in the language of msgs.
+func (msgs Messages) SerialDrops() string {
+	return Catalog.Format(msgs.locale, "serialDrops", nil)
+}
+
+// SerialNoCounts says "not reported by the system"
+// in the language the app shows.
+func SerialNoCounts() string { return In(i18n.Locale()).SerialNoCounts() }
+
+// SerialNoCounts says "not reported by the system"
+// in the language of msgs.
+func (msgs Messages) SerialNoCounts() string {
+	return Catalog.Format(msgs.locale, "serialNoCounts", nil)
+}
+
+// SerialBuffers says "Buffers"
+// in the language the app shows.
+func SerialBuffers() string { return In(i18n.Locale()).SerialBuffers() }
+
+// SerialBuffers says "Buffers"
+// in the language of msgs.
+func (msgs Messages) SerialBuffers() string {
+	return Catalog.Format(msgs.locale, "serialBuffers", nil)
+}
+
+// SerialInQueue says "Driver in"
+// in the language the app shows.
+func SerialInQueue() string { return In(i18n.Locale()).SerialInQueue() }
+
+// SerialInQueue says "Driver in"
+// in the language of msgs.
+func (msgs Messages) SerialInQueue() string {
+	return Catalog.Format(msgs.locale, "serialInQueue", nil)
+}
+
+// SerialOutQueue says "Driver out"
+// in the language the app shows.
+func SerialOutQueue() string { return In(i18n.Locale()).SerialOutQueue() }
+
+// SerialOutQueue says "Driver out"
+// in the language of msgs.
+func (msgs Messages) SerialOutQueue() string {
+	return Catalog.Format(msgs.locale, "serialOutQueue", nil)
+}
+
+// SerialPending says "Queued writes"
+// in the language the app shows.
+func SerialPending() string { return In(i18n.Locale()).SerialPending() }
+
+// SerialPending says "Queued writes"
+// in the language of msgs.
+func (msgs Messages) SerialPending() string {
+	return Catalog.Format(msgs.locale, "serialPending", nil)
+}
+
+// SerialQueueAlert says "Buffer alert"
+// in the language the app shows.
+func SerialQueueAlert() string { return In(i18n.Locale()).SerialQueueAlert() }
+
+// SerialQueueAlert says "Buffer alert"
+// in the language of msgs.
+func (msgs Messages) SerialQueueAlert() string {
+	return Catalog.Format(msgs.locale, "serialQueueAlert", nil)
+}
+
+// SerialQueueOK says "Normal"
+// in the language the app shows.
+func SerialQueueOK() string { return In(i18n.Locale()).SerialQueueOK() }
+
+// SerialQueueOK says "Normal"
+// in the language of msgs.
+func (msgs Messages) SerialQueueOK() string {
+	return Catalog.Format(msgs.locale, "serialQueueOK", nil)
+}
+
+// SerialQueueBacklog says "Backlog"
+// in the language the app shows.
+func SerialQueueBacklog() string { return In(i18n.Locale()).SerialQueueBacklog() }
+
+// SerialQueueBacklog says "Backlog"
+// in the language of msgs.
+func (msgs Messages) SerialQueueBacklog() string {
+	return Catalog.Format(msgs.locale, "serialQueueBacklog", nil)
+}
+
+// SerialTiming says "Timing"
+// in the language the app shows.
+func SerialTiming() string { return In(i18n.Locale()).SerialTiming() }
+
+// SerialTiming says "Timing"
+// in the language of msgs.
+func (msgs Messages) SerialTiming() string {
+	return Catalog.Format(msgs.locale, "serialTiming", nil)
+}
+
+// SerialLastGap says "Last gap"
+// in the language the app shows.
+func SerialLastGap() string { return In(i18n.Locale()).SerialLastGap() }
+
+// SerialLastGap says "Last gap"
+// in the language of msgs.
+func (msgs Messages) SerialLastGap() string {
+	return Catalog.Format(msgs.locale, "serialLastGap", nil)
+}
+
+// SerialAvgGap says "Mean gap"
+// in the language the app shows.
+func SerialAvgGap() string { return In(i18n.Locale()).SerialAvgGap() }
+
+// SerialAvgGap says "Mean gap"
+// in the language of msgs.
+func (msgs Messages) SerialAvgGap() string {
+	return Catalog.Format(msgs.locale, "serialAvgGap", nil)
+}
+
+// SerialMaxGap says "Longest gap"
+// in the language the app shows.
+func SerialMaxGap() string { return In(i18n.Locale()).SerialMaxGap() }
+
+// SerialMaxGap says "Longest gap"
+// in the language of msgs.
+func (msgs Messages) SerialMaxGap() string {
+	return Catalog.Format(msgs.locale, "serialMaxGap", nil)
+}
+
+// SerialLastFrame says "Last frame"
+// in the language the app shows.
+func SerialLastFrame() string { return In(i18n.Locale()).SerialLastFrame() }
+
+// SerialLastFrame says "Last frame"
+// in the language of msgs.
+func (msgs Messages) SerialLastFrame() string {
+	return Catalog.Format(msgs.locale, "serialLastFrame", nil)
+}
+
+// SerialQuiet says "quiet for %s: the device has stopped"
+// in the language the app shows.
+func SerialQuiet() string { return In(i18n.Locale()).SerialQuiet() }
+
+// SerialQuiet says "quiet for %s: the device has stopped"
+// in the language of msgs.
+func (msgs Messages) SerialQuiet() string {
+	return Catalog.Format(msgs.locale, "serialQuiet", nil)
+}
+
+// SerialAgo says "%s ago"
+// in the language the app shows.
+func SerialAgo() string { return In(i18n.Locale()).SerialAgo() }
+
+// SerialAgo says "%s ago"
+// in the language of msgs.
+func (msgs Messages) SerialAgo() string {
+	return Catalog.Format(msgs.locale, "serialAgo", nil)
+}
+
+// SerialMaxFrame says "Largest frame"
+// in the language the app shows.
+func SerialMaxFrame() string { return In(i18n.Locale()).SerialMaxFrame() }
+
+// SerialMaxFrame says "Largest frame"
+// in the language of msgs.
+func (msgs Messages) SerialMaxFrame() string {
+	return Catalog.Format(msgs.locale, "serialMaxFrame", nil)
+}
+
+// SerialAvgFrame says "Mean frame"
+// in the language the app shows.
+func SerialAvgFrame() string { return In(i18n.Locale()).SerialAvgFrame() }
+
+// SerialAvgFrame says "Mean frame"
+// in the language of msgs.
+func (msgs Messages) SerialAvgFrame() string {
+	return Catalog.Format(msgs.locale, "serialAvgFrame", nil)
+}
+
+// SerialFrames says "Frames"
+// in the language the app shows.
+func SerialFrames() string { return In(i18n.Locale()).SerialFrames() }
+
+// SerialFrames says "Frames"
+// in the language of msgs.
+func (msgs Messages) SerialFrames() string {
+	return Catalog.Format(msgs.locale, "serialFrames", nil)
+}
+
+// SerialParse says "Lines"
+// in the language the app shows.
+func SerialParse() string { return In(i18n.Locale()).SerialParse() }
+
+// SerialParse says "Lines"
+// in the language of msgs.
+func (msgs Messages) SerialParse() string {
+	return Catalog.Format(msgs.locale, "serialParse", nil)
+}
+
+// SerialLines says "Lines"
+// in the language the app shows.
+func SerialLines() string { return In(i18n.Locale()).SerialLines() }
+
+// SerialLines says "Lines"
+// in the language of msgs.
+func (msgs Messages) SerialLines() string {
+	return Catalog.Format(msgs.locale, "serialLines", nil)
+}
+
+// SerialTail says "Unfinished line"
+// in the language the app shows.
+func SerialTail() string { return In(i18n.Locale()).SerialTail() }
+
+// SerialTail says "Unfinished line"
+// in the language of msgs.
+func (msgs Messages) SerialTail() string {
+	return Catalog.Format(msgs.locale, "serialTail", nil)
+}
+
+// SerialKeywords says "Keywords"
+// in the language the app shows.
+func SerialKeywords() string { return In(i18n.Locale()).SerialKeywords() }
+
+// SerialKeywords says "Keywords"
+// in the language of msgs.
+func (msgs Messages) SerialKeywords() string {
+	return Catalog.Format(msgs.locale, "serialKeywords", nil)
+}
+
+// SerialScan says "Count keywords"
+// in the language the app shows.
+func SerialScan() string { return In(i18n.Locale()).SerialScan() }
+
+// SerialScan says "Count keywords"
+// in the language of msgs.
+func (msgs Messages) SerialScan() string {
+	return Catalog.Format(msgs.locale, "serialScan", nil)
+}
+
+// TelnetLink says "Link"
+// in the language the app shows.
+func TelnetLink() string { return In(i18n.Locale()).TelnetLink() }
+
+// TelnetLink says "Link"
+// in the language of msgs.
+func (msgs Messages) TelnetLink() string {
+	return Catalog.Format(msgs.locale, "telnetLink", nil)
+}
+
+// TelnetState says "State"
+// in the language the app shows.
+func TelnetState() string { return In(i18n.Locale()).TelnetState() }
+
+// TelnetState says "State"
+// in the language of msgs.
+func (msgs Messages) TelnetState() string {
+	return Catalog.Format(msgs.locale, "telnetState", nil)
+}
+
+// TelnetRemote says "Remote"
+// in the language the app shows.
+func TelnetRemote() string { return In(i18n.Locale()).TelnetRemote() }
+
+// TelnetRemote says "Remote"
+// in the language of msgs.
+func (msgs Messages) TelnetRemote() string {
+	return Catalog.Format(msgs.locale, "telnetRemote", nil)
+}
+
+// TelnetPort says "Port"
+// in the language the app shows.
+func TelnetPort() string { return In(i18n.Locale()).TelnetPort() }
+
+// TelnetPort says "Port"
+// in the language of msgs.
+func (msgs Messages) TelnetPort() string {
+	return Catalog.Format(msgs.locale, "telnetPort", nil)
+}
+
+// TelnetConnected says "Connected"
+// in the language the app shows.
+func TelnetConnected() string { return In(i18n.Locale()).TelnetConnected() }
+
+// TelnetConnected says "Connected"
+// in the language of msgs.
+func (msgs Messages) TelnetConnected() string {
+	return Catalog.Format(msgs.locale, "telnetConnected", nil)
+}
+
+// TelnetDisconnected says "Disconnected"
+// in the language the app shows.
+func TelnetDisconnected() string { return In(i18n.Locale()).TelnetDisconnected() }
+
+// TelnetDisconnected says "Disconnected"
+// in the language of msgs.
+func (msgs Messages) TelnetDisconnected() string {
+	return Catalog.Format(msgs.locale, "telnetDisconnected", nil)
+}
+
+// TelnetConnectTimeout says "Connect timeout"
+// in the language the app shows.
+func TelnetConnectTimeout() string { return In(i18n.Locale()).TelnetConnectTimeout() }
+
+// TelnetConnectTimeout says "Connect timeout"
+// in the language of msgs.
+func (msgs Messages) TelnetConnectTimeout() string {
+	return Catalog.Format(msgs.locale, "telnetConnectTimeout", nil)
+}
+
+// TelnetConnectTimeouts says "Connect timeouts"
+// in the language the app shows.
+func TelnetConnectTimeouts() string { return In(i18n.Locale()).TelnetConnectTimeouts() }
+
+// TelnetConnectTimeouts says "Connect timeouts"
+// in the language of msgs.
+func (msgs Messages) TelnetConnectTimeouts() string {
+	return Catalog.Format(msgs.locale, "telnetConnectTimeouts", nil)
+}
+
+// TelnetReadTimeout says "Read timeout"
+// in the language the app shows.
+func TelnetReadTimeout() string { return In(i18n.Locale()).TelnetReadTimeout() }
+
+// TelnetReadTimeout says "Read timeout"
+// in the language of msgs.
+func (msgs Messages) TelnetReadTimeout() string {
+	return Catalog.Format(msgs.locale, "telnetReadTimeout", nil)
+}
+
+// TelnetWriteFailed says "Write failed"
+// in the language the app shows.
+func TelnetWriteFailed() string { return In(i18n.Locale()).TelnetWriteFailed() }
+
+// TelnetWriteFailed says "Write failed"
+// in the language of msgs.
+func (msgs Messages) TelnetWriteFailed() string {
+	return Catalog.Format(msgs.locale, "telnetWriteFailed", nil)
+}
+
+// TelnetAgreed says "Agreed"
+// in the language the app shows.
+func TelnetAgreed() string { return In(i18n.Locale()).TelnetAgreed() }
+
+// TelnetAgreed says "Agreed"
+// in the language of msgs.
+func (msgs Messages) TelnetAgreed() string {
+	return Catalog.Format(msgs.locale, "telnetAgreed", nil)
+}
+
+// TelnetOptRefused says "Refused"
+// in the language the app shows.
+func TelnetOptRefused() string { return In(i18n.Locale()).TelnetOptRefused() }
+
+// TelnetOptRefused says "Refused"
+// in the language of msgs.
+func (msgs Messages) TelnetOptRefused() string {
+	return Catalog.Format(msgs.locale, "telnetOptRefused", nil)
+}
+
+// TelnetHeartbeat says "Heartbeat"
+// in the language the app shows.
+func TelnetHeartbeat() string { return In(i18n.Locale()).TelnetHeartbeat() }
+
+// TelnetHeartbeat says "Heartbeat"
+// in the language of msgs.
+func (msgs Messages) TelnetHeartbeat() string {
+	return Catalog.Format(msgs.locale, "telnetHeartbeat", nil)
+}
+
+// TelnetBeats says "%d sent · %d answered"
+// in the language the app shows.
+func TelnetBeats() string { return In(i18n.Locale()).TelnetBeats() }
+
+// TelnetBeats says "%d sent · %d answered"
+// in the language of msgs.
+func (msgs Messages) TelnetBeats() string {
+	return Catalog.Format(msgs.locale, "telnetBeats", nil)
+}
+
+// TelnetLastBeat says "Last answer"
+// in the language the app shows.
+func TelnetLastBeat() string { return In(i18n.Locale()).TelnetLastBeat() }
+
+// TelnetLastBeat says "Last answer"
+// in the language of msgs.
+func (msgs Messages) TelnetLastBeat() string {
+	return Catalog.Format(msgs.locale, "telnetLastBeat", nil)
+}
+
+// TelnetIdle says "Quiet"
+// in the language the app shows.
+func TelnetIdle() string { return In(i18n.Locale()).TelnetIdle() }
+
+// TelnetIdle says "Quiet"
+// in the language of msgs.
+func (msgs Messages) TelnetIdle() string {
+	return Catalog.Format(msgs.locale, "telnetIdle", nil)
+}
+
+// TelnetSessionTotal says "Session total"
+// in the language the app shows.
+func TelnetSessionTotal() string { return In(i18n.Locale()).TelnetSessionTotal() }
+
+// TelnetSessionTotal says "Session total"
+// in the language of msgs.
+func (msgs Messages) TelnetSessionTotal() string {
+	return Catalog.Format(msgs.locale, "telnetSessionTotal", nil)
+}
+
+// TelnetPeaks says "Peaks"
+// in the language the app shows.
+func TelnetPeaks() string { return In(i18n.Locale()).TelnetPeaks() }
+
+// TelnetPeaks says "Peaks"
+// in the language of msgs.
+func (msgs Messages) TelnetPeaks() string {
+	return Catalog.Format(msgs.locale, "telnetPeaks", nil)
+}
+
+// TelnetNetErrors says "Network errors"
+// in the language the app shows.
+func TelnetNetErrors() string { return In(i18n.Locale()).TelnetNetErrors() }
+
+// TelnetNetErrors says "Network errors"
+// in the language of msgs.
+func (msgs Messages) TelnetNetErrors() string {
+	return Catalog.Format(msgs.locale, "telnetNetErrors", nil)
+}
+
+// TelnetReadTimeouts says "Read timeouts"
+// in the language the app shows.
+func TelnetReadTimeouts() string { return In(i18n.Locale()).TelnetReadTimeouts() }
+
+// TelnetReadTimeouts says "Read timeouts"
+// in the language of msgs.
+func (msgs Messages) TelnetReadTimeouts() string {
+	return Catalog.Format(msgs.locale, "telnetReadTimeouts", nil)
+}
+
+// TelnetWriteTimeouts says "Write timeouts"
+// in the language the app shows.
+func TelnetWriteTimeouts() string { return In(i18n.Locale()).TelnetWriteTimeouts() }
+
+// TelnetWriteTimeouts says "Write timeouts"
+// in the language of msgs.
+func (msgs Messages) TelnetWriteTimeouts() string {
+	return Catalog.Format(msgs.locale, "telnetWriteTimeouts", nil)
+}
+
+// TelnetResets says "RST resets"
+// in the language the app shows.
+func TelnetResets() string { return In(i18n.Locale()).TelnetResets() }
+
+// TelnetResets says "RST resets"
+// in the language of msgs.
+func (msgs Messages) TelnetResets() string {
+	return Catalog.Format(msgs.locale, "telnetResets", nil)
+}
+
+// TelnetRefused says "Refused"
+// in the language the app shows.
+func TelnetRefused() string { return In(i18n.Locale()).TelnetRefused() }
+
+// TelnetRefused says "Refused"
+// in the language of msgs.
+func (msgs Messages) TelnetRefused() string {
+	return Catalog.Format(msgs.locale, "telnetRefused", nil)
+}
+
+// TelnetReconnects says "Reconnects"
+// in the language the app shows.
+func TelnetReconnects() string { return In(i18n.Locale()).TelnetReconnects() }
+
+// TelnetReconnects says "Reconnects"
+// in the language of msgs.
+func (msgs Messages) TelnetReconnects() string {
+	return Catalog.Format(msgs.locale, "telnetReconnects", nil)
+}
+
+// TelnetHalfOpens says "Half-open links"
+// in the language the app shows.
+func TelnetHalfOpens() string { return In(i18n.Locale()).TelnetHalfOpens() }
+
+// TelnetHalfOpens says "Half-open links"
+// in the language of msgs.
+func (msgs Messages) TelnetHalfOpens() string {
+	return Catalog.Format(msgs.locale, "telnetHalfOpens", nil)
+}
+
+// TelnetProto says "Telnet protocol"
+// in the language the app shows.
+func TelnetProto() string { return In(i18n.Locale()).TelnetProto() }
+
+// TelnetProto says "Telnet protocol"
+// in the language of msgs.
+func (msgs Messages) TelnetProto() string {
+	return Catalog.Format(msgs.locale, "telnetProto", nil)
+}
+
+// TelnetIAC says "IAC frames in"
+// in the language the app shows.
+func TelnetIAC() string { return In(i18n.Locale()).TelnetIAC() }
+
+// TelnetIAC says "IAC frames in"
+// in the language of msgs.
+func (msgs Messages) TelnetIAC() string {
+	return Catalog.Format(msgs.locale, "telnetIAC", nil)
+}
+
+// TelnetNegoSent says "Negotiations out"
+// in the language the app shows.
+func TelnetNegoSent() string { return In(i18n.Locale()).TelnetNegoSent() }
+
+// TelnetNegoSent says "Negotiations out"
+// in the language of msgs.
+func (msgs Messages) TelnetNegoSent() string {
+	return Catalog.Format(msgs.locale, "telnetNegoSent", nil)
+}
+
+// TelnetBadIAC says "Invalid IAC"
+// in the language the app shows.
+func TelnetBadIAC() string { return In(i18n.Locale()).TelnetBadIAC() }
+
+// TelnetBadIAC says "Invalid IAC"
+// in the language of msgs.
+func (msgs Messages) TelnetBadIAC() string {
+	return Catalog.Format(msgs.locale, "telnetBadIAC", nil)
+}
+
+// TelnetBadSub says "Malformed SB"
+// in the language the app shows.
+func TelnetBadSub() string { return In(i18n.Locale()).TelnetBadSub() }
+
+// TelnetBadSub says "Malformed SB"
+// in the language of msgs.
+func (msgs Messages) TelnetBadSub() string {
+	return Catalog.Format(msgs.locale, "telnetBadSub", nil)
+}
+
 // ProtocolRedis says "Redis"
 // in the language the app shows.
 func ProtocolRedis() string { return In(i18n.Locale()).ProtocolRedis() }

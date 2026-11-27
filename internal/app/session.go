@@ -92,6 +92,15 @@ type Session struct {
 
 	start startState // the start page, while it is a new tab
 	bar   cmdBar     // the command bar under the terminal (commandbar.go)
+	// raw is a serial or Telnet session's console bar: the line to send,
+	// and the timestamps' switch (rawsession.go).
+	raw *rawConsole
+	// serial is a serial session's meter: the bytes, frames, errors and
+	// pins its System page shows (serialmeter.go), and telnet a Telnet
+	// session's: the link, the traffic and the IAC commands
+	// (telnetmeter.go).
+	serial *serialMeter
+	telnet *telnetMeter
 
 	// name is the tab's name for this run, "" for the host's title: never
 	// saved (rename.go).
@@ -140,12 +149,22 @@ func (s *Session) isRedis() bool { return s != nil && s.Host.IsRedis() }
 // terminal (object_session.go).
 func (s *Session) isObject() bool { return s != nil && s.Host.IsObject() }
 
+// isSerial tells whether s is a device on a serial port, and isTelnet a
+// server reached over Telnet: their terminal is the connection itself
+// (rawsession.go).
+func (s *Session) isSerial() bool { return s != nil && s.Host.IsSerial() }
+func (s *Session) isTelnet() bool { return s != nil && s.Host.IsTelnet() }
+
+// isRaw tells whether s's terminal is the connection itself, a serial port
+// or a Telnet server, rather than a shell an SSH server opened.
+func (s *Session) isRaw() bool { return s.isSerial() || s.isTelnet() }
+
 // jumpedFrom tells whether a program of s's shell went to another host, as
 // ssh does from a jump host's menu: the terminal then shows a session the
 // app's channels — the exec channel of the monitor, SFTP, the assistant's
 // commands — do not reach, as they end at the host the app connected to.
 func (s *Session) jumpedFrom() bool {
-	if s == nil || s.isLocal() || s.isRedis() {
+	if s == nil || s.isLocal() || s.isRedis() || s.isRaw() {
 		return false
 	}
 	for _, p := range s.panes.panes() {
@@ -181,6 +200,14 @@ func (a *App) connect(s *Session, secret string) {
 	}
 	if s.isObject() {
 		a.connectObject(s, secret)
+		return
+	}
+	if s.isSerial() {
+		a.connectSerial(s)
+		return
+	}
+	if s.isTelnet() {
+		a.connectTelnet(s)
 		return
 	}
 	if s.cancel != nil {
@@ -497,6 +524,20 @@ func (s *Session) disconnect() {
 	if s.sftp != nil {
 		s.sftp.Close()
 		s.sftp = nil
+	}
+	// A serial port or a Telnet socket lives in its panes' terminals, not
+	// in the SSH client: it is closed here, or the port stays taken and the
+	// server keeps a session nobody reads.
+	if s.isRaw() {
+		for _, p := range s.panes.panes() {
+			p.closeWire()
+		}
+	}
+	if s.serial != nil {
+		s.serial.detach()
+	}
+	if s.telnet != nil {
+		s.telnet.detach()
 	}
 	for _, p := range s.panes.panes() {
 		p.stopFollower()

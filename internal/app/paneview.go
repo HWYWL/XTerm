@@ -78,6 +78,29 @@ func (a *App) splitPane(s *Session, dir splitDir) {
 		}()
 		return
 	}
+	if s.isRaw() {
+		// Each pane has a connection of its own: a port, or a server's
+		// socket, has no channels to share.
+		spec := a.shellSpec(s.Host)
+		console := s.rawConsole()
+		ctx := s.ctx
+		if ctx == nil {
+			ctx = context.Background()
+		}
+		go func() {
+			conn, err := a.dialRaw(ctx, s)
+			if err != nil {
+				a.post(func() { a.notify(describeError(err)) })
+				return
+			}
+			term, err := a.openRawTerminal(s, p, conn, console, spec.topts)
+			if err != nil {
+				conn.Close()
+			}
+			a.post(func() { a.paneOpened(s, at, p, dir, s.client, spec, term, err) })
+		}()
+		return
+	}
 	client, spec := s.client, a.shellSpec(s.Host)
 	go func() {
 		term, err := a.openPaneShell(s, p, client, spec)
@@ -122,7 +145,7 @@ func paneError(err error) string {
 // startPane follows the folder and the foreground program of p's shell,
 // which just opened on s's connection, as long as both last.
 func (a *App) startPane(s *Session, p *pane, spec shellSpec) {
-	if s.isRedis() { // no shell to follow
+	if s.isRedis() || s.isRaw() { // no shell to follow
 		a.updateTerminal(p.term, spec.topts)
 		return
 	}
@@ -150,6 +173,7 @@ func (p *pane) stopFollower() {
 // next connection stays (pane.keep).
 func (p *pane) end() {
 	p.stopFollower()
+	p.closeWire()
 	if p.term != nil {
 		p.term.Close()
 		p.term = nil
@@ -217,6 +241,12 @@ func (a *App) paneExited(s *Session, p *pane) {
 // connectionLost marks s lost: its connection dropped.
 func (a *App) connectionLost(s *Session) {
 	s.status, s.err = statusClosed, errConnectionLost
+	// The panes of a serial or Telnet session each hold a connection of
+	// their own: the one that dropped took its tab down, so the others are
+	// closed with it rather than left open.
+	if s.isRaw() {
+		s.disconnect()
+	}
 	for _, p := range s.panes.panes() {
 		p.sayEnd(locales.ConnectionLost())
 	}
